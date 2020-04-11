@@ -10,8 +10,8 @@
 - [x] approxChol/LDLinv(): constructor of LDLinv
 - [ ] approxChol/LLMatOrd(a::SparseMatrixCSC{Tval,Tind}): constructor of LLMatOrd. SparseMatrixCSC: a class of sparse matrix. For now: write some LLMatOrd manually. (maybe a simple 3 by 3 matrix)
 - [x] approxChol/print_ll_col: print a column of LLMatOrd
-- [ ] approxChol/get_ll_col: take out a vector of LLcol from LLMatOrd
-- [ ] approxChol/compressCol: somehow sort the vector of LLcol *
+- [x] approxChol/get_ll_col: take out a vector of LLcol from LLMatOrd
+- [x] approxChol/compressCol: somehow sort the vector of LLcol *
 - [ ] approxChol/approxChol: input LLMatOrd, apply approximate cholosky decomposition and output LDLinv
 - [ ] approxChol/LDLsolver: solve Lx = b given the decomposition
 - [ ] approxChol/forward!: forward substitution, which is a step in LDLsolver
