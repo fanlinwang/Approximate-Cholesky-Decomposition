@@ -3,7 +3,7 @@
 
 void forward(const LDLinv& ldli, std::vector<Tval>& y) {
     int len = ldli.col.size(); 
-    for (int ii = 0; ii < len-1; ii++){ 
+    for (int ii = 0; ii < len; ii++){ 
         Tind i = ldli.col[ii];
 
         Tind j0 = ldli.colptr[ii];
@@ -11,10 +11,10 @@ void forward(const LDLinv& ldli, std::vector<Tval>& y) {
 
         Tval yi = y[i];
 
-        for (Tind jj = j0; jj < j1-1; jj++){
+        for (Tind jj = j0; jj <= j1-(Tind)1; jj++){
             Tval j = ldli.rowval[jj];
             y[j] += ldli.fval[jj] * yi;
-            yi *= ((Tval)(1.0)-ldli.fval[jj]);
+            yi *= ((Tval)(1)-ldli.fval[jj]);
         }
         Tval j = ldli.rowval[j1];
         y[j] += yi;
@@ -34,15 +34,15 @@ void backward(const LDLinv& ldli, std::vector<Tval>& y) {
         Tval yi = y[i];
         yi = yi + y[j];
 
-        for (Tind jj = j1-(Tind)(1.0); jj >= j0; jj--) {
+        for (Tind jj = j1-(Tind)(1); jj >= j0; jj--) {
             j = ldli.rowval[jj];
-            yi = (1-ldli.fval[jj])*yi + ldli.fval[jj]*y[j];
+            yi = ((Tind)1-ldli.fval[jj])*yi + ldli.fval[jj]*y[j];
         }
         y[i] = yi;
     }
 } 
 
-Tval mean(std::vector<Tval> y){
+Tval mean(const std::vector<Tval>& y){
     Tval sum = 0.0;
     for (auto elem: y){
         sum += elem;
