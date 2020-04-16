@@ -77,7 +77,7 @@ Tind compressCol(std::vector<LLcol> &colspace, int len) {
 
         } else {
             
-            curval += c[i].val;
+            curval += c[i].cval;
 
         }
     }

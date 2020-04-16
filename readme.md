@@ -19,3 +19,8 @@
 - [ ] approxChol/approxchol_lapGiven: an API over 
 
 pcg?!!! send email to ask
+
+## Compile
+```
+g++ -std=c++11 main.cpp
+```
