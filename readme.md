@@ -20,3 +20,14 @@ approxChol/forward!: forward substitution, which is a step in LDLsolver
 approxChol/backward!: backward substitution, which is a step in LDLsolver
 approxChol/approxchol_lapGiven: an API over 
 pcg?!!! send email to ask
+
+## 
+- Generate build files:
+``` bash
+mkdir build && cd build
+cmake ..
+```
+- Compile:
+``` bash
+make
+```
