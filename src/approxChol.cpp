@@ -1,5 +1,6 @@
-#include "approxCholTypes.h"
+#include "approxChol.hpp"
 #include <iostream>
+
 
 void forward(const LDLinv& ldli, std::vector<Tval>& y) {
     int len = ldli.col.size(); 

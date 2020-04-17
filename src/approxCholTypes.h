@@ -1,3 +1,5 @@
+#pragma once
+
 #include "common.h"
 typedef int Tind;
 typedef double Tval;
