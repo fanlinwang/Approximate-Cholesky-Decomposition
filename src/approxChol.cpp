@@ -5,9 +5,9 @@
 void forward(const LDLinv& ldli, std::vector<Tval>& y) {
     int len = ldli.col.size(); 
     for (int ii = 0; ii < len; ii++){ 
-        Tind i = ldli.col[ii];
+        Tind i = ldli.col[ii]; 
 
-        Tind j0 = ldli.colptr[ii];
+        Tind j0 = ldli.colptr[ii]; 
         Tind j1 = ldli.colptr[ii+1]-Tind(1);
 
         Tval yi = y[i];
@@ -68,6 +68,24 @@ std::vector<Tval> LDLsolver(const LDLinv& ldli, const std::vector<Tval>& b){
         elem = elem - mu;
     }
 
+    return y;
+}
+
+std::vector<Tval> approxchol_lapGiven(const SparseMatrix& a, const
+                                      std::vector<Tval>& b, bool verbose) 
+{
+    // la = lap(a); ??
+
+    // LLMatOrd llmat = LLMatOrd(a);
+    // LDLinv ldli = approxChol(llmat);
+    std::vector<Tval> y;
+    // y = LDLsolver(ldli, b);
+
+    if (verbose){
+        // TODO: implement nnz to count non-zero elements in a
+        // std::cout << "Ratio of operator edges to original edges: " << 2 * ldli.fval.size() / nnz(a) << "\n";
+        // std::cout << "ratio of max to min diagonal of laplacian : " << maximum(diag(la))/minimum(diag(la))) << "\n";
+    }
     return y;
 }
 
