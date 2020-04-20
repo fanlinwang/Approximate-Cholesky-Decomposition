@@ -21,13 +21,41 @@ approxChol/backward!: backward substitution, which is a step in LDLsolver
 approxChol/approxchol_lapGiven: an API over 
 pcg?!!! send email to ask
 
-## 
-- Generate build files:
+## Project Structure
+``` text
+.
+├── CMakeLists.txt
+├── src
+│   └── main.cpp
+│   ├── approxChol.hpp
+│   └── approxChol.cpp
+│   └── approxCholTypes.h
+│   └── common.h
+│   └── tsc_x86.h
+│   └── CMakeLists.txt
+└── tests
+    ├── test_LDLsolver.cpp
+    ├── test.h
+    └── CMakeLists.txt
+```
+- To add a new test file `test_xxx.cpp` under the `test/`, append the following two lines to `test/CMakeLists.txt`: 
+``` cmake
+add_executable(test_xxx test/test_xxx.cpp ${PROJECT_SOURCES})   # Name of executable.
+target_link_libraries(test_xxx PRIVATE approxChol)  # Link the executable to the library built from src/*.cpp
+```
+
+## Build and Test
+- Generate build files for all:
 ``` bash
-mkdir build && cd build
+cd team008 && mkdir build && cd build
 cmake ..
 ```
 - Compile:
 ``` bash
 make
+```
+- Run:
+``` bash
+./src/main
+./test/test_LDLsolver
 ```

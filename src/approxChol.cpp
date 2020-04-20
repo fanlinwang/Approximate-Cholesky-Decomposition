@@ -1,4 +1,6 @@
 #include "approxChol.hpp"
+#include "common.h"
+#include <immintrin.h>
 #include <iostream>
 
 
@@ -71,21 +73,27 @@ std::vector<Tval> LDLsolver(const LDLinv& ldli, const std::vector<Tval>& b){
     return y;
 }
 
-std::vector<Tval> approxchol_lapGiven(const SparseMatrix& a, const
-                                      std::vector<Tval>& b, bool verbose) 
+void approxchol_lapGiven(const SparseMatrix& A, const
+                                      std::vector<Tval>& b,  std::vector<Tval>& sol, bool verbose) 
 {
     // la = lap(a); ??
 
     // LLMatOrd llmat = LLMatOrd(a);
     // LDLinv ldli = approxChol(llmat);
-    std::vector<Tval> y;
-    // y = LDLsolver(ldli, b);
+    // sol = LDLsolver(ldli, b);
 
     if (verbose){
-        // TODO: implement nnz to count non-zero elements in a
         // std::cout << "Ratio of operator edges to original edges: " << 2 * ldli.fval.size() / nnz(a) << "\n";
         // std::cout << "ratio of max to min diagonal of laplacian : " << maximum(diag(la))/minimum(diag(la))) << "\n";
     }
-    return y;
 }
 
+/*
+* Called by the driver to register your functions
+* Use add_function(func, description) to add your own functions
+*/
+void register_functions()
+{
+    add_function(&approxchol_lapGiven, "Base Solver", 1);
+    // add_function(&approxchol_lapGiven1, "Fast WHT", 1);
+}

@@ -1,6 +1,7 @@
 #pragma once
+#include <vector>
+#include <algorithm>
 
-#include "common.h"
 typedef int Tind;
 typedef double Tval;
 
