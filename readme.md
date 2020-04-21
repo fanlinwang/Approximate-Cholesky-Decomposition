@@ -40,6 +40,7 @@ add_executable(test_xxx test/test_xxx.cpp ${PROJECT_SOURCES})   # Name of execut
 target_link_libraries(test_xxx PRIVATE approxChol)  # Link the executable to the library built from src/*.cpp
 ```
 
+<<<<<<< HEAD
 ## Build and Test
 - Generate build files for all:
 ``` bash
@@ -55,3 +56,4 @@ make
 ./src/main
 ./test/test_LDLsolver
 ```
+
