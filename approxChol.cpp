@@ -95,7 +95,7 @@ Tind compressCol(std::vector<LLcol> &colspace, int len) {
 }
 
 LDLinv approxChol(LLMatOrd a) {
-    long n = a.n;
+    auto n = a.n;
 
     // need to make custom one without col info later
     LDLinv ldli(a);
