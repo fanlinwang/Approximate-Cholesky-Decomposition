@@ -36,7 +36,7 @@
 ```
 - To add a new test file `test_xxx.cpp` under the `test/`, append the following two lines to `test/CMakeLists.txt`: 
 ``` cmake
-add_executable(test_xxx test/test_xxx.cpp ${PROJECT_SOURCES})   # Name of executable.
+add_executable(test_xxx test_xxx.cpp ${PROJECT_SOURCES})   # Name of executable.
 target_link_libraries(test_xxx PRIVATE approxChol)  # Link the executable to the library built from src/*.cpp
 ```
 
