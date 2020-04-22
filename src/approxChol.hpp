@@ -1,6 +1,7 @@
 #pragma once
 
 #include "approxCholTypes.h"
+#include "common.h"
 
 /*
   Print a column in an LLMatOrd matrix.

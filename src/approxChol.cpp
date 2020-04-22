@@ -266,12 +266,3 @@ void approxchol_lapGiven(const SparseMatrix& A, const
     }
 }
 
-/*
-* Called by the driver to register your functions
-* Use add_function(func, description) to add your own functions
-*/
-void register_functions()
-{
-    add_function(&approxchol_lapGiven, "Base Solver", 1);
-    // add_function(&approxchol_lapGiven1, "Fast Solver", 1);
-}
