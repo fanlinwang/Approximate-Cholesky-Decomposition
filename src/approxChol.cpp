@@ -7,7 +7,7 @@
 
 void print_ll_col(LLMatOrd llmat, int i) {
     Tind ptr = llmat.cols[i];
-    while (ptr != 0)
+    while (ptr != -1)
     {
         LLord ll = llmat.lles[ptr];
         std::cout << "col " << i << ", row " << ll.row << " : " << ll.val << std::endl;
@@ -21,7 +21,7 @@ int get_ll_col(LLMatOrd llmat, int i, std::vector<LLcol> &colspace) {
     Tind ptr = llmat.cols[i];
     int len = 0;
 
-    while (ptr != 0) {
+    while (ptr != -1) {
         LLcol item = {llmat.lles[ptr].row, ptr, llmat.lles[ptr].val};
 
         if (len >= colspace.size()) {
@@ -47,13 +47,13 @@ bool cmp_val(const LLcol &a, const LLcol &b) {
 
 Tind compressCol(std::vector<LLcol> &colspace, int len) {
 
-    // sort colspace ?
+    // sort colspace ? DY: just checked, yes! 
     std::sort(colspace.begin(), colspace.end(), cmp_row);
 
     std::vector<LLcol> c = colspace;
 
     Tind ptr = -1;
-    Tind currow = c[0].row;     // julia index start from 1?
+    Tind currow = c[0].row;     // julia index start from 1? 
     Tval curval = c[0].cval;
     Tind curptr = c[0].ptr;
 
@@ -67,9 +67,9 @@ Tind compressCol(std::vector<LLcol> &colspace, int len) {
             c[ptr].cval = curval;
             c[ptr].ptr = curptr;
 
-            currow = c[0].row;
-            curval = c[0].cval;
-            curptr = c[0].ptr;
+            currow = c[i].row;
+            curval = c[i].cval;
+            curptr = c[i].ptr;
 
         } else {
             
@@ -84,8 +84,9 @@ Tind compressCol(std::vector<LLcol> &colspace, int len) {
     c[ptr].cval = curval;
     c[ptr].ptr = curptr;
 
-    std::sort(colspace.begin(), colspace.end(), cmp_val);
-
+    std::sort(c.begin(), c.begin() + ptr + 1, cmp_val);
+    
+    colspace = c;
     return ptr+1; // if the returned value is used for vector length, then it should return ptr+1
 }
 
