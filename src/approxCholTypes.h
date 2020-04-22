@@ -84,7 +84,7 @@ struct LLMatOrd{
     long n;
     std::vector<Tind> cols;
     std::vector<LLord> lles;
-    // LLmatp(SparseMatrix a)
+    // LLmatp(SparseMatrix a){}
     // LLmatp(SparseMatrix a, std::vector<Tind> perm)
 };
 

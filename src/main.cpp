@@ -23,13 +23,19 @@ using namespace std;
 #define EPS (1e-3)
 
 /* prototype of the function you need to optimize */
-typedef void(*comp_func)(const SparseMatrix& a, const std::vector<Tval>& b, std::vector<Tval>& sol, bool verbose);
-
 double get_perf_score(comp_func f);
 void register_functions();
 double perf_test(comp_func f, string desc, int flops);
-void add_function(comp_func f, string name, int flop);
 void build_x(double ** m, unsigned n1, unsigned n2);
+/*
+* Called by the driver to register your functions
+* Use add_function(func, description) to add your own functions
+*/
+void register_functions()
+{
+   // add_function(&approxchol_lapGiven, "Base Solver", 1);
+    // add_function(&approxchol_lapGiven1, "Fast Solver", 1);
+}
 
 /* Global vars, used to keep track of student functions */
 vector<comp_func> userFuncs;
