@@ -4,10 +4,7 @@
 #include <iostream>
 #include <random>
 
-/*
-  Print a column in an LLMatOrd matrix.
-  This is here for diagnostics.
-*/
+
 void print_ll_col(LLMatOrd llmat, int i) {
     Tind ptr = llmat.cols[i];
     while (ptr != 0)
@@ -18,7 +15,6 @@ void print_ll_col(LLMatOrd llmat, int i) {
         ptr = ll.next;
     }
 }
-
 
 int get_ll_col(LLMatOrd llmat, int i, std::vector<LLcol> &colspace) {
     
@@ -41,16 +37,13 @@ int get_ll_col(LLMatOrd llmat, int i, std::vector<LLcol> &colspace) {
     return len;
 }
 
-
 bool cmp_row(const LLcol &a, const LLcol &b) {
     return a.row < b.row;
 }
 
-
 bool cmp_val(const LLcol &a, const LLcol &b) {
     return a.cval < b.cval;
 }
-
 
 Tind compressCol(std::vector<LLcol> &colspace, int len) {
 
@@ -263,7 +256,7 @@ void approxchol_lapGiven(const SparseMatrix& A, const
 {
     // la = lap(a); ??
 
-    // LLMatOrd llmat = LLMatOrd(a);
+    // LLMatOrd llmat = LLMatOrd(A);
     // LDLinv ldli = approxChol(llmat);
     // sol = LDLsolver(ldli, b);
 
@@ -280,5 +273,5 @@ void approxchol_lapGiven(const SparseMatrix& A, const
 void register_functions()
 {
     add_function(&approxchol_lapGiven, "Base Solver", 1);
-    // add_function(&approxchol_lapGiven1, "Fast WHT", 1);
+    // add_function(&approxchol_lapGiven1, "Fast Solver", 1);
 }
