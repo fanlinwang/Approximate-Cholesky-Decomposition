@@ -22,6 +22,11 @@ using namespace std;
 #define FLOPS (4.*n)
 #define EPS (1e-3)
 
+typedef void(*comp_func)(const SparseMatrix& a, const
+                         std::vector<Tval>& b, std::vector<Tval>& sol, bool verbose);
+
+void add_function(comp_func f, std::string name, int flop);
+
 /* prototype of the function you need to optimize */
 double get_perf_score(comp_func f);
 void register_functions();
