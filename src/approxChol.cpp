@@ -253,17 +253,23 @@ std::vector<Tval> LDLsolver(const LDLinv& ldli, const std::vector<Tval>& b){
 }
 
 void approxchol_lapGiven(const SparseMatrix& A, const
-                                      std::vector<Tval>& b,  std::vector<Tval>& sol, bool verbose) 
+                                      std::vector<Tval>& b,  std::vector<Tval>& sol, Tval error, bool verbose) 
 {
     // la = lap(a); ??
 
+    // start
     // LLMatOrd llmat = LLMatOrd(A);
     // LDLinv ldli = approxChol(llmat);
     // sol = LDLsolver(ldli, b);
+    // end  
+
+    // TODO: error = norm(la*sol, b); // should be close to 0
 
     if (verbose){
         // std::cout << "Ratio of operator edges to original edges: " << 2 * ldli.fval.size() / nnz(a) << "\n";
         // std::cout << "ratio of max to min diagonal of laplacian : " << maximum(diag(la))/minimum(diag(la))) << "\n";
+        // std::cout << "Error: " << norm(la*sol-b) << "\n";
     }
+
 }
 
