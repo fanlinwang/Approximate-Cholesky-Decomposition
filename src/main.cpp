@@ -13,6 +13,7 @@
 #include <string.h>
 #include "common.h"
 #include "tsc_x86.h"
+#include "approxCholTypes.h"
 
 using namespace std;
 

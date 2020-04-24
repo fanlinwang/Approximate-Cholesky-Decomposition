@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __CHOL_DATA_STRUCT__
 #define __CHOL_DATA_STRUCT__
 
@@ -25,9 +26,7 @@ struct Edge{
     }
 };
 
-bool cmp_edge(const Edge& a, const Edge& b){
-    return (a.c < b.c) || (a.c == b.c && a.r < b.r);
-}
+bool cmp_edge(const Edge& a, const Edge& b);
 
 //not weighted
 struct SparseMatrix{
@@ -96,21 +95,7 @@ struct SparseMatrix{
     }
 };
 
-std::ostream& operator << (std::ostream &out, SparseMatrix &sparse)
-{
-    out << "num of columns:" << sparse.colnum << std::endl;
-    out << "num of elems:" << sparse.elems << std::endl;
-    out << "colptrs:" << std::endl;
-    for (int i = 0; i < sparse.colnum; i++)
-    {
-        out << sparse.colptrs[i] << ' ';
-    }
-    out << std::endl;
-    out << "(row, val):" << std::endl;
-    for (int i = 0; i < sparse.elems; i++)
-        out << "(" << sparse.rows[i] << ", " << sparse.vals[i] << ")\n";
-    return out;
-}
+std::ostream& operator << (std::ostream &out, SparseMatrix &sparse);
 
 // these are the types we use with a fixed ordering
 struct LLord{
@@ -121,14 +106,7 @@ struct LLord{
     LLord(Tind row, Tind next, Tval val):row(row), next(next), val(val){}
 };
 
-std::vector<Tind> invperm(std::vector<Tind> &perm)
-{
-    std::vector<Tind> invp;
-    invp.resize(perm.size());
-    for (int i = 0; i < perm.size(); i++)
-        invp[perm[i]] = i;
-    return invp;
-}
+std::vector<Tind> invperm(std::vector<Tind> &perm);
 
 struct LLMatOrd{
     long n;
@@ -191,21 +169,7 @@ struct LLMatOrd{
         }
     }
 };
-std::ostream& operator << (std::ostream &out, LLMatOrd& mat)
-{
-    out << "num of columns:" << mat.n << std::endl;
-    out << "num of elems:" << mat.lles.size() << std::endl;
-    out << "colptrs:" << std::endl;
-    for (int i = 0; i < mat.n; i++)
-    {
-        out << mat.cols[i] << ' ';
-    }
-    out << std::endl;
-    out << "(row, next, val):" << std::endl;
-    for (int i = 0; i < mat.lles.size(); i++)
-        out << "(" << mat.lles[i].row << ", " << mat.lles[i].next << ", " << mat.lles[i].val << ")\n";
-    return out;
-}
+std::ostream& operator << (std::ostream &out, LLMatOrd& mat);
 /*
 """
   LLp elements are all in the same column.

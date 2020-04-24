@@ -1,4 +1,4 @@
-add_library(approxChol STATIC approxChol.cpp)
+add_library(approxChol STATIC approxChol.cpp approxCholTypes.cpp)
 target_include_directories(approxChol PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(main main.cpp)

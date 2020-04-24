@@ -1,5 +1,6 @@
 #include <common.h>
 #include <approxCholTypes.h>
+
 // a=
 // [2, 1]  =  1.0
 //   [3, 1]  =  1.0
