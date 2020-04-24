@@ -25,6 +25,10 @@ struct Edge{
     }
 };
 
+bool cmp_edge(const Edge& a, const Edge& b){
+    return (a.c < b.c) || (a.c == b.c && a.r < b.r);
+}
+
 //not weighted
 struct SparseMatrix{
     std::vector<Tval> vals;
@@ -38,7 +42,7 @@ struct SparseMatrix{
     SparseMatrix(std::vector<Edge> edges, long colnum)//suppose input edges to be sorted and x > y
     {
         this->colnum = colnum;
-        sort(edges.begin(), edges.end());
+        std::sort(edges.begin(), edges.end(), cmp_edge);
         long len = edges.size();
         vals.resize(len + colnum);
         rows.resize(len + colnum);
