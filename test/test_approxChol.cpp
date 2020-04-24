@@ -3,7 +3,7 @@
 // #include "common.h"
 // #include "approxChol.cpp"
 #include "test.h"
-#include "matrix.cpp" 
+#include "matrix.hpp" 
 
 int main(){
     // test print_ll_col, get_ll_col, compresCol

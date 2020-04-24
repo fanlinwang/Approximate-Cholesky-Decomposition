@@ -1,7 +1,7 @@
 #include <iostream>
 #include "approxChol.hpp"
 #include "test.h"
-#include "matrix.cpp"
+#include "matrix.hpp"
 
 #define TOLERANCE 0.01
 
