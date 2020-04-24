@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __APPROX_CHOL__
+#define __APPROX_CHOL__
 
 #include "approxCholTypes.h"
 #include "common.h"
@@ -20,3 +21,5 @@ std::vector<Tval> LDLsolver(const LDLinv& ldli, const std::vector<Tval>& b);
 void approxchol_lapGiven(const SparseMatrix& A, const std::vector<Tval>& b,   
                          std::vector<Tval>& sol, Tval error, bool verbose);
 
+
+#endif

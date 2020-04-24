@@ -1,4 +1,3 @@
-#pragma once
 #ifndef __CHOL_DATA_STRUCT__
 #define __CHOL_DATA_STRUCT__
 
@@ -228,7 +227,7 @@ struct LLcol{
 
 struct LDLinv{
     std::vector<Tind> col;
-    std::vector<Tind> colptr;
+    std::vector<Tind> colptr; // store 1-based indices
     std::vector<Tind> rowval;
     std::vector<Tval> fval;
     std::vector<Tval> d;
