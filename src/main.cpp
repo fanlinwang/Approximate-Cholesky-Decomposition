@@ -21,7 +21,7 @@ using namespace std;
 #define REP 10
 #define MAX_FUNCS 32
 #define FLOPS (4.*n)
-#define EPS (1e-3)
+#define TOLERANCE 1e-8
 
 typedef void(*comp_func)(const SparseMatrix& a, const
                          std::vector<Tval>& b, std::vector<Tval>& sol, bool verbose);
@@ -194,7 +194,7 @@ int main(int argc, char **argv) {
         // f(); // TODO
         double error = nrm_sqr_diff(y, y_base, n);
 
-        if (error > EPS) {
+        if (error > TOLERANCE) {
             cout << error << endl;
             cout << "ERROR!!!!  the results for the " << i+1 << "th function are different to the previous" << std::endl;
         }

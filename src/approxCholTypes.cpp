@@ -20,6 +20,27 @@ std::ostream& operator << (std::ostream &out, SparseMatrix &sparse)
     return out;
 }
 
+Tind find_col(const SparseMatrix &sparse, Tind i){
+    auto pos = std::upper_bound(sparse.colptrs.begin(), 
+                                 sparse.colptrs.end(), i);
+    if (pos == sparse.colptrs.end()) // last column
+        return sparse.colnum-1;
+    return std::distance(sparse.colptrs.begin(), pos)-1;
+}
+
+std::vector<Tval> operator * (const SparseMatrix& A,
+                               const std::vector<Tval>& x)
+{
+    int n = x.size(), cr = 0;
+    std::vector<Tval> b(n, 0.0);
+    for (int i = 0; i < A.elems; ++i){
+        int cr = A.rows[i];
+        Tind col = find_col(A, i);
+        b[cr] += A.vals[i] * x[col];        
+    }
+    return b;
+}
+
 std::vector<Tind> invperm(std::vector<Tind> &perm)
 {
     std::vector<Tind> invp;

@@ -3,6 +3,9 @@
 #include <immintrin.h>
 #include <iostream>
 #include <random>
+#include <cmath>
+#include <ctime>
+#include <limits>
 
 
 void print_ll_col(LLMatOrd llmat, int i) {
@@ -224,14 +227,6 @@ void backward(const LDLinv& ldli, std::vector<Tval>& y) {
     }
 } 
 
-Tval mean(const std::vector<Tval>& y){
-    Tval sum = 0.0;
-    for (auto& elem: y){
-        sum += elem;
-    }
-    return sum/y.size();
-}
-
 std::vector<Tval> LDLsolver(const LDLinv& ldli, const std::vector<Tval>& b){
     std::vector<Tval> y(b.begin(), b.end());
 
@@ -271,5 +266,159 @@ void approxchol_lapGiven(const SparseMatrix& A, const
         // std::cout << "Error: " << norm(la*sol-b) << "\n";
     }
 
+    // iteratively solve the equation:
+    // pcg(la, b, F, tol, maxits, maxtime, pcgIts, verbose, stag_test);
 }
 
+
+void axpy2(const Tval al, const std::vector<Tval>& p, std::vector<Tval>& x){
+    int n = x.size();
+    for (int i = 0; i < n; ++i)
+        x[i] = x[i] + al*p[i];
+}
+
+void bzbeta(const Tval beta, const std::vector<Tval>& z, std::vector<Tval>& p){
+    int n = p.size();
+    for (int i = 0; i < n; ++i)
+        p[i] = z[i] + beta*p[i];
+}
+
+Tval mean(const std::vector<Tval>& y){
+    Tval sum = 0.0;
+    for (auto& elem: y){
+        sum += elem;
+    }
+    return sum/y.size();
+}
+
+
+Tval norm(const std::vector<Tval>& y){
+    Tval sum = 0.0;
+    for (auto& elem: y){
+        sum += elem*elem;
+    }
+    return std::sqrt(sum);
+}
+
+Tval dot(const std::vector<Tval>& x, const std::vector<Tval>& y){
+    Tval sum = 0.0;
+    for (int i = 0; i < x.size(); ++i){
+        sum += x[i]*y[i];
+    }
+    return sum;
+}
+
+
+std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,       
+                      solver ldlsolver, const std::vector<Tval>& sol, 
+                      const LDLinv& ldli, Tval tolerance, Tind maxits, time_t maxtime, bool verbose, std::vector<Tind> pcgIts, Tind stag_test) //TODO: struct the parameters...
+{ 
+    Tind n = b.size();
+    Tval nb = norm(b);
+
+    // If input vector is zero, quit
+    if (nb == 0)
+      return sol;
+
+    std::vector<Tval> x(n, 0.0);
+    std::vector<Tval> bestx(n, 0.0);
+    Tval bestnr = 1.0;
+
+    std::vector<Tval> r(b.begin(), b.end());
+    std::vector<Tval> z(sol.begin(), sol.end());
+    std::vector<Tval> p(sol.begin(), sol.end());
+    std::vector<Tval> q(n, 0.0);
+
+    Tval rho = dot(r, sol);
+    Tval best_rho = rho;
+    Tind stag_count = 0;
+    time_t t1 = time(NULL);
+
+    Tind itcnt = 0;
+    Tval oldrho = rho; 
+    while (itcnt < maxits){
+        itcnt = itcnt+1;
+
+        q = la*p; //TODO: sparse matrix multiplication
+
+        Tval pq = dot(p,q);
+
+        if ((pq < EPS || pq > INF)){
+          if (verbose)
+            std::cout << "PCG Stopped due to small or large pq.\n";
+          break;
+        }
+
+        Tval al = rho/pq;
+
+        // the following line could cause slowdown
+        if (al*norm(p) < EPS*norm(x)){
+            if (verbose) 
+                std::cout << "PCG: Stopped due to stagnation.\n";
+            break;
+        }
+        
+        axpy2(al,p,x);
+        axpy2(-al,q,r);
+
+        Tval nr = norm(r)/nb;
+        if (nr < bestnr){
+            bestnr = nr;
+            for (int i = 0; i < n; ++i)
+                bestx[i] = x[i];
+        }
+                    
+        if (nr < tolerance) 
+            break;
+        z = ldlsolver(ldli, r);
+
+        oldrho = rho;
+        rho = dot(z, r); 
+
+        if (rho < best_rho*(1-1/stag_test)){
+            best_rho = rho;
+            stag_count = 0;
+        } else {
+          if (stag_test > 0) {
+            if (best_rho > (1-1/stag_test)*rho) {
+              stag_count += 1;
+              if (stag_count > stag_test) {
+                std::cout << "PCG Stopped by stagnation test " << stag_test << "\n";
+                break;
+              }
+            }
+          }
+        }
+
+        if (rho < EPS || rho > INF){
+          if (verbose)
+            std::cout << "PCG Stopped due to small or large rho.\n"; 
+          break;
+        }
+
+
+        Tval beta = rho/oldrho; 
+        if (beta < EPS || beta > INF) {
+          if (verbose)
+            std::cout << "PCG Stopped due to small or large beta.\n"; 
+          break;
+        }
+
+        bzbeta(beta,p,z);
+
+        if ((time(NULL) - t1) > maxtime){
+            if (verbose) 
+                std::cout << "PCG New stopped at maxtime.\n"; 
+            break;
+        }
+
+    }
+
+    if (verbose)
+        std::cout << "PCG stopped after: " << std::round((time(NULL) - t1)) << "seconds and " << itcnt << " iterations with relative error " << (norm(r)/norm(b)) << ".\n";
+
+    if (pcgIts.size() > 0)
+        pcgIts[0] = itcnt; 
+
+    return bestx;
+}
