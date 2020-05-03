@@ -6,13 +6,15 @@
 
 int main(){
 
-    std::vector<std::vector<double> > matrix{
-        {0,1,1,0},
-        {1,0,0,1},
-        {1,0,0,1},
-        {0,1,1,0}};
+    // std::vector<std::vector<double> > matrix{
+    //     {0,1,1,0},
+    //     {1,0,0,1},
+    //     {1,0,0,1},
+    //     {0,1,1,0}};
 
-    SparseMatrix A(matrix);
+    std::cout << "construct A" << std::endl;
+    SparseMatrix A(4, 4);
+    std::cout << A;
     // b is a normalized vector
     std::vector<Tval> b = {-0.5270249460796002, 0.7282324157897637, 
                            0.3227082222861411, -0.5239156919963046};
@@ -26,15 +28,20 @@ int main(){
     std::cout << "\n";
 
     // laplancian of A. 
-    std::vector<std::vector<double> > la{
-        {2,-1,-1,0},
-        {-1,2,0,-1},
-        {-1,0,2,-1},
-        {0,-1,-1,2}};
+    // std::vector<std::vector<double> > la{
+    //     {2,-1,-1,0},
+    //     {-1,2,0,-1},
+    //     {-1,0,2,-1},
+    //     {0,-1,-1,2}};
 
-    SparseMatrix lap_A(la);
+    SparseMatrix lap_A;
+    laplacian(A, lap_A);
+    std::cout << "laplacian of A" <<std::endl;
+    std::cout << lap_A;
 
     LLMatOrd llmat = LLMatOrd(A);
+    std::cout << "LLmat of A" <<std::endl;
+    std::cout << llmat << std::endl;
     LDLinv ldli(llmat);
     ldli.col = {1,2,3};
     ldli.colptr = {1,3,5,6};

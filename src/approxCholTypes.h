@@ -2,6 +2,7 @@
 #define __CHOL_DATA_STRUCT__
 
 #include "common.h"
+#include <cstdlib>
 typedef int Tind;
 typedef double Tval;
 
@@ -19,7 +20,7 @@ struct Edge{
         // }
     }
 
-    bool operator < (Edge &e)
+    bool operator < (const Edge& e) const
     {
         return (this->c < e.c) || ((this->c == e.c) && this->r < e.r);
     }
@@ -37,6 +38,7 @@ struct SparseMatrix{
     long elems;
     // long cols;
     // long rows;
+    SparseMatrix (){}
     SparseMatrix(std::vector<Edge> edges, long colnum)//suppose input edges to be sorted and x > y
     {
         this->colnum = colnum;
@@ -91,6 +93,65 @@ struct SparseMatrix{
                     edges.push_back(Edge(i, j, matrix[i][j]));
         new (this)SparseMatrix(edges, m);//placement new
         // std::cout << "in\n" << this->colnum << ' ' << this->elems;
+    }
+
+    //random walk https://stackoverflow.com/a/14618505
+    SparseMatrix(int n, int m, int eqaul_weights=1)//randomly generate a n nodes m edges connected sparse graph
+    {
+        double w = 1;
+        if (m < n)
+            m = n-1;
+        std::set<int> S, T, nodes;
+        for (int i = 0; i < n; i++)
+            S.insert(i);
+        int current_node = rand() % n;
+        S.erase(current_node);
+        T.insert(current_node);
+        std::set<Edge> edges;
+        //create random connected MST
+        while (!S.empty())
+        {
+            int new_node = rand() % n;
+            if (S.count(new_node))
+            {
+                if (!eqaul_weights)
+                    w = rand() / double(RAND_MAX);
+                edges.insert(Edge(current_node, new_node, w));
+                edges.insert(Edge(new_node, current_node, w));
+                S.erase(new_node);
+                T.insert(new_node);
+            }
+            current_node = new_node;
+        }
+        // std::cout << edges.size() << std::endl;
+        m -= n - 1;
+        //randomly add rest edges
+        for (int i = 0; i < m; i++)
+        {
+            int a = rand() % n;
+            int b = rand() % n;
+            while (true)
+            {
+                if (a != b)
+                {
+                    auto iter = edges.lower_bound(Edge(a, b, 0));
+                    if (iter->r != a || iter->c != b)
+                        break;
+                }
+                a = rand() % n;
+                b = rand() % n;
+            }
+            if (!eqaul_weights)
+                w = rand() / double(RAND_MAX);
+            // auto iter = edges.lower_bound(Edge(a, b, 0));
+            // std::cout << iter->r << " " << iter->c << std::endl;
+            // std::cout << "new edge:" << a << " " << b << " "  << w << " "  <<  std::endl;
+            edges.insert(Edge(a, b, w));
+            edges.insert(Edge(b, a, w));
+        }
+        // std::cout << edges.size() << std::endl;
+        std::vector<Edge> edges_list(edges.begin(), edges.end());
+        new (this)SparseMatrix(edges_list, n);//placement new
     }
 };
 
@@ -215,6 +276,9 @@ struct LLcol{
     Tind ptr;
     Tval cval;
 };
+
+//convert a sparsematrix from connected graph to laplacian
+void laplacian(const SparseMatrix& A, SparseMatrix& L);
 
 
 // LDLinv
