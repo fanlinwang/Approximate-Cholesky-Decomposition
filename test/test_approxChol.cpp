@@ -6,30 +6,27 @@
 #include "matrix.hpp" 
 
 int main(){
-    // test print_ll_col, get_ll_col, compresCol
+    // test approxChol
     LLMatOrd llmat = simple5x5();
-    print_ll_col(llmat, 1);
-    
-    std::vector<LLcol> colspace;
-    int len = get_ll_col(llmat, 1, colspace);
-    LLcol e1; e1.row = 3; e1.ptr = 8; e1.cval = -0.5; // add multi-edges
-    LLcol e2; e2.row = 2; e2.ptr = 9; e2.cval = -0.3;
-    colspace.push_back(e1); colspace.push_back(e2); len += 2;
+    llmat.n = 5;
+    Tind m = 6; // m non-zero values in total
+    llmat.cols = std::vector<Tind>(llmat.n);
+    llmat.cols[0] = 2;
+    llmat.cols[1] = 5;
+    llmat.cols[2] = -1;
+    llmat.cols[3] = -1;
+    llmat.cols[4] = -1;
+    std::vector<LLord> lles = std::vector<LLord>(m);
+    lles[0].row = 1; lles[0].next = -1; lles[0].val = 1.0;
+    lles[1].row = 2; lles[1].next = 0; lles[1].val = 1.0;
+    lles[2].row = 3; lles[2].next = 1; lles[2].val = 1.0;
+    lles[3].row = 2; lles[3].next = -1; lles[3].val = 1.0;
+    lles[4].row = 3; lles[4].next = 3; lles[4].val = 1.0;
+    lles[5].row = 4; lles[5].next = 4; lles[5].val = 1.0;
+    llmat.lles = lles;
 
-    std::cout << "Before being compressed: \n";
-    for (int i = 0; i < len; i++){
-        std::cout << "row = " << colspace[i].row 
-            << "\t ptr = " << colspace[i].ptr
-            << "\t val = " << colspace[i].cval << "\n";
-    }
-
-    std::cout << "After being compressed: \n";
-    len = compressCol(colspace, len);
-    for (int i = 0; i < len; i++){
-        std::cout << "row = " << colspace[i].row 
-            << "\t ptr =" << colspace[i].ptr
-            << "\t val = " << colspace[i].cval << "\n";
-    }
-
+    LDLinv ldli = approxChol(llmat);
+    std::cout << ldli << std::endl;
+    std::cout << "ApproxChol tested!" << std::endl;
     return 0;
 }

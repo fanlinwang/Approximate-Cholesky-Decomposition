@@ -65,3 +65,38 @@ std::ostream& operator << (std::ostream &out, LLMatOrd& mat)
         out << "(" << mat.lles[i].row << ", " << mat.lles[i].next << ", " << mat.lles[i].val << ")\n";
     return out;
 }
+
+std::ostream& operator << (std::ostream &out, LDLinv &ldli)
+{
+    out << "col:" << std::endl;
+    for (int i = 0; i < ldli.col.size(); i++)
+    {
+        out << ldli.col[i] << ' ';
+    }
+    out << std::endl;
+    out << "colptr:" << std::endl;
+    for (int i = 0; i < ldli.colptr.size(); i++)
+    {
+        out << ldli.colptr[i] << ' ';
+    }
+    out << std::endl;
+    out << "rowval:" << std::endl;
+    for (int i = 0; i < ldli.rowval.size(); i++)
+    {
+        out << ldli.rowval[i] << ' ';
+    }
+    out << std::endl;
+    out << "fval:" << std::endl;
+    for (int i = 0; i < ldli.fval.size(); i++)
+    {
+        out << ldli.fval[i] << ' ';
+    }
+    out << std::endl;
+    out << "d:" << std::endl;
+    for (int i = 0; i < ldli.d.size(); i++)
+    {
+        out << ldli.d[i] << ' ';
+    }
+    out << std::endl;
+    return out;
+}

@@ -247,5 +247,6 @@ struct LDLinv{
                     d(std::vector<Tval>(a.n, 0)) {}
     // LDLinv(SparseMatrix a);
 };
+std::ostream& operator << (std::ostream &out, LDLinv &ldli);
 
 #endif
