@@ -51,19 +51,19 @@ struct SolverParameter {
         maxits = 10;
         maxtime = 10000;
         verbose = true;
-        stag_test = false;
+        stag_test = 0;
     }
 };
 
 std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,       
-                      solver ldlsolver, const std::vector<Tval>& sol, 
-                      const LDLinv& ldli, const SolverParameter& paras);
+                      solver ldlsolver, const std::vector<Tval>& init_sol, 
+                      const LDLinv& ldli, SolverParameter& paras);
 
 // solver and its wrapper
 std::vector<Tval> LDLsolver(const LDLinv& ldli, const std::vector<Tval>& b);
-void approxchol_lapGiven(SparseMatrix& A, SparseMatrix& lap_A, 
-                         const std::vector<Tval>& b,   
-                         std::vector<Tval>& sol, SolverParameter& paras);
+void approxchol_lapGiven(SparseMatrix& A, SparseMatrix& lap_A,
+                         const std::vector<Tval>& b,          
+                         std::vector<Tval>& sol, SolverParameter paras);
 
 
 #endif

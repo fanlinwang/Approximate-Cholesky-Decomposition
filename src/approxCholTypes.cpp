@@ -101,7 +101,7 @@ void laplacian(const SparseMatrix& A, SparseMatrix& L)
         while (col < A.colnum && i >= A.colptrs[col + 1])
             col++;
         edges_list.push_back(Edge(A.rows[i], col, -A.vals[i]));
-        weights_sum[col] -= A.vals[i];
+        weights_sum[col] += A.vals[i];
     }
     for (int i = 0; i < A.colnum; i++)
         edges_list.push_back(Edge(i, i, weights_sum[i]));

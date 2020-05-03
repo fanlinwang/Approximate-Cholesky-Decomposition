@@ -273,7 +273,7 @@ void approxchol_lapGiven(SparseMatrix& A, SparseMatrix& lap_A,
     LDLinv ldli = approxChol(llmat);
     sol = LDLsolver(ldli, b);
 
-    Tval error = norm(lap_A*sol-b); 
+    Tval error = norm(lap_A*sol-b)/norm(b); 
 
     if (paras.verbose){
         // std::cout << "Ratio of operator edges to original edges: " << 2 * ldli.fval.size() / nnz(a) << "\n";
@@ -355,16 +355,21 @@ std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,
         itcnt = itcnt+1;
 
         q = la*p; 
-
         Tval pq = dot(p,q);
-
-        if ((pq < EPS || pq > INF)){
+        if (paras.verbose) 
+            std::cout << "Current iteration: " << itcnt << ", pq = " 
+            << pq << ", rho = " << rho << "\n";
+        
+        if (pq < EPS || pq > INF){ 
           if (paras.verbose)
             std::cout << "PCG Stopped due to small or large pq.\n";
           break;
         }
 
         Tval al = rho/pq;
+        if (paras.verbose) 
+            std::cout << "al: " << al << ", nb = " 
+            << nb << "\n";
 
         // the following line could cause slowdown
         if (al*norm(p) < EPS*norm(x)){
@@ -390,19 +395,21 @@ std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,
         oldrho = rho;
         rho = dot(z, r); 
 
-        if (rho < best_rho*(1-1/paras.stag_test)){
-            best_rho = rho;
-            stag_count = 0;
-        } else {
-          if (paras.stag_test > 0) {
-            if (best_rho > (1-1/paras.stag_test)*rho) {
-              stag_count += 1;
-              if (stag_count > paras.stag_test) {
-                std::cout << "PCG Stopped by stagnation test " << paras.stag_test << "\n";
-                break;
-              }
+        if (paras.stag_test != 0) {
+            if (rho < best_rho*(1-1/paras.stag_test)){
+                best_rho = rho;
+                stag_count = 0;
+            } else {
+                if (paras.stag_test > 0) {
+                    if (best_rho > (1-1/paras.stag_test)*rho) {
+                        stag_count += 1;
+                        if (stag_count > paras.stag_test) {
+                            std::cout << "PCG Stopped by stagnation test " << paras.stag_test << "\n";
+                            break;
+                        }
+                    }
+                }
             }
-          }
         }
 
         if (rho < EPS || rho > INF){
@@ -430,7 +437,7 @@ std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,
     }
 
     if (paras.verbose)
-        std::cout << "PCG stopped after: " << std::round((time(NULL) - t1)) << "seconds and " << itcnt << " iterations with relative error " << (norm(r)/norm(b)) << ".\n";
+        std::cout << "PCG stopped after: " << std::round((time(NULL) - t1)) << " seconds and " << itcnt << " iterations with relative error " << (norm(la*bestx-b)/norm(b)) << ".\n";
 
     if (paras.pcgIts.size() > 0)
         paras.pcgIts[0] = itcnt; 
