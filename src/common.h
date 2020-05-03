@@ -2,6 +2,7 @@
 #define __COMMON__
 
 #include <vector>
+#include <set>
 #include <algorithm>
 #include <string>
 #include <iostream>
