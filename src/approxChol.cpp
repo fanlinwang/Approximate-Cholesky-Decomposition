@@ -265,27 +265,24 @@ std::vector<Tval> LDLsolver(const LDLinv& ldli, const std::vector<Tval>& b){
     return y;
 }
 
-void approxchol_lapGiven(const SparseMatrix& A, const
-                                      std::vector<Tval>& b,  std::vector<Tval>& sol, Tval error, bool verbose) 
+void approxchol_lapGiven(SparseMatrix& A, SparseMatrix& lap_A,
+                         const std::vector<Tval>& b,          
+                         std::vector<Tval>& sol, SolverParameter paras) 
 {
-    // la = lap(a); ??
+    LLMatOrd llmat = LLMatOrd(A);
+    LDLinv ldli = approxChol(llmat);
+    sol = LDLsolver(ldli, b);
 
-    // start
-    // LLMatOrd llmat = LLMatOrd(A);
-    // LDLinv ldli = approxChol(llmat);
-    // sol = LDLsolver(ldli, b);
-    // end  
+    Tval error = norm(lap_A*sol-b); 
 
-    // TODO: error = norm(la*sol, b); // should be close to 0
-
-    if (verbose){
+    if (paras.verbose){
         // std::cout << "Ratio of operator edges to original edges: " << 2 * ldli.fval.size() / nnz(a) << "\n";
         // std::cout << "ratio of max to min diagonal of laplacian : " << maximum(diag(la))/minimum(diag(la))) << "\n";
-        // std::cout << "Error: " << norm(la*sol-b) << "\n";
+        std::cout << "Error after first iteration: " << error << "\n";
     }
 
-    // iteratively solve the equation:
-    // pcg(la, b, F, tol, maxits, maxtime, pcgIts, verbose, stag_test);
+    // iteratively solve the equation
+    sol = pcg(lap_A, b, LDLsolver, sol, ldli, paras);
 }
 
 
@@ -329,7 +326,7 @@ Tval dot(const std::vector<Tval>& x, const std::vector<Tval>& y){
 
 std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,       
                       solver ldlsolver, const std::vector<Tval>& sol, 
-                      const LDLinv& ldli, Tval tolerance, Tind maxits, time_t maxtime, bool verbose, std::vector<Tind> pcgIts, Tind stag_test) //TODO: struct the parameters...
+                      const LDLinv& ldli, SolverParameter& paras)
 { 
     Tind n = b.size();
     Tval nb = norm(b);
@@ -354,15 +351,15 @@ std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,
 
     Tind itcnt = 0;
     Tval oldrho = rho; 
-    while (itcnt < maxits){
+    while (itcnt < paras.maxits){
         itcnt = itcnt+1;
 
-        q = la*p; //TODO: sparse matrix multiplication
+        q = la*p; 
 
         Tval pq = dot(p,q);
 
         if ((pq < EPS || pq > INF)){
-          if (verbose)
+          if (paras.verbose)
             std::cout << "PCG Stopped due to small or large pq.\n";
           break;
         }
@@ -371,7 +368,7 @@ std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,
 
         // the following line could cause slowdown
         if (al*norm(p) < EPS*norm(x)){
-            if (verbose) 
+            if (paras.verbose) 
                 std::cout << "PCG: Stopped due to stagnation.\n";
             break;
         }
@@ -386,22 +383,22 @@ std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,
                 bestx[i] = x[i];
         }
                     
-        if (nr < tolerance) 
+        if (nr < paras.tolerance) 
             break;
         z = ldlsolver(ldli, r);
 
         oldrho = rho;
         rho = dot(z, r); 
 
-        if (rho < best_rho*(1-1/stag_test)){
+        if (rho < best_rho*(1-1/paras.stag_test)){
             best_rho = rho;
             stag_count = 0;
         } else {
-          if (stag_test > 0) {
-            if (best_rho > (1-1/stag_test)*rho) {
+          if (paras.stag_test > 0) {
+            if (best_rho > (1-1/paras.stag_test)*rho) {
               stag_count += 1;
-              if (stag_count > stag_test) {
-                std::cout << "PCG Stopped by stagnation test " << stag_test << "\n";
+              if (stag_count > paras.stag_test) {
+                std::cout << "PCG Stopped by stagnation test " << paras.stag_test << "\n";
                 break;
               }
             }
@@ -409,7 +406,7 @@ std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,
         }
 
         if (rho < EPS || rho > INF){
-          if (verbose)
+          if (paras.verbose)
             std::cout << "PCG Stopped due to small or large rho.\n"; 
           break;
         }
@@ -417,26 +414,26 @@ std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,
 
         Tval beta = rho/oldrho; 
         if (beta < EPS || beta > INF) {
-          if (verbose)
+          if (paras.verbose)
             std::cout << "PCG Stopped due to small or large beta.\n"; 
           break;
         }
 
         bzbeta(beta,p,z);
 
-        if ((time(NULL) - t1) > maxtime){
-            if (verbose) 
+        if ((time(NULL) - t1) > paras.maxtime){
+            if (paras.verbose) 
                 std::cout << "PCG New stopped at maxtime.\n"; 
             break;
         }
 
     }
 
-    if (verbose)
+    if (paras.verbose)
         std::cout << "PCG stopped after: " << std::round((time(NULL) - t1)) << "seconds and " << itcnt << " iterations with relative error " << (norm(r)/norm(b)) << ".\n";
 
-    if (pcgIts.size() > 0)
-        pcgIts[0] = itcnt; 
+    if (paras.pcgIts.size() > 0)
+        paras.pcgIts[0] = itcnt; 
 
     return bestx;
 }

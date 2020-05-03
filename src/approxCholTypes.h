@@ -97,6 +97,8 @@ struct SparseMatrix{
 std::ostream& operator << (std::ostream &out, SparseMatrix &sparse);
 std::vector<Tval> operator * (const SparseMatrix& A,
                                const std::vector<Tval>& x);
+std::vector<Tval> operator - (const std::vector<Tval>& x,
+                               const std::vector<Tval>& y);
 // return the index of the column of the i-th stored element
 Tind find_col(const SparseMatrix &sparse, Tind i); 
                                

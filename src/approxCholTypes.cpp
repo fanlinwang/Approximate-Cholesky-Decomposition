@@ -28,6 +28,16 @@ Tind find_col(const SparseMatrix &sparse, Tind i){
     return std::distance(sparse.colptrs.begin(), pos)-1;
 }
 
+std::vector<Tval> operator - (const std::vector<Tval>& x,
+                               const std::vector<Tval>& y)
+{
+    assert(x.size() == y.size());
+    std::vector<Tval> res(x.size());
+    for (int i = 0; i < x.size(); ++i)
+        res[i] = x[i] - y[i];
+    return res; 
+}
+
 std::vector<Tval> operator * (const SparseMatrix& A,
                                const std::vector<Tval>& x)
 {

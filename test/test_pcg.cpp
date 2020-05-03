@@ -2,7 +2,6 @@
 #include "approxChol.hpp"
 #include "test.h"
 
-#define TOLERANCE 0.01
 
 int main(){
 
@@ -43,9 +42,9 @@ int main(){
     ldli.d = {0.5, 0.6666666666666667, 1.3333333333333335, 0.0};
 
     std::vector<Tval> sol = LDLsolver(ldli, b);
-    std::vector<Tind> pcgIts;
-    std::vector<Tval> iterative_sol = pcg(lap_A, b, LDLsolver, sol, ldli,      
-                                          1e-10, 1000, 1e5, 1, pcgIts, 0);
+    SolverParameter para;
+
+    std::vector<Tval> iterative_sol = pcg(lap_A, b, LDLsolver, sol, ldli, para);
     for (int i = 0; i < 4; i++)
         std::cout << sol[i] <<  "," << iterative_sol[i] << "\n"; 
     return 0;

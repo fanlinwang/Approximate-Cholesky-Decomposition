@@ -38,14 +38,32 @@ void bzbeta(const Tval beta, const std::vector<Tval>& z, std::vector<Tval>& p);
 */
 typedef std::vector<Tval>(*solver)(const LDLinv& ldli, 
                                    const std::vector<Tval>& b);
+      
+struct SolverParameter {
+    Tval tolerance;
+    Tind maxits;
+    time_t maxtime;
+    bool verbose;
+    std::vector<Tind> pcgIts;
+    Tind stag_test;
+    SolverParameter(){
+        tolerance = 1e-5;
+        maxits = 10;
+        maxtime = 10000;
+        verbose = true;
+        stag_test = false;
+    }
+};
+
 std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,       
                       solver ldlsolver, const std::vector<Tval>& sol, 
-                      const LDLinv& ldli, Tval tolerance, Tind maxits, time_t maxtime, bool verbose, std::vector<Tind> pcgIts, Tind stag_test);
+                      const LDLinv& ldli, const SolverParameter& paras);
 
 // solver and its wrapper
 std::vector<Tval> LDLsolver(const LDLinv& ldli, const std::vector<Tval>& b);
-void approxchol_lapGiven(const SparseMatrix& A, const std::vector<Tval>& b,   
-                         std::vector<Tval>& sol, Tval error, bool verbose);
+void approxchol_lapGiven(SparseMatrix& A, SparseMatrix& lap_A, 
+                         const std::vector<Tval>& b,   
+                         std::vector<Tval>& sol, SolverParameter& paras);
 
 
 #endif
