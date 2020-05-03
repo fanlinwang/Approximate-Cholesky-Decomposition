@@ -194,16 +194,16 @@ void forward(const LDLinv& ldli, std::vector<Tval>& y) {
         Tind j0 = ldli.colptr[ii]; 
         Tind j1 = ldli.colptr[ii+1]-1;
 
-        Tval yi = y[i-1];
+        Tval yi = y[i];
 
-        for (Tind jj = j0-1; jj <= j1-2; jj++){
+        for (Tind jj = j0; jj <= j1-1; jj++){
             Tval j = ldli.rowval[jj];
-            y[j-1] += ldli.fval[jj] * yi;
+            y[j] += ldli.fval[jj] * yi;
             yi *= ((Tval)(1)-ldli.fval[jj]);
         }
-        Tval j = ldli.rowval[j1-1];
-        y[j-1] += yi;
-        y[i-1] = yi;
+        Tval j = ldli.rowval[j1];
+        y[j] += yi;
+        y[i] = yi;
     }
 } 
 
@@ -215,15 +215,15 @@ void backward(const LDLinv& ldli, std::vector<Tval>& y) {
         Tind j0 = ldli.colptr[ii];
         Tind j1 = ldli.colptr[ii+1]-1;
 
-        Tval j = ldli.rowval[j1-1];
-        Tval yi = y[i-1];
-        yi = yi + y[j-1];
+        Tval j = ldli.rowval[j1];
+        Tval yi = y[i];
+        yi = yi + y[j];
 
-        for (Tind jj = j1-2; jj >= j0-1; jj--) {
+        for (Tind jj = j1-1; jj >= j0; jj--) {
             j = ldli.rowval[jj];
-            yi = ((Tind)1-ldli.fval[jj])*yi + ldli.fval[jj]*y[j-1];
+            yi = ((Tind)1-ldli.fval[jj])*yi + ldli.fval[jj]*y[j];
         }
-        y[i-1] = yi;
+        y[i] = yi;
     }
 } 
 

@@ -36,9 +36,9 @@ int main(){
 
     LLMatOrd llmat = LLMatOrd(A);
     LDLinv ldli(llmat);
-    ldli.col = {1,2,3};
-    ldli.colptr = {1,3,5,6};
-    ldli.rowval = {2, 3, 3, 4, 4};
+    ldli.col = {0,1,2};
+    ldli.colptr = {0,2,4,5};
+    ldli.rowval = {1,2,2,3,3};
     ldli.fval = {0.5, 1.0, 0.3333333333333333, 1.0, 1.0};
     ldli.d = {0.5, 0.6666666666666667, 1.3333333333333335, 0.0};
 
