@@ -52,7 +52,7 @@ make
 ```
 - Run:
 ``` bash
-./src/main
+./src/main [vertice] [edges]
 ./test/test_LDLsolver
 ```
 
