@@ -167,6 +167,7 @@ double perf_test(comp_func f, string desc, int flops)
     cyclesList.sort();
     cycles = cyclesList.front();
     // return cycles; 
+    cout << "#cycles: " << cycles << std::endl;
     return (1.0 * flops) / cycles;
 }
 
