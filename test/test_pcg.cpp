@@ -1,6 +1,7 @@
 #include <iostream>
 #include "approxChol.hpp"
 #include "test.h"
+#include <cstdlib>
 
 #define TOLERANCE 0.01
 
@@ -12,20 +13,23 @@ int main(){
     //     {1,0,0,1},
     //     {0,1,1,0}};
 
+    int n = 1000;
+    int m = 10000;
     std::cout << "construct A" << std::endl;
-    SparseMatrix A(4, 4);
-    std::cout << A;
+    SparseMatrix A(n, m);
+    // std::cout << A;
     // b is a normalized vector
-    std::vector<Tval> b = {-0.5270249460796002, 0.7282324157897637, 
-                           0.3227082222861411, -0.5239156919963046};
+    std::vector<Tval> b(n);
+    for (int i = 0; i < n; i++)
+        b[i] = rand() / double(RAND_MAX);
 
     // test sparse matrix * a vector:
     // should be 1.050, -1.050, -1.050, 1.050
     std::cout << "test sparse matrix multiplication: \n";
     std::vector<Tval> mul = A*b;
-    for (auto m: mul)
-        std::cout << m << " ";
-    std::cout << "\n";
+    // for (auto m: mul)
+    //     std::cout << m << " ";
+    // std::cout << "\n";
 
     // laplancian of A. 
     // std::vector<std::vector<double> > la{
@@ -37,11 +41,11 @@ int main(){
     SparseMatrix lap_A;
     laplacian(A, lap_A);
     std::cout << "laplacian of A" <<std::endl;
-    std::cout << lap_A;
+    // std::cout << lap_A;
 
     LLMatOrd llmat = LLMatOrd(A);
     std::cout << "LLmat of A" <<std::endl;
-    std::cout << llmat << std::endl;
+    // std::cout << llmat << std::endl;
     LDLinv ldli(llmat);
     ldli.col = {0,1,2};
     ldli.colptr = {0,2,4,5};
