@@ -118,6 +118,8 @@ double perf_test(comp_func f, string desc, int flops)
     LLMatOrd llmat = LLMatOrd(A);
     cout << "Created random sparse matrix A.\n";
 
+    flops = approxChol_count(llmat);
+
     // SparseMatrix lap_A;
     // laplacian(A, lap_A);
 
@@ -164,7 +166,8 @@ double perf_test(comp_func f, string desc, int flops)
 
     cyclesList.sort();
     cycles = cyclesList.front();
-    return cycles; // return (1.0 * flops) / cycles;
+    // return cycles; 
+    return (1.0 * flops) / cycles;
 }
 
 int main(int argc, char **argv) {
@@ -211,7 +214,7 @@ int main(int argc, char **argv) {
     for (i = 0; i < numFuncs; i++)
     {
         cout << "Starting performance test " << i << "...\n";
-        perf = perf_test(userFuncs[i], funcNames[i], 24);
+        perf = perf_test(userFuncs[i], funcNames[i], 12*EDGE);
         cout << endl << "Running: " << funcNames[i] << endl;
         cout << perf << " flops / cycles" << endl;
     }

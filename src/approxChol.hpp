@@ -17,6 +17,7 @@ bool cmp_row(const LLcol &a, const LLcol &b);
 bool cmp_val(const LLcol &a, const LLcol &b);
 Tind compressCol(std::vector<LLcol> &colspace, int len);
 LDLinv approxChol(LLMatOrd a);
+int approxChol_count(LLMatOrd a);
 void forward(const LDLinv& ldli, std::vector<Tval>& y);
 void backward(const LDLinv& ldli, std::vector<Tval>& y); 
 
