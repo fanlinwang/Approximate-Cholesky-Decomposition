@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <string>
 #include <iostream>
+#include <cassert>
 #define NR 10000
 
 #endif

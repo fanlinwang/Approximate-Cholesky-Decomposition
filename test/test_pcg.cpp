@@ -11,13 +11,13 @@ float get_random()
     return dis(e);
 }
 
-int main(){
+int main(int argc, char* argv[]){
 
     // std::cout << "construct A" << std::endl;
-    const int vertices = 4;
-    const int edges = 4;
+    const int vertices = atoi(argv[1]);
+    const int edges = atoi(argv[2]);
     SparseMatrix A(vertices, edges);
-    std::cout << A;
+    // std::cout << A;
 
     std::vector<Tval> b(vertices, 0.0);
     for (auto& e: b)
@@ -26,13 +26,13 @@ int main(){
     std::cout << "random b:\n";
     for (auto&e : b){
         e -= m;
-        std::cout << e << " ";
+        // std::cout << e << " ";
     }
     std::cout << "\ntest sparse matrix multiplication: \n";
     std::vector<Tval> mul = A*b;
-    for (auto m: mul)
-        std::cout << m << " ";
-    std::cout << "\n";
+    // for (auto m: mul)
+    //     std::cout << m << " ";
+    // std::cout << "\n";
         
     SparseMatrix lap_A;
     laplacian(A, lap_A);
