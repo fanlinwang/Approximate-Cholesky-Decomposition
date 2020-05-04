@@ -31,13 +31,16 @@ int main(){
                                    0.508196656310198, -0.19067859399834997};
 
     std::vector<Tval> sol = LDLsolver(ldli, b);
-
-    Tval error = 0;
-    for (int i = 0; i < 4; i++){
-        std::cout << sol[i] << " "; 
-        error += julia_sol[i]-sol[i];
-    }
-    test(error < TOLERANCE);
-
+    std::vector<std::vector<double> > la{
+        {2,-1,-1,0},
+        {-1,2,0,-1},
+        {-1,0,2,-1},
+        {0,-1,-1,2}};
+    SparseMatrix lap_A(la);
+    SolverParameter para;
+    std::vector<Tval> iterative_sol = pcg(lap_A, b, LDLsolver, sol, ldli,      
+                                          para);
+    for (int i = 0; i < 4; i++)
+        std::cout << sol[i] <<  "," << iterative_sol[i] << "\n"; 
     return 0;
 }

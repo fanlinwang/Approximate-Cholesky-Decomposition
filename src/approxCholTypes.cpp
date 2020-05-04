@@ -34,6 +34,16 @@ Tind find_col(const SparseMatrix &sparse, Tind i){
     return std::distance(sparse.colptrs.begin(), pos)-1;
 }
 
+std::vector<Tval> operator - (const std::vector<Tval>& x,
+                               const std::vector<Tval>& y)
+{
+    assert(x.size() == y.size());
+    std::vector<Tval> res(x.size());
+    for (int i = 0; i < x.size(); ++i)
+        res[i] = x[i] - y[i];
+    return res; 
+}
+
 std::vector<Tval> operator * (const SparseMatrix& A,
                                const std::vector<Tval>& x)
 {
@@ -91,7 +101,7 @@ void laplacian(const SparseMatrix& A, SparseMatrix& L)
         while (col < A.colnum && i >= A.colptrs[col + 1])
             col++;
         edges_list.push_back(Edge(A.rows[i], col, -A.vals[i]));
-        weights_sum[col] -= A.vals[i];
+        weights_sum[col] += A.vals[i];
     }
     for (int i = 0; i < A.colnum; i++)
         edges_list.push_back(Edge(i, i, weights_sum[i]));

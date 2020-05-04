@@ -1,63 +1,49 @@
 #include <iostream>
 #include "approxChol.hpp"
+#include "approxCholTypes.h"
 #include "test.h"
-#include <cstdlib>
+#include "random"
 
-#define TOLERANCE 0.01
+float get_random()
+{
+    static std::default_random_engine e;
+    static std::normal_distribution<> dis(0, 1); 
+    return dis(e);
+}
 
-int main(){
+int main(int argc, char* argv[]){
 
-    // std::vector<std::vector<double> > matrix{
-    //     {0,1,1,0},
-    //     {1,0,0,1},
-    //     {1,0,0,1},
-    //     {0,1,1,0}};
-
-    int n = 1000;
-    int m = 10000;
-    std::cout << "construct A" << std::endl;
-    SparseMatrix A(n, m);
+    // std::cout << "construct A" << std::endl;
+    const int vertices = atoi(argv[1]);
+    const int edges = atoi(argv[2]);
+    SparseMatrix A(vertices, edges);
     // std::cout << A;
-    // b is a normalized vector
-    std::vector<Tval> b(n);
-    for (int i = 0; i < n; i++)
-        b[i] = rand() / double(RAND_MAX);
 
-    // test sparse matrix * a vector:
-    // should be 1.050, -1.050, -1.050, 1.050
-    std::cout << "test sparse matrix multiplication: \n";
+    std::vector<Tval> b(vertices, 0.0);
+    for (auto& e: b)
+        e = get_random();
+    Tval m = mean(b);
+    std::cout << "random b:\n";
+    for (auto&e : b){
+        e -= m;
+        // std::cout << e << " ";
+    }
+    std::cout << "\ntest sparse matrix multiplication: \n";
     std::vector<Tval> mul = A*b;
     // for (auto m: mul)
     //     std::cout << m << " ";
     // std::cout << "\n";
-
-    // laplancian of A. 
-    // std::vector<std::vector<double> > la{
-    //     {2,-1,-1,0},
-    //     {-1,2,0,-1},
-    //     {-1,0,2,-1},
-    //     {0,-1,-1,2}};
-
+        
     SparseMatrix lap_A;
     laplacian(A, lap_A);
-    std::cout << "laplacian of A" <<std::endl;
-    // std::cout << lap_A;
 
-    LLMatOrd llmat = LLMatOrd(A);
-    std::cout << "LLmat of A" <<std::endl;
-    // std::cout << llmat << std::endl;
-    LDLinv ldli(llmat);
-    ldli.col = {0,1,2};
-    ldli.colptr = {0,2,4,5};
-    ldli.rowval = {1,2,2,3,3};
-    ldli.fval = {0.5, 1.0, 0.3333333333333333, 1.0, 1.0};
-    ldli.d = {0.5, 0.6666666666666667, 1.3333333333333335, 0.0};
+    SolverParameter para;
+    para.maxits = 100;
+    para.maxtime = 1000;
+    para.verbose = true;
+    para.tolerance = 1e-10;
+    std::vector<Tval> sol(vertices, 0.0);
+    approxchol_lapGiven(A, lap_A, b, sol, para); 
 
-    std::vector<Tval> sol = LDLsolver(ldli, b);
-    std::vector<Tind> pcgIts;
-    std::vector<Tval> iterative_sol = pcg(lap_A, b, LDLsolver, sol, ldli,      
-                                          1e-10, 1000, 1e5, 1, pcgIts, 0);
-    for (int i = 0; i < 4; i++)
-        std::cout << sol[i] <<  "," << iterative_sol[i] << "\n"; 
     return 0;
 }
