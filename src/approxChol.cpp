@@ -356,9 +356,9 @@ std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,
 
         q = la*p; 
         Tval pq = dot(p,q);
-        if (paras.verbose) 
-            std::cout << "Current iteration: " << itcnt << ", pq = " 
-            << pq << ", rho = " << rho << "\n";
+        // if (paras.verbose) 
+        //     std::cout << "Current iteration: " << itcnt << ", pq = " 
+        //     << pq << ", rho = " << rho << "\n";
         
         if (pq < EPS || pq > INF){ 
           if (paras.verbose)
@@ -367,9 +367,9 @@ std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,
         }
 
         Tval al = rho/pq;
-        if (paras.verbose) 
-            std::cout << "al: " << al << ", nb = " 
-            << nb << "\n";
+        // if (paras.verbose) 
+        //     std::cout << "al: " << al << ", nb = " 
+        //     << nb << "\n";
 
         // the following line could cause slowdown
         if (al*norm(p) < EPS*norm(x)){

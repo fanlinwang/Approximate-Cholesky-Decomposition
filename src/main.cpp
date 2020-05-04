@@ -14,17 +14,19 @@
 #include "common.h"
 #include "tsc_x86.h"
 #include "approxCholTypes.h"
+#include "approxChol.hpp"
 
 using namespace std;
 
-#define CYCLES_REQUIRED 1e7
-#define REP 10
+#define CYCLES_REQUIRED 1e8
+#define REP 5
 #define MAX_FUNCS 32
-#define FLOPS (4.*n)
-#define TOLERANCE 1e-8
+// #define FLOPS (4.*n)
 
-typedef void(*comp_func)(const SparseMatrix& a, const
-                         std::vector<Tval>& b, std::vector<Tval>& sol, bool verbose);
+typedef LDLinv(*comp_func)(LLMatOrd a);
+// typedef void(*comp_func)(SparseMatrix& A, SparseMatrix& lap_A,
+//                          const std::vector<Tval>& b,          
+//                          std::vector<Tval>& sol, SolverParameter paras);
 
 void add_function(comp_func f, std::string name, int flop);
 
@@ -39,8 +41,8 @@ void build_x(double ** m, unsigned n1, unsigned n2);
 */
 void register_functions()
 {
-   // add_function(&approxchol_lapGiven, "Base Solver", 1);
-    // add_function(&approxchol_lapGiven1, "Fast Solver", 1);
+    // add_function(&approxchol_lapGiven, "Base iterative solver", 1);
+    add_function(&approxChol, "Base approxChol", 1);
 }
 
 /* Global vars, used to keep track of student functions */
@@ -49,25 +51,23 @@ vector<string> funcNames;
 vector<int> funcFlops;
 int numFuncs = 0;
 
-// TODO: generate a sparse SDDM matrix with dimension n 
-//void init_matrices();
-void rands(double * m, size_t row, size_t col) 
+float get_random()
 {
-    std::random_device rd;
-    std::mt19937 gen{rd()};
-    std::uniform_real_distribution<double> dist(-1.0, 1.0);
-    for (size_t i = 0; i < row*col; ++i)  
-        m[i] = dist(gen);
-}
-void build(double **a, int n)
-{
-    // *a = static_cast<double *>(aligned_alloc(32, n * n * sizeof(double)));
-    // rands(*a, n, n);
+    static std::random_device e;
+    static std::normal_distribution<> dis(-1, 1); 
+    return dis(e);
 }
 
-void destroy(double *m)
+void init_vec(std::vector<Tval>& b)
 {
-    free(m);
+    for (auto& e: b)
+        e = get_random();
+    Tval m = mean(b);
+    std::cout << "Generating random vector b...\n";
+    for (auto&e : b){
+        e -= m;
+    }
+    std::cout << "b generated.\n";
 }
 
 /*
@@ -110,12 +110,23 @@ double perf_test(comp_func f, string desc, int flops)
     double multiplier = 1;
     myInt64 start, end;
 
-    // TODO: initialize input 
-    // double *x,*y;
-    // int n = NR*NR;
+    // initialize input 
+    std::vector<Tval> b(VERTICE, 0.0);
+    init_vec(b);
 
-    // build(&x, n);
-    // build(&y, n);
+    SparseMatrix A(VERTICE, EDGE);
+    LLMatOrd llmat = LLMatOrd(A);
+    cout << "Created random sparse matrix A.\n";
+
+    // SparseMatrix lap_A;
+    // laplacian(A, lap_A);
+
+    // SolverParameter para;
+    // para.maxits = 100;
+    // para.maxtime = 1000;
+    // para.verbose = false;
+    // para.tolerance = 1e-10;
+    // std::vector<Tval> sol(VERTICE, 0.0);
 
     // Warm-up phase: we determine a number of executions that allows
     // the code to be executed for at least CYCLES_REQUIRED cycles.
@@ -124,7 +135,8 @@ double perf_test(comp_func f, string desc, int flops)
         num_runs = num_runs * multiplier;
         start = start_tsc();
         for (size_t i = 0; i < num_runs; i++) {
-            //f();  //TODO          
+            // f(A, lap_A, b, sol, para);   
+            f(llmat);   
         }
         end = stop_tsc(start);
 
@@ -141,7 +153,7 @@ double perf_test(comp_func f, string desc, int flops)
 
         start = start_tsc();
         for (size_t i = 0; i < num_runs; ++i) {
-            // f(); // TODO
+            f(llmat); 
         }
         end = stop_tsc(start);
 
@@ -150,11 +162,9 @@ double perf_test(comp_func f, string desc, int flops)
         cyclesList.push_back(cycles);
     }
 
-    // destroy(x);
-    // destroy(y);
     cyclesList.sort();
     cycles = cyclesList.front();
-    return  (1.0 * flops) / cycles;
+    return cycles; // return (1.0 * flops) / cycles;
 }
 
 int main(int argc, char **argv) {
@@ -163,7 +173,6 @@ int main(int argc, char **argv) {
     int i;
 
     register_functions();
-    //init_matrices();
 
     if (numFuncs == 0){
         cout << endl;
@@ -176,36 +185,32 @@ int main(int argc, char **argv) {
     cout << numFuncs << " functions registered." << endl;
 
     //Check validity of functions. 
-    int n = NR*NR;
-    double *x, *y, *y_old, *y_base;
-    build(&x, n);
-    build(&y, n);
-    y_base = static_cast<double *>(malloc(n * sizeof(double)));
-    y_old  = static_cast<double *>(malloc(n * sizeof(double)));
+    // build(&x, n);
+    // build(&y, n);
 
-    memcpy(y_old,  y, n*sizeof(double));
-    // base(); 
-    // TODO: baseline function to be compared
-    memcpy(y_base, y, n*sizeof(double));
+    // y_base = static_cast<double *>(malloc(n * sizeof(double)));
+    // y_old  = static_cast<double *>(malloc(n * sizeof(double)));
 
-    for (i = 0; i < numFuncs; i++) {
-        memcpy(y, y_old, n*sizeof(double));
-        comp_func f = userFuncs[i];
-        // f(); // TODO
-        double error = nrm_sqr_diff(y, y_base, n);
+    // memcpy(y_old,  y, n*sizeof(double));
+    // // base(); 
+    // // TODO: baseline function to be compared
+    // memcpy(y_base, y, n*sizeof(double));
 
-        if (error > TOLERANCE) {
-            cout << error << endl;
-            cout << "ERROR!!!!  the results for the " << i+1 << "th function are different to the previous" << std::endl;
-        }
-    }
-    // destroy(x);
-    // destroy(y);
-    // destroy(y_base);
+    // for (i = 0; i < numFuncs; i++) {
+    //     memcpy(y, y_old, n*sizeof(double));
+    //     comp_func f = userFuncs[i];
+    //     // f(); // TODO
+    //     double error = nrm_sqr_diff(y, y_base, n);
 
+    //     if (error > TOLERANCE) {
+    //         cout << error << endl;
+    //         cout << "ERROR!!!!  the results for the " << i+1 << "th function are different to the previous" << std::endl;
+    //     }
+    // }
 
     for (i = 0; i < numFuncs; i++)
     {
+        cout << "Starting performance test " << i << "...\n";
         perf = perf_test(userFuncs[i], funcNames[i], 24);
         cout << endl << "Running: " << funcNames[i] << endl;
         cout << perf << " flops / cycles" << endl;

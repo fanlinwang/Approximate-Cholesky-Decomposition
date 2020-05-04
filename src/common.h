@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include <cassert>
-#define NR 10000
+#define VERTICE 10000
+#define EDGE 100000
 
 #endif
