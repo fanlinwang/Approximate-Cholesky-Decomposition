@@ -196,9 +196,163 @@ LDLinv approxChol(LLMatOrd a) {
     return ldli;
 }
 
-int approxChol_count(LLMatOrd a) {
+int get_ll_col_count(LLMatOrd llmat, int i, std::vector<LLcol> &colspace, int &intops, int &intcomp) {
+    
+    Tind ptr = llmat.cols[i];
+    int len = 0;
+
+    while (ptr != -1) {
+        LLcol item = {llmat.lles[ptr].row, ptr, llmat.lles[ptr].val};
+
+        if (len >= colspace.size()) {
+            colspace.push_back(item);
+        } else {
+            colspace[len] = item;
+        }
+
+        len += 1;
+        ptr = llmat.lles[ptr].next;
+        intops++;
+        intcomp++;
+    }
+
+    return len;
+}
+
+int getPartition_row(std::vector<LLcol> &nums, int low, int height, int &intops, int &intcomp)
+{
+    LLcol keyVal = nums[low];
+    while (low<height)
+    {
+        intcomp++;
+        while (low < height && nums[height].row >= keyVal.row) {
+            height--;
+            intcomp += 2;
+            intops++;
+        }
+        intcomp += 2;
+        nums[low] = nums[height];
+        while (low < height && nums[low].row <= keyVal.row) {
+            low++;
+            intcomp += 2;
+            intops++;
+        }
+        intcomp += 2;
+        nums[height] = nums[low];
+    }
+    intcomp++;
+    nums[low] = keyVal;
+    return low;
+}
+
+void sort_row(std::vector<LLcol> &c, int low, int high, int &intops, int &intcomp) {
+
+    if (low < high)
+    {
+        int mid = getPartition_row(c, low, high, intops, intcomp);
+        sort_row(c, low, mid-1, intops, intcomp);
+        sort_row(c, mid + 1, high, intops, intcomp);
+    }
+    intcomp++;
+}
+
+int getPartition_val(std::vector<LLcol> &nums, int low, int height, int &intops, int &intcomp, int &flcomp, int &flops)
+{
+    LLcol keyVal = nums[low];
+    while (low<height)
+    {
+        intcomp++;
+        while (low < height && nums[height].cval >= keyVal.cval) {
+            height--;
+            intcomp++;
+            intops++;
+            flcomp++;
+        }
+        intcomp++;
+        flcomp++;
+        nums[low] = nums[height];
+        while (low < height && nums[low].cval <= keyVal.cval) {
+            low++;
+            intcomp++;
+            intops++;
+            flcomp++;
+        }
+        intcomp++;
+        flcomp++;
+        nums[height] = nums[low];
+    }
+    intcomp++;
+    nums[low] = keyVal;
+    return low;
+}
+
+void sort_val(std::vector<LLcol> &c, int low, int high, int &intops, int &intcomp, int &flcomp, int &flops) {
+
+    if (low < high)
+    {
+        int mid = getPartition_val(c, low, high, intops, intcomp, flcomp, flops);
+        sort_val(c, low, mid-1, intops, intcomp, flcomp, flops);
+        sort_val(c, mid + 1, high, intops, intcomp, flcomp, flops);
+    }
+    intcomp++;
+}
+
+Tind compressCol_count(std::vector<LLcol> &colspace, int len, int &intops, int &intcomp, int &flcomp, int &flops) {
+
+    // sort colspace ? DY: just checked, yes! 
+    sort_row(colspace, 0, len-1, intops, intcomp);
+
+    std::vector<LLcol> c = colspace;
+
+    Tind ptr = -1;
+    Tind currow = c[0].row;     // julia index start from 1? 
+    Tval curval = c[0].cval;
+    Tind curptr = c[0].ptr;
+    intops++;
+
+    // not consider inbounds
+    for (int i = 1; i < len; i++) {
+
+        if (c[i].row != currow) {
+
+            ptr += 1;
+            c[ptr].row = currow;
+            c[ptr].cval = curval;
+            c[ptr].ptr = curptr;
+
+            currow = c[i].row;
+            curval = c[i].cval;
+            curptr = c[i].ptr;
+            intops++;
+
+        } else {
+            
+            curval += c[i].cval;
+            flops++;
+
+        }
+        intcomp++;
+    }
+
+    // emit the last row
+    ptr += 1;
+    c[ptr].row = currow;
+    c[ptr].cval = curval;
+    c[ptr].ptr = curptr;
+    intops++;
+
+    sort_val(colspace, 0, len-1, intops, intcomp, flcomp, flops);
+    
+    colspace = c;
+    return ptr+1; // if the returned value is used for vector length, then it should return ptr+1
+}
+
+void approxChol_count(LLMatOrd a, int &flops_count, int &flcomp_count, int &intops_count, int &intcomp_count) {
     auto n = a.n;
-    int flops_count = 0;
+    flops_count = 0;
+    flcomp_count = 0;
+    intops_count = 0;
+    intcomp_count = 0;
 
     // need to make custom one without col info later
     LDLinv ldli(a);
@@ -213,16 +367,13 @@ int approxChol_count(LLMatOrd a) {
     std::default_random_engine engine;
     std::uniform_real_distribution<Tval> u(0.0, 1.0);
 
-    //Tval randnums[5] = {0.7527533347596496, 0.5805790891279785, 0.14277294752566538, 0.41620584940537597, 0.4559296013211689};
-    //int randptr = 0;
-
     for (long i = 0; i <= n-2; i++) {
 
         ldli.col[i] = i;
         ldli.colptr[i] = ldli_row_ptr;
 
-        int len = get_ll_col(a, i, colspace);
-        len = compressCol(colspace, len);
+        int len = get_ll_col_count(a, i, colspace, intops_count, intcomp_count);
+        len = compressCol_count(colspace, len, intops_count, intcomp_count, flcomp_count, flops_count);
         // flop count: sort LLcol len*log(len)?
 
         Tval csum = 0;
@@ -262,11 +413,6 @@ int approxChol_count(LLMatOrd a) {
             flops_count += 2;
             // flop count: 1 mul 1 add
 
-            /*{
-                std::cout << r << "\t" << cumspace[0] << " " << cumspace[1] << " " << cumspace[2] << " " << cumspace[3] << " " << cumspace[4] << std::endl;
-                std::cout << "j: " << j << "\tk: " << k << "\tkoff: " << koff << std::endl;
-            }*/
-
             // create edge (j,k) with newEdgeVal
             // do it by reassigning ll
             if (j < k) {    // put it in col j
@@ -282,6 +428,7 @@ int approxChol_count(LLMatOrd a) {
                 a.lles[llcol.ptr].val = newEdgeVal;
                 a.cols[k] = llcol.ptr;
             }
+            intcomp_count++;
 
             colScale *= 1 - f;
             wdeg = wdeg - 2*w + w*f;
@@ -291,6 +438,7 @@ int approxChol_count(LLMatOrd a) {
             ldli.rowval.push_back(j);
             ldli.fval.push_back(f);
             ldli_row_ptr += 1;
+            intops_count++;
         }
 
         LLcol llcol = colspace[len-1];
@@ -308,9 +456,6 @@ int approxChol_count(LLMatOrd a) {
 
     ldli.colptr[n-1] = ldli_row_ptr;
     ldli.d = d;
-
-    std::cout << "#flops: " << flops_count << std::endl;
-    return flops_count;
 }
 
 void forward(const LDLinv& ldli, std::vector<Tval>& y) {
