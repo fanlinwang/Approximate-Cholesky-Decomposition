@@ -109,8 +109,6 @@ LDLinv approxChol(LLMatOrd a) {
     std::default_random_engine engine;
     std::uniform_real_distribution<Tval> u(0.0, 1.0);
 
-    //Tval randnums[5] = {0.7527533347596496, 0.5805790891279785, 0.14277294752566538, 0.41620584940537597, 0.4559296013211689};
-    //int randptr = 0;
 
     for (long i = 0; i <= n-2; i++) {
 
@@ -119,19 +117,12 @@ LDLinv approxChol(LLMatOrd a) {
 
         int len = get_ll_col(a, i, colspace);
         len = compressCol(colspace, len);
-
-        /*
-        std::cout << std::endl;
-        for (int tt = 0; tt < colspace.size(); tt++)
-        {
-            std::cout << colspace[tt].row << " " << colspace[tt].ptr << " " << colspace[tt].cval << std::endl;
-        }
-        std::cout << std::endl;
-        std::cout << a << std::endl;*/
+        // flop count: sort LLcol len*log(len)?
 
         Tval csum = 0;
         for (int ii = 0; ii < len; ii++) {
             csum += colspace[ii].cval;
+            // flop count: 1 add
             cumspace[ii] = csum;
         }
         Tval wdeg = csum;
@@ -145,18 +136,131 @@ LDLinv approxChol(LLMatOrd a) {
             Tind j = llcol.row;
 
             Tval f = w/wdeg;
+            // flop count: 1 mul
 
             Tval r = u(engine);
-            //Tval r = randnums[randptr++];
             r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+            // flop count: 1 mul 2 add
 
             auto cumspace_last = cumspace.begin();
             std::advance(cumspace_last, len);
             int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+            // flop count: len?
 
             Tind k = colspace[koff].row;
 
             Tval newEdgeVal = w*(1-f);
+            // flop count: 1 mul 1 add
+
+
+            // create edge (j,k) with newEdgeVal
+            // do it by reassigning ll
+            if (j < k) {    // put it in col j
+                Tind jhead = a.cols[j];
+                a.lles[llcol.ptr].row = k;
+                a.lles[llcol.ptr].next = jhead;
+                a.lles[llcol.ptr].val = newEdgeVal;
+                a.cols[j] = llcol.ptr;
+            } else {        // put it in col k
+                Tind khead = a.cols[k];
+                a.lles[llcol.ptr].row = j;
+                a.lles[llcol.ptr].next = khead;
+                a.lles[llcol.ptr].val = newEdgeVal;
+                a.cols[k] = llcol.ptr;
+            }
+
+            colScale *= 1 - f;
+            wdeg = wdeg - 2*w + w*f;
+            // flop count: 3 mul 3 add
+
+            ldli.rowval.push_back(j);
+            ldli.fval.push_back(f);
+            ldli_row_ptr += 1;
+        }
+
+        LLcol llcol = colspace[len-1];
+        Tval w = llcol.cval * colScale;
+        // flop count: 1 mul
+        Tind j = llcol.row;
+
+        ldli.rowval.push_back(j);
+        ldli.fval.push_back(1);
+        ldli_row_ptr += 1;
+
+        d[i] = w;
+    }
+
+    ldli.colptr[n-1] = ldli_row_ptr;
+    ldli.d = d;
+
+    return ldli;
+}
+
+int approxChol_count(LLMatOrd a) {
+    auto n = a.n;
+    int flops_count = 0;
+
+    // need to make custom one without col info later
+    LDLinv ldli(a);
+    Tind ldli_row_ptr = 0;
+
+    std::vector<Tval> d(n, 0);
+
+    std::vector<LLcol> colspace(n);
+    std::vector<Tval> cumspace(n);
+
+    // random engine and distribution
+    std::default_random_engine engine;
+    std::uniform_real_distribution<Tval> u(0.0, 1.0);
+
+    //Tval randnums[5] = {0.7527533347596496, 0.5805790891279785, 0.14277294752566538, 0.41620584940537597, 0.4559296013211689};
+    //int randptr = 0;
+
+    for (long i = 0; i <= n-2; i++) {
+
+        ldli.col[i] = i;
+        ldli.colptr[i] = ldli_row_ptr;
+
+        int len = get_ll_col(a, i, colspace);
+        len = compressCol(colspace, len);
+        // flop count: sort LLcol len*log(len)?
+
+        Tval csum = 0;
+        for (int ii = 0; ii < len; ii++) {
+            csum += colspace[ii].cval;
+            flops_count++;
+            cumspace[ii] = csum;
+        }
+        Tval wdeg = csum;
+
+        Tval colScale = 1;
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+
+            LLcol llcol = colspace[joffset];
+            Tval w = llcol.cval * colScale;
+            Tind j = llcol.row;
+
+            Tval f = w/wdeg;
+            flops_count++;
+            // flop count: 1 mul
+
+            Tval r = u(engine);
+            //Tval r = randnums[randptr++];
+            r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+            flops_count += 3;
+            // flop count: 1 mul 2 add
+
+            auto cumspace_last = cumspace.begin();
+            std::advance(cumspace_last, len);
+            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+            // flop count: len?
+
+            Tind k = colspace[koff].row;
+
+            Tval newEdgeVal = w*(1-f);
+            flops_count += 2;
+            // flop count: 1 mul 1 add
 
             /*{
                 std::cout << r << "\t" << cumspace[0] << " " << cumspace[1] << " " << cumspace[2] << " " << cumspace[3] << " " << cumspace[4] << std::endl;
@@ -180,7 +284,9 @@ LDLinv approxChol(LLMatOrd a) {
             }
 
             colScale *= 1 - f;
-            wdeg = wdeg - 2*w + w*w/wdeg;
+            wdeg = wdeg - 2*w + w*f;
+            flops_count += 6;
+            // flop count: 3 mul 3 add
 
             ldli.rowval.push_back(j);
             ldli.fval.push_back(f);
@@ -189,6 +295,8 @@ LDLinv approxChol(LLMatOrd a) {
 
         LLcol llcol = colspace[len-1];
         Tval w = llcol.cval * colScale;
+        flops_count += 1;
+        // flop count: 1 mul
         Tind j = llcol.row;
 
         ldli.rowval.push_back(j);
@@ -201,7 +309,8 @@ LDLinv approxChol(LLMatOrd a) {
     ldli.colptr[n-1] = ldli_row_ptr;
     ldli.d = d;
 
-    return ldli;
+    std::cout << "#flops: " << flops_count << std::endl;
+    return flops_count;
 }
 
 void forward(const LDLinv& ldli, std::vector<Tval>& y) {

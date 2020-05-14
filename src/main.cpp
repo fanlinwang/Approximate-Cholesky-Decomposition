@@ -21,7 +21,11 @@ using namespace std;
 #define CYCLES_REQUIRED 1e8
 #define REP 5
 #define MAX_FUNCS 32
+
 // #define FLOPS (4.*n)
+
+int VERTICE;
+int EDGE;
 
 typedef LDLinv(*comp_func)(LLMatOrd a);
 // typedef void(*comp_func)(SparseMatrix& A, SparseMatrix& lap_A,
@@ -73,18 +77,18 @@ void init_vec(std::vector<Tval>& b)
 /*
 * Compare the solution of the functions 
 */
-double nrm_sqr_diff(double *x, double *y, int n) {
-    double nrm_sqr = 0.0;
-    for(int i = 0; i < n; i++) {
-        nrm_sqr += (x[i] - y[i]) * (x[i] - y[i]);
-    }
+// double nrm_sqr_diff(double *x, double *y, int n) {
+//     double nrm_sqr = 0.0;
+//     for(int i = 0; i < n; i++) {
+//         nrm_sqr += (x[i] - y[i]) * (x[i] - y[i]);
+//     }
     
-    if (isnan(nrm_sqr)) {
-      nrm_sqr = INFINITY;
-    }
+//     if (isnan(nrm_sqr)) {
+//       nrm_sqr = INFINITY;
+//     }
     
-    return nrm_sqr;
-}
+//     return nrm_sqr;
+// }
 
 /*
 * Registers a user function to be tested by the driver program. Registers a
@@ -118,6 +122,8 @@ double perf_test(comp_func f, string desc, int flops)
     LLMatOrd llmat = LLMatOrd(A);
     cout << "Created random sparse matrix A.\n";
 
+    flops = approxChol_count(llmat);
+
     // SparseMatrix lap_A;
     // laplacian(A, lap_A);
 
@@ -131,19 +137,19 @@ double perf_test(comp_func f, string desc, int flops)
     // Warm-up phase: we determine a number of executions that allows
     // the code to be executed for at least CYCLES_REQUIRED cycles.
     // This helps excluding timing overhead when measuring small runtimes.
-    do {
-        num_runs = num_runs * multiplier;
-        start = start_tsc();
-        for (size_t i = 0; i < num_runs; i++) {
-            // f(A, lap_A, b, sol, para);   
-            f(llmat);   
-        }
-        end = stop_tsc(start);
+    // do {
+    //     num_runs = num_runs * multiplier;
+    //     start = start_tsc();
+    //     for (size_t i = 0; i < num_runs; i++) {
+    //         // f(A, lap_A, b, sol, para);   
+    //         f(llmat);   
+    //     }
+    //     end = stop_tsc(start);
 
-        cycles = (double)end;
-        multiplier = (CYCLES_REQUIRED) / (cycles);
+    //     cycles = (double)end;
+    //     multiplier = (CYCLES_REQUIRED) / (cycles);
         
-    } while (multiplier > 2);
+    // } while (multiplier > 2);
 
     list<double> cyclesList;
 
@@ -164,13 +170,17 @@ double perf_test(comp_func f, string desc, int flops)
 
     cyclesList.sort();
     cycles = cyclesList.front();
-    return cycles; // return (1.0 * flops) / cycles;
+    // return cycles; 
+    cout << "#cycles: " << cycles << std::endl;
+    return (1.0 * flops) / cycles;
 }
 
 int main(int argc, char **argv) {
     cout << "Starting program. ";
     double perf;
     int i;
+    VERTICE = atoi(argv[1]);
+    EDGE = atoi(argv[2]);
 
     register_functions();
 
@@ -210,8 +220,9 @@ int main(int argc, char **argv) {
 
     for (i = 0; i < numFuncs; i++)
     {
+        cout << "V: " << VERTICE << ", E:" << EDGE << "\n";
         cout << "Starting performance test " << i << "...\n";
-        perf = perf_test(userFuncs[i], funcNames[i], 24);
+        perf = perf_test(userFuncs[i], funcNames[i], 12*EDGE);
         cout << endl << "Running: " << funcNames[i] << endl;
         cout << perf << " flops / cycles" << endl;
     }
