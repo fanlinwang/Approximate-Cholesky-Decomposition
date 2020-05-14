@@ -122,7 +122,14 @@ double perf_test(comp_func f, string desc, int flops)
     LLMatOrd llmat = LLMatOrd(A);
     cout << "Created random sparse matrix A.\n";
 
-    flops = approxChol_count(llmat);
+    int flops_count, flcomp_count, intops_count, intcomp_count, ops_count;
+    approxChol_count(llmat, flops_count, flcomp_count, intops_count, intcomp_count);
+    ops_count = flops_count + flcomp_count + intops_count + intcomp_count;
+    cout << "#fl ops: " << flops_count << std::endl;
+    cout << "#fl comparisons: " << flcomp_count << std::endl;
+    cout << "#int ops: " << intops_count << std::endl;
+    cout << "#int comparisons: " << intcomp_count << std::endl;
+    cout << "#total ops: " << ops_count << std::endl;
 
     // SparseMatrix lap_A;
     // laplacian(A, lap_A);
@@ -172,7 +179,7 @@ double perf_test(comp_func f, string desc, int flops)
     cycles = cyclesList.front();
     // return cycles; 
     cout << "#cycles: " << cycles << std::endl;
-    return (1.0 * flops) / cycles;
+    return (1.0 * ops_count) / cycles;
 }
 
 int main(int argc, char **argv) {
