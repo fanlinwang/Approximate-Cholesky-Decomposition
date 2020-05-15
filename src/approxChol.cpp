@@ -129,15 +129,8 @@ LDLinv approxChol(LLMatOrd a) {
 
         Tval colScale = 1;
 
+        Tind ks[len-1];
         for (int joffset = 0; joffset <= len-2; joffset++) {
-
-            LLcol llcol = colspace[joffset];
-            Tval w = llcol.cval * colScale;
-            Tind j = llcol.row;
-
-            Tval f = w/wdeg;
-            // flop count: 1 mul
-
             Tval r = u(engine);
             r = r * (csum - cumspace[joffset]) + cumspace[joffset];
             // flop count: 1 mul 2 add
@@ -147,35 +140,52 @@ LDLinv approxChol(LLMatOrd a) {
             int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
             // flop count: len?
 
-            Tind k = colspace[koff].row;
+            ks[joffset] = colspace[koff].row;
+        }
 
-            Tval newEdgeVal = w*(1-f);
-            // flop count: 1 mul 1 add
+        Tval newEdgeVals[len-1];
+        Tind js[len-1];
+        Tind ptrs[len-1];
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            LLcol llcol = colspace[joffset];
+            Tval w = llcol.cval * colScale;
+            js[joffset] = llcol.row;
+            ptrs[joffset] = llcol.ptr;
 
+            Tval f = w/wdeg;
+            // flop count: 1 mul
 
-            // create edge (j,k) with newEdgeVal
-            // do it by reassigning ll
-            if (j < k) {    // put it in col j
-                Tind jhead = a.cols[j];
-                a.lles[llcol.ptr].row = k;
-                a.lles[llcol.ptr].next = jhead;
-                a.lles[llcol.ptr].val = newEdgeVal;
-                a.cols[j] = llcol.ptr;
-            } else {        // put it in col k
-                Tind khead = a.cols[k];
-                a.lles[llcol.ptr].row = j;
-                a.lles[llcol.ptr].next = khead;
-                a.lles[llcol.ptr].val = newEdgeVal;
-                a.cols[k] = llcol.ptr;
-            }
+            newEdgeVals[joffset] = w*(1-f);
 
             colScale *= 1 - f;
-            wdeg = wdeg - 2*w + w*f;
+            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
             // flop count: 3 mul 3 add
 
-            ldli.rowval.push_back(j);
+            ldli.rowval.push_back(js[joffset]);
             ldli.fval.push_back(f);
             ldli_row_ptr += 1;
+        }
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // create edge (j,k) with newEdgeVal
+            // do it by reassigning ll
+            Tind j = js[joffset];
+            Tind k = ks[joffset];
+            Tval newEdgeVal = newEdgeVals[joffset];
+            Tind ptr = ptrs[joffset];
+            if (j < k) {    // put it in col j
+                Tind jhead = a.cols[j];
+                a.lles[ptr].row = k;
+                a.lles[ptr].next = jhead;
+                a.lles[ptr].val = newEdgeVal;
+                a.cols[j] = ptr;
+            } else {        // put it in col k
+                Tind khead = a.cols[k];
+                a.lles[ptr].row = j;
+                a.lles[ptr].next = khead;
+                a.lles[ptr].val = newEdgeVal;
+                a.cols[k] = ptr;
+            }
         }
 
         LLcol llcol = colspace[len-1];
