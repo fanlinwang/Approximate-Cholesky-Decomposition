@@ -1,0 +1,604 @@
+ Percent |	Source code & Disassembly of main for cycles:u (9089 samples)
+-----------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000429a79 <approxChol(LLMatOrd)>:
+         :	_Z10approxChol8LLMatOrd():
+         :
+         :	    colspace = c;
+         :	    return ptr+1; // if the returned value is used for vector length, then it should return ptr+1
+         :	}
+         :
+         :	LDLinv approxChol(LLMatOrd a) {
+    0.00 :	  429a79:       push   %rbp
+    0.00 :	  429a7a:       mov    %rsp,%rbp
+    0.00 :	  429a7d:       push   %rbx
+    0.00 :	  429a7e:       sub    $0x1f8,%rsp
+    0.00 :	  429a85:       mov    %rdi,-0x1e8(%rbp)
+    0.00 :	  429a8c:       mov    %rsi,-0x1f0(%rbp)
+         :	    auto n = a.n;
+    0.00 :	  429a93:       mov    -0x1f0(%rbp),%rax
+    0.00 :	  429a9a:       mov    (%rax),%rax
+    0.00 :	  429a9d:       mov    %rax,-0x50(%rbp)
+         :
+         :	    // need to make custom one without col info later
+         :	    LDLinv ldli(a);
+    0.00 :	  429aa1:       mov    -0x1f0(%rbp),%rdx
+    0.00 :	  429aa8:       lea    -0x110(%rbp),%rax
+    0.00 :	  429aaf:       mov    %rdx,%rsi
+    0.00 :	  429ab2:       mov    %rax,%rdi
+    0.00 :	  429ab5:       callq  41f922 <LLMatOrd::LLMatOrd(LLMatOrd const&)>
+    0.00 :	  429aba:       lea    -0x110(%rbp),%rdx
+    0.00 :	  429ac1:       mov    -0x1e8(%rbp),%rax
+    0.00 :	  429ac8:       mov    %rdx,%rsi
+    0.00 :	  429acb:       mov    %rax,%rdi
+    0.00 :	  429ace:       callq  42cdda <LDLinv::LDLinv(LLMatOrd)>
+    0.00 :	  429ad3:       lea    -0x110(%rbp),%rax
+    0.00 :	  429ada:       mov    %rax,%rdi
+    0.00 :	  429add:       callq  41f8f4 <LLMatOrd::~LLMatOrd()>
+         :	    Tind ldli_row_ptr = 0;
+    0.00 :	  429ae2:       movl   $0x0,-0x14(%rbp)
+         :
+         :	    std::vector<Tval> d(n, 0);
+    0.00 :	  429ae9:       lea    -0xd1(%rbp),%rax
+    0.00 :	  429af0:       mov    %rax,%rdi
+    0.00 :	  429af3:       callq  41fccc <std::allocator<double>::allocator()>
+    0.00 :	  429af8:       mov    $0x0,%eax
+    0.00 :	  429afd:       mov    %rax,-0xd0(%rbp)
+    0.00 :	  429b04:       mov    -0x50(%rbp),%rsi
+    0.00 :	  429b08:       lea    -0xd1(%rbp),%rcx
+    0.00 :	  429b0f:       lea    -0xd0(%rbp),%rdx
+    0.00 :	  429b16:       lea    -0x130(%rbp),%rax
+    0.00 :	  429b1d:       mov    %rax,%rdi
+    0.00 :	  429b20:       callq  41fd00 <std::vector<double, std::allocator<double> >::vector(unsigned long, double const&, std::allocator<double> const&)>
+    0.00 :	  429b25:       lea    -0xd1(%rbp),%rax
+    0.00 :	  429b2c:       mov    %rax,%rdi
+    0.00 :	  429b2f:       callq  41fce6 <std::allocator<double>::~allocator()>
+         :
+         :	    std::vector<LLcol> colspace(n);
+    0.00 :	  429b34:       lea    -0xc2(%rbp),%rax
+    0.00 :	  429b3b:       mov    %rax,%rdi
+    0.00 :	  429b3e:       callq  42d618 <std::allocator<LLcol>::allocator()>
+    0.00 :	  429b43:       mov    -0x50(%rbp),%rcx
+    0.00 :	  429b47:       lea    -0xc2(%rbp),%rdx
+    0.00 :	  429b4e:       lea    -0x150(%rbp),%rax
+    0.00 :	  429b55:       mov    %rcx,%rsi
+    0.00 :	  429b58:       mov    %rax,%rdi
+    0.00 :	  429b5b:       callq  42d64c <std::vector<LLcol, std::allocator<LLcol> >::vector(unsigned long, std::allocator<LLcol> const&)>
+    0.00 :	  429b60:       lea    -0xc2(%rbp),%rax
+    0.00 :	  429b67:       mov    %rax,%rdi
+    0.00 :	  429b6a:       callq  42d632 <std::allocator<LLcol>::~allocator()>
+         :	    std::vector<Tval> cumspace(n);
+    0.00 :	  429b6f:       lea    -0xc1(%rbp),%rax
+    0.00 :	  429b76:       mov    %rax,%rdi
+    0.00 :	  429b79:       callq  41fccc <std::allocator<double>::allocator()>
+    0.00 :	  429b7e:       mov    -0x50(%rbp),%rcx
+    0.00 :	  429b82:       lea    -0xc1(%rbp),%rdx
+    0.00 :	  429b89:       lea    -0x170(%rbp),%rax
+    0.00 :	  429b90:       mov    %rcx,%rsi
+    0.00 :	  429b93:       mov    %rax,%rdi
+    0.00 :	  429b96:       callq  42d6ae <std::vector<double, std::allocator<double> >::vector(unsigned long, std::allocator<double> const&)>
+    0.00 :	  429b9b:       lea    -0xc1(%rbp),%rax
+    0.00 :	  429ba2:       mov    %rax,%rdi
+    0.00 :	  429ba5:       callq  41fce6 <std::allocator<double>::~allocator()>
+         :
+         :	    // random engine and distribution
+         :	    std::default_random_engine engine;
+    0.00 :	  429baa:       lea    -0x180(%rbp),%rax
+    0.00 :	  429bb1:       mov    $0x1,%esi
+    0.00 :	  429bb6:       mov    %rax,%rdi
+    0.00 :	  429bb9:       callq  42d710 <std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::linear_congruential_engine(unsigned long)>
+         :	    std::uniform_real_distribution<Tval> u(0.0, 1.0);
+    0.00 :	  429bbe:       lea    -0x190(%rbp),%rax
+    0.00 :	  429bc5:       vmovsd 0xa0ab(%rip),%xmm1        # 433c78 <std::ignore+0x196>
+    0.00 :	  429bcd:       vxorpd %xmm0,%xmm0,%xmm0
+    0.00 :	  429bd1:       mov    %rax,%rdi
+    0.00 :	  429bd4:       callq  42d736 <std::uniform_real_distribution<double>::uniform_real_distribution(double, double)>
+         :
+         :
+         :	    for (long i = 0; i <= n-2; i++) {
+    0.00 :	  429bd9:       movq   $0x0,-0x20(%rbp)
+    0.00 :	  429be1:       jmpq   42a18c <approxChol(LLMatOrd)+0x713>
+         :
+         :	        ldli.col[i] = i;
+    0.07 :	  429be6:       mov    -0x20(%rbp),%rdx
+    0.03 :	  429bea:       mov    -0x1e8(%rbp),%rax
+    0.00 :	  429bf1:       mov    %rdx,%rsi
+    0.07 :	  429bf4:       mov    %rax,%rdi
+    0.00 :	  429bf7:       callq  41fdba <std::vector<int, std::allocator<int> >::operator[](unsigned long)>
+    0.01 :	  429bfc:       mov    -0x20(%rbp),%rdx
+    0.07 :	  429c00:       mov    %edx,(%rax)
+         :	        ldli.colptr[i] = ldli_row_ptr;
+    0.78 :	  429c02:       mov    -0x20(%rbp),%rax
+    0.01 :	  429c06:       mov    -0x1e8(%rbp),%rdx
+    0.01 :	  429c0d:       add    $0x18,%rdx
+    0.00 :	  429c11:       mov    %rax,%rsi
+    0.07 :	  429c14:       mov    %rdx,%rdi
+    0.00 :	  429c17:       callq  41fdba <std::vector<int, std::allocator<int> >::operator[](unsigned long)>
+    0.00 :	  429c1c:       mov    -0x14(%rbp),%edx
+    0.04 :	  429c1f:       mov    %edx,(%rax)
+         :
+         :	        int len = get_ll_col(a, i, colspace);
+    0.54 :	  429c21:       mov    -0x20(%rbp),%rax
+    0.00 :	  429c25:       mov    %eax,%ebx
+    0.00 :	  429c27:       mov    -0x1f0(%rbp),%rdx
+    0.00 :	  429c2e:       lea    -0xc0(%rbp),%rax
+    0.04 :	  429c35:       mov    %rdx,%rsi
+    0.00 :	  429c38:       mov    %rax,%rdi
+    0.00 :	  429c3b:       callq  41f922 <LLMatOrd::LLMatOrd(LLMatOrd const&)>
+    0.83 :	  429c40:       lea    -0x150(%rbp),%rdx
+    0.46 :	  429c47:       lea    -0xc0(%rbp),%rax
+    0.00 :	  429c4e:       mov    %ebx,%esi
+    0.00 :	  429c50:       mov    %rax,%rdi
+    0.01 :	  429c53:       callq  429632 <get_ll_col(LLMatOrd, int, std::vector<LLcol, std::allocator<LLcol> >&)>
+    0.07 :	  429c58:       mov    %eax,-0x54(%rbp)
+    0.22 :	  429c5b:       lea    -0xc0(%rbp),%rax
+    0.01 :	  429c62:       mov    %rax,%rdi
+    0.00 :	  429c65:       callq  41f8f4 <LLMatOrd::~LLMatOrd()>
+         :	        len = compressCol(colspace, len);
+    0.02 :	  429c6a:       mov    -0x54(%rbp),%edx
+    0.02 :	  429c6d:       lea    -0x150(%rbp),%rax
+    0.09 :	  429c74:       mov    %edx,%esi
+    0.00 :	  429c76:       mov    %rax,%rdi
+    0.00 :	  429c79:       callq  429790 <compressCol(std::vector<LLcol, std::allocator<LLcol> >&, int)>
+    0.29 :	  429c7e:       mov    %eax,-0x54(%rbp)
+         :	        // flop count: sort LLcol len*log(len)?
+         :
+         :	        Tval csum = 0;
+    0.23 :	  429c81:       mov    $0x0,%eax
+    0.01 :	  429c86:       mov    %rax,-0x28(%rbp)
+         :	        for (int ii = 0; ii < len; ii++) {
+    0.07 :	  429c8a:       movl   $0x0,-0x2c(%rbp)
+    0.04 :	  429c91:       jmp    429ce4 <approxChol(LLMatOrd)+0x26b>
+         :	            csum += colspace[ii].cval;
+    0.25 :	  429c93:       mov    -0x2c(%rbp),%eax
+    0.15 :	  429c96:       movslq %eax,%rdx
+    0.26 :	  429c99:       lea    -0x150(%rbp),%rax
+    0.07 :	  429ca0:       mov    %rdx,%rsi
+    0.14 :	  429ca3:       mov    %rax,%rdi
+    0.17 :	  429ca6:       callq  42d0b6 <std::vector<LLcol, std::allocator<LLcol> >::operator[](unsigned long)>
+    0.07 :	  429cab:       vmovsd 0x8(%rax),%xmm0
+    2.02 :	  429cb0:       vmovsd -0x28(%rbp),%xmm1
+    0.03 :	  429cb5:       vaddsd %xmm0,%xmm1,%xmm0
+    1.58 :	  429cb9:       vmovsd %xmm0,-0x28(%rbp)
+         :	            // flop count: 1 add
+         :	            cumspace[ii] = csum;
+    0.43 :	  429cbe:       mov    -0x2c(%rbp),%eax
+    0.04 :	  429cc1:       movslq %eax,%rdx
+    0.01 :	  429cc4:       lea    -0x170(%rbp),%rax
+    0.09 :	  429ccb:       mov    %rdx,%rsi
+    0.36 :	  429cce:       mov    %rax,%rdi
+    0.09 :	  429cd1:       callq  41fdfa <std::vector<double, std::allocator<double> >::operator[](unsigned long)>
+    0.13 :	  429cd6:       mov    %rax,%rdx
+    0.40 :	  429cd9:       mov    -0x28(%rbp),%rax
+    0.09 :	  429cdd:       mov    %rax,(%rdx)
+         :	        for (int ii = 0; ii < len; ii++) {
+    0.48 :	  429ce0:       addl   $0x1,-0x2c(%rbp)
+    0.46 :	  429ce4:       mov    -0x2c(%rbp),%eax
+    0.20 :	  429ce7:       cmp    -0x54(%rbp),%eax
+    0.00 :	  429cea:       jl     429c93 <approxChol(LLMatOrd)+0x21a>
+         :	        }
+         :	        Tval wdeg = csum;
+    0.30 :	  429cec:       mov    -0x28(%rbp),%rax
+    0.42 :	  429cf0:       mov    %rax,-0x38(%rbp)
+         :
+         :	        Tval colScale = 1;
+    0.08 :	  429cf4:       movabs $0x3ff0000000000000,%rax
+    0.03 :	  429cfe:       mov    %rax,-0x40(%rbp)
+         :
+         :	        for (int joffset = 0; joffset <= len-2; joffset++) {
+    0.33 :	  429d02:       movl   $0x0,-0x44(%rbp)
+    0.02 :	  429d09:       jmpq   42a0bb <approxChol(LLMatOrd)+0x642>
+         :
+         :	            LLcol llcol = colspace[joffset];
+    3.11 :	  429d0e:       mov    -0x44(%rbp),%eax
+    0.13 :	  429d11:       movslq %eax,%rdx
+    0.06 :	  429d14:       lea    -0x150(%rbp),%rax
+    0.01 :	  429d1b:       mov    %rdx,%rsi
+    0.50 :	  429d1e:       mov    %rax,%rdi
+    0.00 :	  429d21:       callq  42d0b6 <std::vector<LLcol, std::allocator<LLcol> >::operator[](unsigned long)>
+    0.00 :	  429d26:       mov    0x8(%rax),%rdx
+    3.03 :	  429d2a:       mov    (%rax),%rax
+    0.30 :	  429d2d:       mov    %rax,-0x1c0(%rbp)
+    0.57 :	  429d34:       mov    %rdx,-0x1b8(%rbp)
+         :	            Tval w = llcol.cval * colScale;
+    0.20 :	  429d3b:       vmovsd -0x1b8(%rbp),%xmm0
+    1.97 :	  429d43:       vmulsd -0x40(%rbp),%xmm0,%xmm0
+    2.01 :	  429d48:       vmovsd %xmm0,-0x60(%rbp)
+         :	            Tind j = llcol.row;
+    0.53 :	  429d4d:       mov    -0x1c0(%rbp),%eax
+    0.01 :	  429d53:       mov    %eax,-0x1c4(%rbp)
+         :
+         :	            Tval f = w/wdeg;
+    0.01 :	  429d59:       vmovsd -0x60(%rbp),%xmm0
+    2.34 :	  429d5e:       vdivsd -0x38(%rbp),%xmm0,%xmm0
+    7.78 :	  429d63:       vmovsd %xmm0,-0x1d0(%rbp)
+         :	            // flop count: 1 mul
+         :
+         :	            Tval r = u(engine);
+    0.46 :	  429d6b:       lea    -0x180(%rbp),%rdx
+    0.00 :	  429d72:       lea    -0x190(%rbp),%rax
+    0.00 :	  429d79:       mov    %rdx,%rsi
+    0.00 :	  429d7c:       mov    %rax,%rdi
+    0.47 :	  429d7f:       callq  42d774 <double std::uniform_real_distribution<double>::operator()<std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul> >(std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>&)>
+    0.61 :	  429d84:       vmovsd %xmm0,-0x1f8(%rbp)
+    0.51 :	  429d8c:       mov    -0x1f8(%rbp),%rax
+    2.04 :	  429d93:       mov    %rax,-0x1d8(%rbp)
+         :	            r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+    0.48 :	  429d9a:       mov    -0x44(%rbp),%eax
+    0.00 :	  429d9d:       movslq %eax,%rdx
+    0.00 :	  429da0:       lea    -0x170(%rbp),%rax
+    0.00 :	  429da7:       mov    %rdx,%rsi
+    0.72 :	  429daa:       mov    %rax,%rdi
+    0.00 :	  429dad:       callq  41fdfa <std::vector<double, std::allocator<double> >::operator[](unsigned long)>
+    0.00 :	  429db2:       vmovsd (%rax),%xmm1
+    0.44 :	  429db6:       vmovsd -0x28(%rbp),%xmm0
+    0.00 :	  429dbb:       vsubsd %xmm1,%xmm0,%xmm0
+    0.00 :	  429dbf:       vmovsd -0x1d8(%rbp),%xmm1
+    0.00 :	  429dc7:       vmulsd %xmm1,%xmm0,%xmm2
+    1.42 :	  429dcb:       vmovsd %xmm2,-0x1f8(%rbp)
+    0.59 :	  429dd3:       mov    -0x44(%rbp),%eax
+    0.00 :	  429dd6:       movslq %eax,%rdx
+    0.00 :	  429dd9:       lea    -0x170(%rbp),%rax
+    0.01 :	  429de0:       mov    %rdx,%rsi
+    0.55 :	  429de3:       mov    %rax,%rdi
+    0.00 :	  429de6:       callq  41fdfa <std::vector<double, std::allocator<double> >::operator[](unsigned long)>
+    0.01 :	  429deb:       vmovsd (%rax),%xmm0
+    0.51 :	  429def:       vaddsd -0x1f8(%rbp),%xmm0,%xmm0
+    1.68 :	  429df7:       vmovsd %xmm0,-0x1d8(%rbp)
+         :	            // flop count: 1 mul 2 add
+         :
+         :	            auto cumspace_last = cumspace.begin();
+    0.55 :	  429dff:       lea    -0x170(%rbp),%rax
+    0.14 :	  429e06:       mov    %rax,%rdi
+    0.00 :	  429e09:       callq  42058a <std::vector<double, std::allocator<double> >::begin()>
+    0.00 :	  429e0e:       mov    %rax,-0x1e0(%rbp)
+         :	            std::advance(cumspace_last, len);
+    0.52 :	  429e15:       mov    -0x54(%rbp),%edx
+    0.00 :	  429e18:       lea    -0x1e0(%rbp),%rax
+    0.00 :	  429e1f:       mov    %edx,%esi
+    0.01 :	  429e21:       mov    %rax,%rdi
+    0.50 :	  429e24:       callq  42d7af <void std::advance<__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, int>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >&, int)>
+         :	            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+    0.01 :	  429e29:       lea    -0x170(%rbp),%rax
+    0.00 :	  429e30:       mov    %rax,%rdi
+    0.00 :	  429e33:       callq  42058a <std::vector<double, std::allocator<double> >::begin()>
+    0.47 :	  429e38:       lea    -0x1d8(%rbp),%rdx
+    0.00 :	  429e3f:       mov    -0x1e0(%rbp),%rcx
+    0.08 :	  429e46:       mov    %rcx,%rsi
+    0.00 :	  429e49:       mov    %rax,%rdi
+    0.56 :	  429e4c:       callq  42d7fb <__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > > std::lower_bound<__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, __gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&)>
+    0.30 :	  429e51:       mov    %rax,%rbx
+    0.00 :	  429e54:       lea    -0x170(%rbp),%rax
+    0.33 :	  429e5b:       mov    %rax,%rdi
+    0.07 :	  429e5e:       callq  42058a <std::vector<double, std::allocator<double> >::begin()>
+    0.52 :	  429e63:       mov    %rbx,%rsi
+    0.00 :	  429e66:       mov    %rax,%rdi
+    0.01 :	  429e69:       callq  42d8c0 <std::iterator_traits<__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > > >::difference_type std::distance<__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > > >(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, __gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >)>
+    0.01 :	  429e6e:       mov    %eax,-0x64(%rbp)
+         :	            // flop count: len?
+         :
+         :	            Tind k = colspace[koff].row;
+    0.01 :	  429e71:       mov    -0x64(%rbp),%eax
+    0.72 :	  429e74:       movslq %eax,%rdx
+    0.64 :	  429e77:       lea    -0x150(%rbp),%rax
+    0.00 :	  429e7e:       mov    %rdx,%rsi
+    0.00 :	  429e81:       mov    %rax,%rdi
+    0.00 :	  429e84:       callq  42d0b6 <std::vector<LLcol, std::allocator<LLcol> >::operator[](unsigned long)>
+    0.00 :	  429e89:       mov    (%rax),%eax
+    3.39 :	  429e8b:       mov    %eax,-0x68(%rbp)
+         :
+         :	            Tval newEdgeVal = w*(1-f);
+    0.57 :	  429e8e:       vmovsd -0x1d0(%rbp),%xmm1
+    0.00 :	  429e96:       vmovsd 0x9dda(%rip),%xmm0        # 433c78 <std::ignore+0x196>
+    1.34 :	  429e9e:       vsubsd %xmm1,%xmm0,%xmm0
+    0.25 :	  429ea2:       vmulsd -0x60(%rbp),%xmm0,%xmm0
+    0.66 :	  429ea7:       vmovsd %xmm0,-0x70(%rbp)
+         :	            // flop count: 1 mul 1 add
+         :
+         :
+         :	            // create edge (j,k) with newEdgeVal
+         :	            // do it by reassigning ll
+         :	            if (j < k) {    // put it in col j
+    0.04 :	  429eac:       mov    -0x1c4(%rbp),%eax
+    0.00 :	  429eb2:       cmp    -0x68(%rbp),%eax
+    0.00 :	  429eb5:       jge    429f79 <approxChol(LLMatOrd)+0x500>
+         :	                Tind jhead = a.cols[j];
+    2.05 :	  429ebb:       mov    -0x1c4(%rbp),%eax
+    1.09 :	  429ec1:       cltq
+    0.13 :	  429ec3:       mov    -0x1f0(%rbp),%rdx
+    0.01 :	  429eca:       add    $0x8,%rdx
+    0.26 :	  429ece:       mov    %rax,%rsi
+    0.00 :	  429ed1:       mov    %rdx,%rdi
+    0.04 :	  429ed4:       callq  41fdba <std::vector<int, std::allocator<int> >::operator[](unsigned long)>
+    0.14 :	  429ed9:       mov    (%rax),%eax
+    7.78 :	  429edb:       mov    %eax,-0x74(%rbp)
+         :	                a.lles[llcol.ptr].row = k;
+    0.23 :	  429ede:       mov    -0x1bc(%rbp),%eax
+    0.00 :	  429ee4:       cltq
+    0.08 :	  429ee6:       mov    -0x1f0(%rbp),%rdx
+    0.00 :	  429eed:       add    $0x20,%rdx
+    0.22 :	  429ef1:       mov    %rax,%rsi
+    0.00 :	  429ef4:       mov    %rdx,%rdi
+    0.09 :	  429ef7:       callq  42cff6 <std::vector<LLord, std::allocator<LLord> >::operator[](unsigned long)>
+    0.20 :	  429efc:       mov    -0x68(%rbp),%edx
+    0.00 :	  429eff:       mov    %edx,(%rax)
+         :	                a.lles[llcol.ptr].next = jhead;
+    0.80 :	  429f01:       mov    -0x1bc(%rbp),%eax
+    0.00 :	  429f07:       cltq
+    0.11 :	  429f09:       mov    -0x1f0(%rbp),%rdx
+    0.00 :	  429f10:       add    $0x20,%rdx
+    0.12 :	  429f14:       mov    %rax,%rsi
+    0.00 :	  429f17:       mov    %rdx,%rdi
+    0.19 :	  429f1a:       callq  42cff6 <std::vector<LLord, std::allocator<LLord> >::operator[](unsigned long)>
+    0.09 :	  429f1f:       mov    -0x74(%rbp),%edx
+    0.01 :	  429f22:       mov    %edx,0x4(%rax)
+         :	                a.lles[llcol.ptr].val = newEdgeVal;
+    0.44 :	  429f25:       mov    -0x1bc(%rbp),%eax
+    0.00 :	  429f2b:       cltq
+    0.09 :	  429f2d:       mov    -0x1f0(%rbp),%rdx
+    0.02 :	  429f34:       add    $0x20,%rdx
+    0.19 :	  429f38:       mov    %rax,%rsi
+    0.00 :	  429f3b:       mov    %rdx,%rdi
+    0.06 :	  429f3e:       callq  42cff6 <std::vector<LLord, std::allocator<LLord> >::operator[](unsigned long)>
+    0.20 :	  429f43:       mov    %rax,%rdx
+    0.00 :	  429f46:       mov    -0x70(%rbp),%rax
+    0.11 :	  429f4a:       mov    %rax,0x8(%rdx)
+         :	                a.cols[j] = llcol.ptr;
+    0.90 :	  429f4e:       mov    -0x1c4(%rbp),%eax
+    0.11 :	  429f54:       cltq
+    0.00 :	  429f56:       mov    -0x1f0(%rbp),%rdx
+    0.02 :	  429f5d:       add    $0x8,%rdx
+    0.15 :	  429f61:       mov    %rax,%rsi
+    0.09 :	  429f64:       mov    %rdx,%rdi
+    0.00 :	  429f67:       callq  41fdba <std::vector<int, std::allocator<int> >::operator[](unsigned long)>
+    0.11 :	  429f6c:       mov    -0x1bc(%rbp),%edx
+    0.18 :	  429f72:       mov    %edx,(%rax)
+    0.40 :	  429f74:       jmpq   42a02f <approxChol(LLMatOrd)+0x5b6>
+         :	            } else {        // put it in col k
+         :	                Tind khead = a.cols[k];
+    2.54 :	  429f79:       mov    -0x68(%rbp),%eax
+    1.11 :	  429f7c:       cltq
+    0.47 :	  429f7e:       mov    -0x1f0(%rbp),%rdx
+    0.17 :	  429f85:       add    $0x8,%rdx
+    0.24 :	  429f89:       mov    %rax,%rsi
+    0.01 :	  429f8c:       mov    %rdx,%rdi
+    0.00 :	  429f8f:       callq  41fdba <std::vector<int, std::allocator<int> >::operator[](unsigned long)>
+    0.00 :	  429f94:       mov    (%rax),%eax
+    5.28 :	  429f96:       mov    %eax,-0x78(%rbp)
+         :	                a.lles[llcol.ptr].row = j;
+    0.12 :	  429f99:       mov    -0x1bc(%rbp),%eax
+    0.00 :	  429f9f:       cltq
+    0.00 :	  429fa1:       mov    -0x1f0(%rbp),%rdx
+    0.00 :	  429fa8:       add    $0x20,%rdx
+    0.15 :	  429fac:       mov    %rax,%rsi
+    0.00 :	  429faf:       mov    %rdx,%rdi
+    0.00 :	  429fb2:       callq  42cff6 <std::vector<LLord, std::allocator<LLord> >::operator[](unsigned long)>
+    0.22 :	  429fb7:       mov    -0x1c4(%rbp),%edx
+    0.00 :	  429fbd:       mov    %edx,(%rax)
+         :	                a.lles[llcol.ptr].next = khead;
+    0.69 :	  429fbf:       mov    -0x1bc(%rbp),%eax
+    0.00 :	  429fc5:       cltq
+    0.13 :	  429fc7:       mov    -0x1f0(%rbp),%rdx
+    0.00 :	  429fce:       add    $0x20,%rdx
+    0.09 :	  429fd2:       mov    %rax,%rsi
+    0.00 :	  429fd5:       mov    %rdx,%rdi
+    0.15 :	  429fd8:       callq  42cff6 <std::vector<LLord, std::allocator<LLord> >::operator[](unsigned long)>
+    0.07 :	  429fdd:       mov    -0x78(%rbp),%edx
+    0.01 :	  429fe0:       mov    %edx,0x4(%rax)
+         :	                a.lles[llcol.ptr].val = newEdgeVal;
+    0.36 :	  429fe3:       mov    -0x1bc(%rbp),%eax
+    0.01 :	  429fe9:       cltq
+    0.00 :	  429feb:       mov    -0x1f0(%rbp),%rdx
+    0.01 :	  429ff2:       add    $0x20,%rdx
+    0.14 :	  429ff6:       mov    %rax,%rsi
+    0.00 :	  429ff9:       mov    %rdx,%rdi
+    0.00 :	  429ffc:       callq  42cff6 <std::vector<LLord, std::allocator<LLord> >::operator[](unsigned long)>
+    0.22 :	  42a001:       mov    %rax,%rdx
+    0.00 :	  42a004:       mov    -0x70(%rbp),%rax
+    0.00 :	  42a008:       mov    %rax,0x8(%rdx)
+         :	                a.cols[k] = llcol.ptr;
+    0.14 :	  42a00c:       mov    -0x68(%rbp),%eax
+    0.26 :	  42a00f:       cltq
+    0.00 :	  42a011:       mov    -0x1f0(%rbp),%rdx
+    0.01 :	  42a018:       add    $0x8,%rdx
+    0.03 :	  42a01c:       mov    %rax,%rsi
+    0.18 :	  42a01f:       mov    %rdx,%rdi
+    0.00 :	  42a022:       callq  41fdba <std::vector<int, std::allocator<int> >::operator[](unsigned long)>
+    0.01 :	  42a027:       mov    -0x1bc(%rbp),%edx
+    0.23 :	  42a02d:       mov    %edx,(%rax)
+         :	            }
+         :
+         :	            colScale *= 1 - f;
+    0.44 :	  42a02f:       vmovsd -0x1d0(%rbp),%xmm1
+    0.04 :	  42a037:       vmovsd 0x9c39(%rip),%xmm0        # 433c78 <std::ignore+0x196>
+    0.17 :	  42a03f:       vsubsd %xmm1,%xmm0,%xmm0
+    0.29 :	  42a043:       vmovsd -0x40(%rbp),%xmm1
+    0.10 :	  42a048:       vmulsd %xmm0,%xmm1,%xmm0
+    0.19 :	  42a04c:       vmovsd %xmm0,-0x40(%rbp)
+         :	            wdeg = wdeg - 2*w + w*f;
+    0.25 :	  42a051:       vmovsd -0x60(%rbp),%xmm0
+    0.19 :	  42a056:       vaddsd %xmm0,%xmm0,%xmm0
+    0.13 :	  42a05a:       vmovsd -0x38(%rbp),%xmm1
+    0.02 :	  42a05f:       vsubsd %xmm0,%xmm1,%xmm1
+    0.19 :	  42a063:       vmovsd -0x1d0(%rbp),%xmm0
+    0.15 :	  42a06b:       vmulsd -0x60(%rbp),%xmm0,%xmm0
+    0.10 :	  42a070:       vaddsd %xmm0,%xmm1,%xmm0
+    0.06 :	  42a074:       vmovsd %xmm0,-0x38(%rbp)
+         :	            // flop count: 3 mul 3 add
+         :
+         :	            ldli.rowval.push_back(j);
+    0.23 :	  42a079:       mov    -0x1e8(%rbp),%rax
+    0.19 :	  42a080:       lea    0x30(%rax),%rdx
+    0.12 :	  42a084:       lea    -0x1c4(%rbp),%rax
+    0.00 :	  42a08b:       mov    %rax,%rsi
+    0.23 :	  42a08e:       mov    %rdx,%rdi
+    0.11 :	  42a091:       callq  420760 <std::vector<int, std::allocator<int> >::push_back(int const&)>
+         :	            ldli.fval.push_back(f);
+    0.52 :	  42a096:       mov    -0x1e8(%rbp),%rax
+    0.31 :	  42a09d:       lea    0x48(%rax),%rdx
+    0.11 :	  42a0a1:       lea    -0x1d0(%rbp),%rax
+    0.20 :	  42a0a8:       mov    %rax,%rsi
+    0.13 :	  42a0ab:       mov    %rdx,%rdi
+    0.01 :	  42a0ae:       callq  42d904 <std::vector<double, std::allocator<double> >::push_back(double const&)>
+         :	            ldli_row_ptr += 1;
+    0.06 :	  42a0b3:       addl   $0x1,-0x14(%rbp)
+         :	        for (int joffset = 0; joffset <= len-2; joffset++) {
+    1.45 :	  42a0b7:       addl   $0x1,-0x44(%rbp)
+    1.39 :	  42a0bb:       mov    -0x54(%rbp),%eax
+    0.55 :	  42a0be:       sub    $0x2,%eax
+    0.21 :	  42a0c1:       cmp    -0x44(%rbp),%eax
+    0.00 :	  42a0c4:       jge    429d0e <approxChol(LLMatOrd)+0x295>
+         :	        }
+         :
+         :	        LLcol llcol = colspace[len-1];
+    1.12 :	  42a0ca:       mov    -0x54(%rbp),%eax
+    0.42 :	  42a0cd:       sub    $0x1,%eax
+    0.04 :	  42a0d0:       movslq %eax,%rdx
+    0.09 :	  42a0d3:       lea    -0x150(%rbp),%rax
+    0.02 :	  42a0da:       mov    %rdx,%rsi
+    0.00 :	  42a0dd:       mov    %rax,%rdi
+    0.00 :	  42a0e0:       callq  42d0b6 <std::vector<LLcol, std::allocator<LLcol> >::operator[](unsigned long)>
+    0.00 :	  42a0e5:       mov    0x8(%rax),%rdx
+    0.23 :	  42a0e9:       mov    (%rax),%rax
+    0.00 :	  42a0ec:       mov    %rax,-0x1a0(%rbp)
+    0.02 :	  42a0f3:       mov    %rdx,-0x198(%rbp)
+         :	        Tval w = llcol.cval * colScale;
+    0.14 :	  42a0fa:       vmovsd -0x198(%rbp),%xmm0
+    0.26 :	  42a102:       vmulsd -0x40(%rbp),%xmm0,%xmm0
+    0.32 :	  42a107:       vmovsd %xmm0,-0x80(%rbp)
+         :	        // flop count: 1 mul
+         :	        Tind j = llcol.row;
+    0.06 :	  42a10c:       mov    -0x1a0(%rbp),%eax
+    0.00 :	  42a112:       mov    %eax,-0x1a4(%rbp)
+         :
+         :	        ldli.rowval.push_back(j);
+    0.00 :	  42a118:       mov    -0x1e8(%rbp),%rax
+    0.00 :	  42a11f:       lea    0x30(%rax),%rdx
+    0.03 :	  42a123:       lea    -0x1a4(%rbp),%rax
+    0.00 :	  42a12a:       mov    %rax,%rsi
+    0.00 :	  42a12d:       mov    %rdx,%rdi
+    0.00 :	  42a130:       callq  420760 <std::vector<int, std::allocator<int> >::push_back(int const&)>
+         :	        ldli.fval.push_back(1);
+    0.14 :	  42a135:       movabs $0x3ff0000000000000,%rax
+    0.00 :	  42a13f:       mov    %rax,-0x88(%rbp)
+    0.13 :	  42a146:       mov    -0x1e8(%rbp),%rax
+    0.00 :	  42a14d:       lea    0x48(%rax),%rdx
+    0.00 :	  42a151:       lea    -0x88(%rbp),%rax
+    0.00 :	  42a158:       mov    %rax,%rsi
+    0.02 :	  42a15b:       mov    %rdx,%rdi
+    0.00 :	  42a15e:       callq  42d97e <std::vector<double, std::allocator<double> >::push_back(double&&)>
+         :	        ldli_row_ptr += 1;
+    0.06 :	  42a163:       addl   $0x1,-0x14(%rbp)
+         :
+         :	        d[i] = w;
+    0.33 :	  42a167:       mov    -0x20(%rbp),%rdx
+    0.01 :	  42a16b:       lea    -0x130(%rbp),%rax
+    0.00 :	  42a172:       mov    %rdx,%rsi
+    0.00 :	  42a175:       mov    %rax,%rdi
+    0.07 :	  42a178:       callq  41fdfa <std::vector<double, std::allocator<double> >::operator[](unsigned long)>
+    0.00 :	  42a17d:       mov    %rax,%rdx
+    0.00 :	  42a180:       mov    -0x80(%rbp),%rax
+    0.09 :	  42a184:       mov    %rax,(%rdx)
+         :	    for (long i = 0; i <= n-2; i++) {
+    0.86 :	  42a187:       addq   $0x1,-0x20(%rbp)
+    0.00 :	  42a18c:       mov    -0x50(%rbp),%rax
+    0.01 :	  42a190:       sub    $0x2,%rax
+    0.06 :	  42a194:       cmp    -0x20(%rbp),%rax
+    0.00 :	  42a198:       jge    429be6 <approxChol(LLMatOrd)+0x16d>
+         :	    }
+         :
+         :	    ldli.colptr[n-1] = ldli_row_ptr;
+    0.00 :	  42a19e:       mov    -0x50(%rbp),%rax
+    0.00 :	  42a1a2:       sub    $0x1,%rax
+    0.00 :	  42a1a6:       mov    -0x1e8(%rbp),%rdx
+    0.00 :	  42a1ad:       add    $0x18,%rdx
+    0.00 :	  42a1b1:       mov    %rax,%rsi
+    0.00 :	  42a1b4:       mov    %rdx,%rdi
+    0.00 :	  42a1b7:       callq  41fdba <std::vector<int, std::allocator<int> >::operator[](unsigned long)>
+    0.00 :	  42a1bc:       mov    -0x14(%rbp),%edx
+    0.00 :	  42a1bf:       mov    %edx,(%rax)
+         :	    ldli.d = d;
+    0.00 :	  42a1c1:       mov    -0x1e8(%rbp),%rax
+    0.00 :	  42a1c8:       lea    0x60(%rax),%rdx
+    0.00 :	  42a1cc:       lea    -0x130(%rbp),%rax
+    0.00 :	  42a1d3:       mov    %rax,%rsi
+    0.00 :	  42a1d6:       mov    %rdx,%rdi
+    0.00 :	  42a1d9:       callq  42d9ba <std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&)>
+         :
+         :	    return ldli;
+    0.00 :	  42a1de:       nop
+         :	    std::vector<Tval> cumspace(n);
+    0.00 :	  42a1df:       lea    -0x170(%rbp),%rax
+    0.00 :	  42a1e6:       mov    %rax,%rdi
+    0.00 :	  42a1e9:       callq  41fa2c <std::vector<double, std::allocator<double> >::~vector()>
+         :	    std::vector<LLcol> colspace(n);
+    0.00 :	  42a1ee:       lea    -0x150(%rbp),%rax
+    0.00 :	  42a1f5:       mov    %rax,%rdi
+    0.00 :	  42a1f8:       callq  42d2a8 <std::vector<LLcol, std::allocator<LLcol> >::~vector()>
+         :	    std::vector<Tval> d(n, 0);
+    0.00 :	  42a1fd:       lea    -0x130(%rbp),%rax
+    0.00 :	  42a204:       mov    %rax,%rdi
+    0.00 :	  42a207:       callq  41fa2c <std::vector<double, std::allocator<double> >::~vector()>
+    0.00 :	  42a20c:       jmpq   42a2d3 <approxChol(LLMatOrd)+0x85a>
+    0.00 :	  42a211:       mov    %rax,%rbx
+    0.00 :	  42a214:       lea    -0x110(%rbp),%rax
+    0.00 :	  42a21b:       mov    %rax,%rdi
+    0.00 :	  42a21e:       callq  41f8f4 <LLMatOrd::~LLMatOrd()>
+    0.00 :	  42a223:       mov    %rbx,%rax
+    0.00 :	  42a226:       jmpq   42a2cb <approxChol(LLMatOrd)+0x852>
+    0.00 :	  42a22b:       mov    %rax,%rbx
+    0.00 :	  42a22e:       lea    -0xd1(%rbp),%rax
+    0.00 :	  42a235:       mov    %rax,%rdi
+    0.00 :	  42a238:       callq  41fce6 <std::allocator<double>::~allocator()>
+    0.00 :	  42a23d:       jmp    42a2b7 <approxChol(LLMatOrd)+0x83e>
+    0.00 :	  42a23f:       mov    %rax,%rbx
+    0.00 :	  42a242:       lea    -0xc2(%rbp),%rax
+    0.00 :	  42a249:       mov    %rax,%rdi
+    0.00 :	  42a24c:       callq  42d632 <std::allocator<LLcol>::~allocator()>
+    0.00 :	  42a251:       jmp    42a2a8 <approxChol(LLMatOrd)+0x82f>
+    0.00 :	  42a253:       mov    %rax,%rbx
+    0.00 :	  42a256:       lea    -0xc1(%rbp),%rax
+    0.00 :	  42a25d:       mov    %rax,%rdi
+    0.00 :	  42a260:       callq  41fce6 <std::allocator<double>::~allocator()>
+    0.00 :	  42a265:       jmp    42a299 <approxChol(LLMatOrd)+0x820>
+    0.00 :	  42a267:       mov    %rax,%rbx
+         :	        int len = get_ll_col(a, i, colspace);
+    0.00 :	  42a26a:       lea    -0xc0(%rbp),%rax
+    0.00 :	  42a271:       mov    %rax,%rdi
+    0.00 :	  42a274:       callq  41f8f4 <LLMatOrd::~LLMatOrd()>
+    0.00 :	  42a279:       mov    %rbx,%rax
+    0.00 :	  42a27c:       jmp    42a282 <approxChol(LLMatOrd)+0x809>
+    0.00 :	  42a27e:       jmp    42a282 <approxChol(LLMatOrd)+0x809>
+    0.00 :	  42a280:       jmp    42a282 <approxChol(LLMatOrd)+0x809>
+    0.00 :	  42a282:       mov    %rax,%rbx
+    0.00 :	  42a285:       jmp    42a28a <approxChol(LLMatOrd)+0x811>
+    0.00 :	  42a287:       mov    %rax,%rbx
+         :	    std::vector<Tval> cumspace(n);
+    0.00 :	  42a28a:       lea    -0x170(%rbp),%rax
+    0.00 :	  42a291:       mov    %rax,%rdi
+    0.00 :	  42a294:       callq  41fa2c <std::vector<double, std::allocator<double> >::~vector()>
+         :	    std::vector<LLcol> colspace(n);
+    0.00 :	  42a299:       lea    -0x150(%rbp),%rax
+    0.00 :	  42a2a0:       mov    %rax,%rdi
+    0.00 :	  42a2a3:       callq  42d2a8 <std::vector<LLcol, std::allocator<LLcol> >::~vector()>
+         :	    std::vector<Tval> d(n, 0);
+    0.00 :	  42a2a8:       lea    -0x130(%rbp),%rax
+    0.00 :	  42a2af:       mov    %rax,%rdi
+    0.00 :	  42a2b2:       callq  41fa2c <std::vector<double, std::allocator<double> >::~vector()>
+    0.00 :	  42a2b7:       mov    -0x1e8(%rbp),%rax
+    0.00 :	  42a2be:       mov    %rax,%rdi
+    0.00 :	  42a2c1:       callq  41f9b8 <LDLinv::~LDLinv()>
+    0.00 :	  42a2c6:       mov    %rbx,%rax
+    0.00 :	  42a2c9:       jmp    42a2cb <approxChol(LLMatOrd)+0x852>
+    0.00 :	  42a2cb:       mov    %rax,%rdi
+    0.00 :	  42a2ce:       callq  41dda0 <_Unwind_Resume@plt>
+         :	}
+    0.00 :	  42a2d3:       mov    -0x1e8(%rbp),%rax
+    0.00 :	  42a2da:       add    $0x1f8,%rsp
+    0.00 :	  42a2e1:       pop    %rbx
+    0.00 :	  42a2e2:       pop    %rbp
+    0.00 :	  42a2e3:       retq

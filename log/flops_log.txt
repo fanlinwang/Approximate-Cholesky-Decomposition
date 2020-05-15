@@ -1,0 +1,584 @@
+Start test. V = 10, E = 10
+Starting program. 1 functions registered.
+V: 10, E:10
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 71
+#fl comparisons: 15
+#int ops: 50
+#int comparisons: 126
+#total ops: 262
+#cycles: 39844.3
+
+Running: Base approxChol
+0.00657559 flops / cycles
+
+Performance counter stats for './build/src/main 10 10':
+
+62,223      r5301c7:u                                                     (55.85%)
+0      r5302c7:u                                                     (56.75%)
+13,035,533      L1-dcache-loads:u                                             (75.35%)
+52,438      L1-dcache-load-misses:u   #    0.40% of all L1-dcache hits    (77.85%)
+16,103      LLC-loads:u                                                   (76.43%)
+203      LLC-load-misses:u         #    1.26% of all LL-cache hits     (65.49%)
+
+0.010746287 seconds time elapsed
+
+Start test. V = 100, E = 100
+Starting program. 1 functions registered.
+V: 100, E:100
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 1278
+#fl comparisons: 275
+#int ops: 776
+#int comparisons: 2007
+#total ops: 4336
+#cycles: 782780
+
+Running: Base approxChol
+0.00553923 flops / cycles
+
+Performance counter stats for './build/src/main 100 100':
+
+1,181,089      r5301c7:u                                                     (66.70%)
+0      r5302c7:u                                                     (66.76%)
+350,630,217      L1-dcache-loads:u                                             (66.75%)
+1,134,750      L1-dcache-load-misses:u   #    0.32% of all L1-dcache hits    (66.76%)
+111,974      LLC-loads:u                                                   (66.66%)
+235      LLC-load-misses:u         #    0.21% of all LL-cache hits     (66.48%)
+
+0.163590376 seconds time elapsed
+
+Start test. V = 100, E = 500
+Starting program. 1 functions registered.
+V: 100, E:500
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 12156
+#fl comparisons: 7819
+#int ops: 13649
+#int comparisons: 36298
+#total ops: 69922
+#cycles: 3.74568e+06
+
+Running: Base approxChol
+0.0186674 flops / cycles
+
+Performance counter stats for './build/src/main 100 500':
+
+11,308,824      r5301c7:u                                                     (66.70%)
+0      r5302c7:u                                                     (66.71%)
+1,680,452,879      L1-dcache-loads:u                                             (66.72%)
+3,782,582      L1-dcache-load-misses:u   #    0.23% of all L1-dcache hits    (66.69%)
+207,044      LLC-loads:u                                                   (66.60%)
+179      LLC-load-misses:u         #    0.09% of all LL-cache hits     (66.60%)
+
+0.680144456 seconds time elapsed
+
+Start test. V = 1000, E = 1000
+Starting program. 1 functions registered.
+V: 1000, E:1000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 13296
+#fl comparisons: 2851
+#int ops: 8002
+#int comparisons: 20783
+#total ops: 44932
+#cycles: 4.34746e+07
+
+Running: Base approxChol
+0.00103352 flops / cycles
+
+Performance counter stats for './build/src/main 1000 1000':
+
+11,547,941      r5301c7:u                                                     (66.65%)
+0      r5302c7:u                                                     (66.66%)
+22,988,477,341      L1-dcache-loads:u                                             (66.68%)
+537,540,932      L1-dcache-load-misses:u   #    2.34% of all L1-dcache hits    (66.68%)
+937,820      LLC-loads:u                                                   (66.68%)
+1,434      LLC-load-misses:u         #    0.15% of all LL-cache hits     (66.66%)
+
+7.564276833 seconds time elapsed
+
+Start test. V = 1000, E = 2000
+Starting program. 1 functions registered.
+V: 1000, E:2000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 68545
+#fl comparisons: 31960
+#int ops: 58659
+#int comparisons: 160084
+#total ops: 319248
+#cycles: 8.88493e+07
+
+Running: Base approxChol
+0.00359314 flops / cycles
+
+Performance counter stats for './build/src/main 1000 2000':
+
+71,870,299      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+46,461,308,880      L1-dcache-loads:u                                             (66.67%)
+880,012,795      L1-dcache-load-misses:u   #    1.89% of all L1-dcache hits    (66.67%)
+2,003,659      LLC-loads:u                                                   (66.66%)
+2,700      LLC-load-misses:u         #    0.13% of all LL-cache hits     (66.66%)
+
+15.405151604 seconds time elapsed
+
+Start test. V = 1000, E = 5000
+Starting program. 1 functions registered.
+V: 1000, E:5000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 195773
+#fl comparisons: 132635
+#int ops: 228933
+#int comparisons: 594329
+#total ops: 1151670
+#cycles: 2.23301e+08
+
+Running: Base approxChol
+0.00515747 flops / cycles
+
+Performance counter stats for './build/src/main 1000 5000':
+
+204,890,565      r5301c7:u                                                     (66.66%)
+0      r5302c7:u                                                     (66.66%)
+115,759,241,361      L1-dcache-loads:u                                             (66.66%)
+1,666,211,072      L1-dcache-load-misses:u   #    1.44% of all L1-dcache hits    (66.67%)
+21,662,155      LLC-loads:u                                                   (66.67%)
+275,160      LLC-load-misses:u         #    1.27% of all LL-cache hits     (66.67%)
+
+38.906629842 seconds time elapsed
+
+Start test. V = 1000, E = 8000
+Starting program. 1 functions registered.
+V: 1000, E:8000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 302344
+#fl comparisons: 240501
+#int ops: 412317
+#int comparisons: 1038420
+#total ops: 1993582
+#cycles: 3.59983e+08
+
+Running: Base approxChol
+0.00553799 flops / cycles
+
+Performance counter stats for './build/src/main 1000 8000':
+
+342,337,651      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+185,859,565,447      L1-dcache-loads:u                                             (66.67%)
+2,448,982,113      L1-dcache-load-misses:u   #    1.32% of all L1-dcache hits    (66.67%)
+60,071,352      LLC-loads:u                                                   (66.66%)
+396,444      LLC-load-misses:u         #    0.66% of all LL-cache hits     (66.66%)
+
+62.391160190 seconds time elapsed
+
+Start test. V = 2000, E = 2000
+Starting program. 1 functions registered.
+V: 2000, E:2000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 26970
+#fl comparisons: 5765
+#int ops: 16054
+#int comparisons: 41925
+#total ops: 90714
+#cycles: 1.69855e+08
+
+Running: Base approxChol
+0.000534067 flops / cycles
+
+Performance counter stats for './build/src/main 2000 2000':
+
+23,054,125      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+90,286,684,068      L1-dcache-loads:u                                             (66.67%)
+2,725,333,885      L1-dcache-load-misses:u   #    3.02% of all L1-dcache hits    (66.67%)
+12,341,811      LLC-loads:u                                                   (66.67%)
+27,384      LLC-load-misses:u         #    0.22% of all LL-cache hits     (66.67%)
+
+29.587918446 seconds time elapsed
+
+Start test. V = 2000, E = 5000
+Starting program. 1 functions registered.
+V: 2000, E:5000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 202701
+#fl comparisons: 109035
+#int ops: 192922
+#int comparisons: 516866
+#total ops: 1021524
+#cycles: 4.19233e+08
+
+Running: Base approxChol
+0.00243665 flops / cycles
+
+Performance counter stats for './build/src/main 2000 5000':
+
+217,504,737      r5301c7:u                                                     (66.66%)
+0      r5302c7:u                                                     (66.66%)
+223,596,021,429      L1-dcache-loads:u                                             (66.67%)
+4,466,019,701      L1-dcache-load-misses:u   #    2.00% of all L1-dcache hits    (66.67%)
+151,033,430      LLC-loads:u                                                   (66.67%)
+587,760      LLC-load-misses:u         #    0.39% of all LL-cache hits     (66.66%)
+
+73.515816417 seconds time elapsed
+
+Start test. V = 2000, E = 8000
+Starting program. 1 functions registered.
+V: 2000, E:8000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 347583
+#fl comparisons: 223132
+#int ops: 386353
+#int comparisons: 1009192
+#total ops: 1966260
+#cycles: 6.77643e+08
+
+Running: Base approxChol
+0.00290162 flops / cycles
+
+Performance counter stats for './build/src/main 2000 8000':
+
+373,263,170      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+355,958,765,188      L1-dcache-loads:u                                             (66.67%)
+6,014,528,828      L1-dcache-load-misses:u   #    1.69% of all L1-dcache hits    (66.67%)
+294,179,747      LLC-loads:u                                                   (66.67%)
+3,274,646      LLC-load-misses:u         #    1.11% of all LL-cache hits     (66.67%)
+
+118.800273473 seconds time elapsed
+
+Start test. V = 2000, E = 10000
+Starting program. 1 functions registered.
+V: 2000, E:10000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 432549
+#fl comparisons: 303860
+#int ops: 523004
+#int comparisons: 1340858
+#total ops: 2600271
+#cycles: 8.476e+08
+
+Running: Base approxChol
+0.00306781 flops / cycles
+
+Performance counter stats for './build/src/main 2000 10000':
+
+471,376,280      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+444,047,627,985      L1-dcache-loads:u                                             (66.66%)
+7,045,069,793      L1-dcache-load-misses:u   #    1.59% of all L1-dcache hits    (66.67%)
+358,044,104      LLC-loads:u                                                   (66.67%)
+2,705,467      LLC-load-misses:u         #    0.76% of all LL-cache hits     (66.67%)
+
+148.718073897 seconds time elapsed
+
+Start test. V = 5000, E = 5000
+Starting program. 1 functions registered.
+V: 5000, E:5000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 69110
+#fl comparisons: 14806
+#int ops: 40944
+#int comparisons: 107245
+#total ops: 232105
+#cycles: 1.06441e+09
+
+Running: Base approxChol
+0.000218059 flops / cycles
+
+Performance counter stats for './build/src/main 5000 5000':
+
+59,685,647      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+560,909,666,411      L1-dcache-loads:u                                             (66.67%)
+19,196,409,735      L1-dcache-load-misses:u   #    3.42% of all L1-dcache hits    (66.67%)
+5,031,930,690      LLC-loads:u                                                   (66.67%)
+2,134,296      LLC-load-misses:u         #    0.04% of all LL-cache hits     (66.67%)
+
+187.195731306 seconds time elapsed
+
+Start test. V = 5000, E = 8000
+Starting program. 1 functions registered.
+V: 5000, E:8000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 295801
+#fl comparisons: 133942
+#int ops: 247540
+#int comparisons: 670492
+#total ops: 1347775
+#cycles: 1.66928e+09
+
+Running: Base approxChol
+0.000807399 flops / cycles
+
+Performance counter stats for './build/src/main 5000 8000':
+
+311,266,896      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+881,558,273,308      L1-dcache-loads:u                                             (66.67%)
+23,493,798,835      L1-dcache-load-misses:u   #    2.67% of all L1-dcache hits    (66.67%)
+7,487,219,577      LLC-loads:u                                                   (66.67%)
+4,244,515      LLC-load-misses:u         #    0.06% of all LL-cache hits     (66.67%)
+
+291.056758740 seconds time elapsed
+
+Start test. V = 5000, E = 10000
+Starting program. 1 functions registered.
+V: 5000, E:10000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 422952
+#fl comparisons: 219094
+#int ops: 390107
+#int comparisons: 1042162
+#total ops: 2074315
+#cycles: 2.09923e+09
+
+Running: Base approxChol
+0.000988129 flops / cycles
+
+Performance counter stats for './build/src/main 5000 10000':
+
+459,767,498      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+1,095,112,211,693      L1-dcache-loads:u                                             (66.67%)
+26,072,039,316      L1-dcache-load-misses:u   #    2.38% of all L1-dcache hits    (66.67%)
+9,423,880,983      LLC-loads:u                                                   (66.67%)
+8,006,350      LLC-load-misses:u         #    0.08% of all LL-cache hits     (66.67%)
+
+366.089217398 seconds time elapsed
+
+Start test. V = 5000, E = 20000
+Starting program. 1 functions registered.
+V: 5000, E:20000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 972387
+#fl comparisons: 659998
+#int ops: 1136263
+#int comparisons: 2921086
+#total ops: 5689734
+#cycles: 3.92595e+09
+
+Running: Base approxChol
+0.00144926 flops / cycles
+
+Performance counter stats for './build/src/main 5000 20000':
+
+1,079,980,081      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+2,158,629,033,668      L1-dcache-loads:u                                             (66.67%)
+38,705,874,491      L1-dcache-load-misses:u   #    1.79% of all L1-dcache hits    (66.67%)
+11,049,650,675      LLC-loads:u                                                   (66.67%)
+11,337,805      LLC-load-misses:u         #    0.10% of all LL-cache hits     (66.67%)
+
+683.551205592 seconds time elapsed
+
+Start test. V = 8000, E = 8000
+Starting program. 1 functions registered.
+V: 8000, E:8000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 108494
+#fl comparisons: 23167
+#int ops: 64561
+#int comparisons: 168271
+#total ops: 364493
+#cycles: 2.63656e+09
+
+Running: Base approxChol
+0.000138246 flops / cycles
+
+Performance counter stats for './build/src/main 8000 8000':
+
+93,873,539      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+1,429,396,945,220      L1-dcache-loads:u                                             (66.67%)
+50,434,823,088      L1-dcache-load-misses:u   #    3.53% of all L1-dcache hits    (66.67%)
+15,512,461,598      LLC-loads:u                                                   (66.67%)
+1,708,362      LLC-load-misses:u         #    0.01% of all LL-cache hits     (66.67%)
+
+455.703675807 seconds time elapsed
+
+Start test. V = 8000, E = 10000
+Starting program. 1 functions registered.
+V: 8000, E:10000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 283199
+#fl comparisons: 105569
+#int ops: 207769
+#int comparisons: 567210
+#total ops: 1163747
+#cycles: 3.28747e+09
+
+Running: Base approxChol
+0.000353995 flops / cycles
+
+Performance counter stats for './build/src/main 8000 10000':
+
+290,861,133      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+1,767,460,035,775      L1-dcache-loads:u                                             (66.67%)
+55,165,431,921      L1-dcache-load-misses:u   #    3.12% of all L1-dcache hits    (66.67%)
+22,567,012,114      LLC-loads:u                                                   (66.67%)
+5,981,955      LLC-load-misses:u         #    0.03% of all LL-cache hits     (66.67%)
+
+568.466310537 seconds time elapsed
+
+Start test. V = 8000, E = 20000
+Starting program. 1 functions registered.
+V: 8000, E:20000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 941808
+#fl comparisons: 551363
+#int ops: 977546
+#int comparisons: 2556559
+#total ops: 5027276
+#cycles: 6.331e+09
+
+Running: Base approxChol
+0.000794074 flops / cycles
+
+Performance counter stats for './build/src/main 8000 20000':
+
+1,062,478,376      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+3,453,448,805,108      L1-dcache-loads:u                                             (66.67%)
+75,333,202,716      L1-dcache-load-misses:u   #    2.18% of all L1-dcache hits    (66.67%)
+29,069,266,632      LLC-loads:u                                                   (66.67%)
+22,122,271      LLC-load-misses:u         #    0.08% of all LL-cache hits     (66.67%)
+
+1095.472812535 seconds time elapsed
+
+Start test. V = 8000, E = 50000
+Starting program. 1 functions registered.
+V: 8000, E:50000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 2562202
+#fl comparisons: 2044200
+#int ops: 3485153
+#int comparisons: 8727454
+#total ops: 16819009
+#cycles: 1.52987e+10
+
+Running: Base approxChol
+0.00109937 flops / cycles
+
+Performance counter stats for './build/src/main 8000 50000':
+
+3,023,918,126      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+8,505,364,463,024      L1-dcache-loads:u                                             (66.67%)
+135,967,567,772      L1-dcache-load-misses:u   #    1.60% of all L1-dcache hits    (66.67%)
+29,246,107,292      LLC-loads:u                                                   (66.67%)
+46,277,613      LLC-load-misses:u         #    0.16% of all LL-cache hits     (66.67%)
+
+2646.188921774 seconds time elapsed
+
+Start test. V = 10000, E = 10000
+Starting program. 1 functions registered.
+V: 10000, E:10000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 134126
+#fl comparisons: 28671
+#int ops: 80186
+#int comparisons: 208496
+#total ops: 451479
+#cycles: 4.13515e+09
+
+Running: Base approxChol
+0.000109181 flops / cycles
+
+Performance counter stats for './build/src/main 10000 10000':
+
+115,712,676      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+2,230,146,830,150      L1-dcache-loads:u                                             (66.67%)
+79,254,192,146      L1-dcache-load-misses:u   #    3.55% of all L1-dcache hits    (66.67%)
+28,343,717,659      LLC-loads:u                                                   (66.67%)
+5,210,953      LLC-load-misses:u         #    0.02% of all LL-cache hits     (66.67%)
+
+714.876439047 seconds time elapsed
+
+Start test. V = 10000, E = 20000
+Starting program. 1 functions registered.
+V: 10000, E:20000
+Starting performance test 0...
+Generating random vector b...
+b generated.
+Created random sparse matrix A.
+#fl ops: 894746
+#fl comparisons: 482270
+#int ops: 853413
+#int comparisons: 2263245
+#total ops: 4493674
+
+Performance counter stats for './build/src/main 10000 20000':
+
+51,866,944      r5301c7:u                                                     (66.67%)
+0      r5302c7:u                                                     (66.67%)
+229,507,900,049      L1-dcache-loads:u                                             (66.67%)
+5,582,851,994      L1-dcache-load-misses:u   #    2.43% of all L1-dcache hits    (66.67%)
+2,383,207,962      LLC-loads:u                                                   (66.67%)
+688,618      LLC-load-misses:u         #    0.03% of all LL-cache hits     (66.67%)
+
+72.955335801 seconds time elapsed
+

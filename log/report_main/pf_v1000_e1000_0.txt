@@ -1,0 +1,256 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+# dso: main
+#
+# Total Lost Samples: 0
+#
+# Samples: 30K of event 'cycles:u'
+# Event count (approx.): 27958421361
+#
+# Overhead  Command  Symbol                                                                                                                                                                                                       
+# ........  .......  .............................................................................................................................................................................................................
+#
+    22.85%  main     [.] std::_Construct<LLord<LLord const&> >
+    17.81%  main     [.] __gnu_cxx::operator!=<LLord const*, std::vector<LLord, std::allocator<LLord> > >
+    10.07%  main     [.] std::__uninitialized_copy<false>::__uninit_copy<__gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >, LLord*>
+     8.50%  main     [.] __gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >::base
+     6.77%  main     [.] __gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >::operator++
+     6.07%  main     [.] operator new
+     4.30%  main     [.] std::forward<LLord const&>
+     3.73%  main     [.] std::__addressof<LLord>
+     3.42%  main     [.] __gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >::operator*
+     0.46%  main     [.] approxChol
+     0.30%  main     [.] get_ll_col
+     0.27%  main     [.] compressCol
+     0.25%  main     [.] std::generate_canonical<double, 53ul, std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul> >
+     0.22%  main     [.] std::vector<LLcol, std::allocator<LLcol> >::operator[]
+     0.18%  main     [.] std::__insertion_sort<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >, bool (*)(LLcol const&, LLcol const&)>
+     0.18%  main     [.] __gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >::__normal_iterator
+     0.17%  main     [.] std::lower_bound<__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double>
+     0.16%  main     [.] __gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >::operator+
+     0.15%  main     [.] __gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >::base
+     0.14%  main     [.] __gnu_cxx::operator!=<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >
+     0.14%  main     [.] std::vector<int, std::allocator<int> >::operator[]
+     0.13%  main     [.] __gnu_cxx::operator-<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >
+     0.12%  main     [.] std::__copy_move<false, true, std::random_access_iterator_tag>::__copy_m<LLcol>
+     0.11%  main     [.] std::vector<LLcol, std::allocator<LLcol> >::size
+     0.11%  main     [.] std::vector<LLord, std::allocator<LLord> >::operator[]
+     0.10%  main     [.] cmp_val
+     0.10%  main     [.] std::__niter_base<__gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > > >
+     0.09%  main     [.] std::vector<LLord, std::allocator<LLord> >::vector
+     0.09%  main     [.] std::vector<LLcol, std::allocator<LLcol> >::begin
+     0.08%  main     [.] std::__copy_move_a<false, LLcol const*, LLcol*>
+     0.07%  main     [.] std::__unguarded_linear_insert<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >, bool (*)(LLcol const&, LLcol const&)>
+     0.07%  main     [.] std::__niter_base<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > > >
+     0.07%  main     [.] std::vector<LLcol, std::allocator<LLcol> >::vector
+     0.07%  main     [.] std::vector<double, std::allocator<double> >::operator[]
+     0.07%  main     [.] __gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >::operator*
+     0.07%  main     [.] LLMatOrd::~LLMatOrd
+     0.07%  main     [.] std::_Vector_base<LLcol, std::allocator<LLcol> >::~_Vector_base
+     0.06%  main     [.] std::_Destroy<LLord*, LLord>
+     0.06%  main     [.] std::vector<int, std::allocator<int> >::vector
+     0.06%  main     [.] std::vector<LLcol, std::allocator<LLcol> >::begin
+     0.06%  main     [.] std::vector<LLcol, std::allocator<LLcol> >::end
+     0.06%  main     [.] std::_Vector_base<int, std::allocator<int> >::_Vector_impl::_Vector_impl
+     0.06%  main     [.] std::_Vector_base<int, std::allocator<int> >::~_Vector_base
+     0.06%  main     [.] std::vector<LLcol, std::allocator<LLcol> >::operator=
+     0.06%  main     [.] std::vector<int, std::allocator<int> >::push_back
+     0.06%  main     [.] std::_Vector_base<LLord, std::allocator<LLord> >::~_Vector_base
+     0.06%  main     [.] std::__copy_move_backward_a2<true, __gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >, __gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > > >
+     0.05%  main     [.] std::_Vector_base<LLord, std::allocator<LLord> >::_M_create_storage
+     0.05%  main     [.] __gnu_cxx::operator==<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >
+     0.05%  main     [.] std::__uninitialized_copy_a<__gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >, LLord*, LLord>
+     0.05%  main     [.] std::vector<double, std::allocator<double> >::push_back
+     0.05%  main     [.] std::__detail::_Mod<unsigned long, 2147483647ul, 16807ul, 0ul, true, true>::__calc
+     0.05%  main     [.] cmp_row
+     0.05%  main     [.] std::__copy_move_a2<false, __gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, __gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > > >
+     0.05%  main     [.] __gnu_cxx::operator-<double*, std::vector<double, std::allocator<double> > >
+     0.05%  main     [.] std::allocator_traits<std::allocator<LLcol> >::select_on_container_copy_construction
+     0.05%  main     [.] std::vector<LLcol, std::allocator<LLcol> >::capacity
+     0.05%  main     [.] std::vector<double, std::allocator<double> >::emplace_back<double>
+     0.04%  main     [.] std::advance<__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, long>
+     0.04%  main     [.] std::__introsort_loop<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >, long, bool (*)(LLcol const&, LLcol const&)>
+     0.04%  main     [.] std::__lg
+     0.04%  main     [.] std::_Vector_base<LLcol, std::allocator<LLcol> >::_M_create_storage
+     0.04%  main     [.] std::allocator<int>::allocator
+     0.04%  main     [.] std::vector<int, std::allocator<int> >::~vector
+     0.04%  main     [.] std::uninitialized_copy<__gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >, LLord*>
+     0.04%  main     [.] std::vector<LLord, std::allocator<LLord> >::~vector
+     0.04%  main     [.] std::_Iter_base<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >, true>::_S_base
+     0.04%  main     [.] std::__uninitialized_copy<true>::__uninit_copy<__gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, LLcol*>
+     0.04%  main     [.] std::allocator<LLcol>::allocator
+     0.04%  main     [.] std::_Vector_base<LLord, std::allocator<LLord> >::_Vector_impl::~_Vector_impl
+     0.04%  main     [.] std::__fill_n_a<int*, unsigned long, int>
+     0.04%  main     [.] std::__niter_base<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > > >
+     0.04%  main     [.] std::forward<int const&>
+     0.04%  main     [.] std::__uninitialized_copy_a<__gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, LLcol*, LLcol>
+     0.03%  main     [.] std::vector<LLord, std::allocator<LLord> >::size
+     0.03%  main     [.] std::__copy_move_a2<false, __gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, LLcol*>
+     0.03%  main     [.] std::_Destroy<LLord*>
+     0.03%  main     [.] std::_Iter_base<__gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, false>::_S_base
+     0.03%  main     [.] std::_Vector_base<int, std::allocator<int> >::_M_get_Tp_allocator
+     0.03%  main     [.] std::__copy_move<false, true, std::random_access_iterator_tag>::__copy_m<int>
+     0.03%  main     [.] std::_Iter_base<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, false>::_S_base
+     0.03%  main     [.] __gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >::operator+=
+     0.03%  main     [.] std::uninitialized_copy<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, int*>
+     0.03%  main     [.] __gnu_cxx::new_allocator<int>::construct<int, int const&>
+     0.03%  main     [.] std::vector<int, std::allocator<int> >::size
+     0.03%  main     [.] std::_Vector_base<LLord, std::allocator<LLord> >::_M_allocate
+     0.03%  main     [.] __gnu_cxx::new_allocator<LLcol>::allocate
+     0.03%  main     [.] std::sort<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >, bool (*)(LLcol const&, LLcol const&)>
+     0.03%  main     [.] std::uniform_real_distribution<double>::operator()<std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul> >
+     0.03%  main     [.] std::__detail::_Adaptor<std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>, double>::operator()
+     0.03%  main     [.] std::__fill_n_a<double*, unsigned long, double>
+     0.03%  main     [.] std::forward<double>
+     0.03%  main     [.] std::_Iter_base<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, true>::_S_base
+     0.03%  main     [.] std::__final_insertion_sort<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >, bool (*)(LLcol const&, LLcol const&)>
+     0.03%  main     [.] std::__miter_base<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > > >
+     0.03%  main     [.] std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::operator()
+     0.03%  main     [.] std::uniform_real_distribution<double>::operator()<std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul> >
+     0.03%  main     [.] std::allocator<LLord>::~allocator
+     0.03%  main     [.] std::_Vector_base<LLcol, std::allocator<LLcol> >::_M_deallocate
+     0.03%  main     [.] std::__advance<__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, long>
+     0.03%  main     [.] std::vector<int, std::allocator<int> >::begin
+     0.03%  main     [.] std::_Vector_base<LLcol, std::allocator<LLcol> >::_M_get_Tp_allocator
+     0.03%  main     [.] __gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >::__normal_iterator
+     0.03%  main     [.] __gnu_cxx::__alloc_traits<std::allocator<LLcol> >::_S_select_on_copy
+     0.03%  main     [.] std::__copy_move_backward<true, true, std::random_access_iterator_tag>::__copy_move_b<LLcol>
+     0.03%  main     [.] std::__miter_base<__gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > > >
+     0.03%  main     [.] __gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >::operator*
+     0.02%  main     [.] __gnu_cxx::new_allocator<double>::construct<double, double>
+     0.02%  main     [.] std::__uninitialized_copy_a<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, int*, int>
+     0.02%  main     [.] std::copy<__gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, LLcol*>
+     0.02%  main     [.] std::_Vector_base<int, std::allocator<int> >::_M_create_storage
+     0.02%  main     [.] __gnu_cxx::new_allocator<double>::construct<double, double const&>
+     0.02%  main     [.] std::vector<LLord, std::allocator<LLord> >::end
+     0.02%  main     [.] std::_Iter_base<__gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, true>::_S_base
+     0.02%  main     [.] std::distance<__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > > >
+     0.02%  main     [.] std::allocator_traits<std::allocator<double> >::construct<double, double>
+     0.02%  main     [.] std::move<LLcol&>
+     0.02%  main     [.] std::vector<LLord, std::allocator<LLord> >::begin
+     0.02%  main     [.] __gnu_cxx::new_allocator<int>::deallocate
+     0.02%  main     [.] std::__fill_n_a<LLcol*, unsigned long, LLcol>
+     0.02%  main     [.] std::_Vector_base<LLcol, std::allocator<LLcol> >::_M_allocate
+     0.02%  main     [.] std::_Vector_base<LLord, std::allocator<LLord> >::_Vector_impl::_Vector_impl
+     0.02%  main     [.] __gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >::operator++
+     0.02%  main     [.] std::_Vector_base<int, std::allocator<int> >::_M_deallocate
+     0.02%  main     [.] std::__niter_base<LLcol*>
+     0.02%  main     [.] __gnu_cxx::new_allocator<int>::allocate
+     0.02%  main     [.] LLMatOrd::LLMatOrd
+     0.02%  main     [.] std::forward<double const&>
+     0.02%  main     [.] __gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >::__normal_iterator
+     0.02%  main     [.] std::_Destroy<int*>
+     0.02%  main     [.] std::__copy_move_a2<false, __gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, int*>
+     0.02%  main     [.] std::_Vector_base<int, std::allocator<int> >::_Vector_base
+     0.02%  main     [.] std::__copy_move_a<false, int const*, int*>
+     0.02%  main     [.] std::uniform_real_distribution<double>::param_type::a
+     0.02%  main     [.] std::allocator_traits<std::allocator<int> >::_S_construct<int, int const&>
+     0.02%  main     [.] std::max<unsigned long>
+     0.02%  main     [.] std::_Vector_base<LLord, std::allocator<LLord> >::_M_get_Tp_allocator
+     0.02%  main     [.] std::allocator_traits<std::allocator<LLord> >::_S_select<std::allocator<LLord> const>
+     0.02%  main     [.] std::_Destroy<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > > >
+     0.02%  main     [.] std::allocator_traits<std::allocator<int> >::construct<int, int const&>
+     0.02%  main     [.] std::allocator<int>::~allocator
+     0.02%  main     [.] std::allocator_traits<std::allocator<LLcol> >::_S_select<std::allocator<LLcol> const>
+     0.02%  main     [.] std::allocator_traits<std::allocator<int> >::select_on_container_copy_construction
+     0.02%  main     [.] std::allocator_traits<std::allocator<int> >::_S_select<std::allocator<int> const>
+     0.02%  main     [.] std::_Iter_base<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >, false>::_S_base
+     0.02%  main     [.] std::uninitialized_copy<__gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, LLcol*>
+     0.02%  main     [.] __gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >::base
+     0.01%  main     [.] std::_Destroy<int*, int>
+     0.01%  main     [.] __gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >::__normal_iterator
+     0.01%  main     [.] std::__copy_move_backward_a<true, LLcol*, LLcol*>
+     0.01%  main     [.] std::advance<__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, int>
+     0.01%  main     [.] std::_Vector_base<LLord, std::allocator<LLord> >::_M_deallocate
+     0.01%  main     [.] std::_Vector_base<LLord, std::allocator<LLord> >::_Vector_base
+     0.01%  main     [.] std::vector<LLcol, std::allocator<LLcol> >::end
+     0.01%  main     [.] std::_Vector_base<LLcol, std::allocator<LLcol> >::_Vector_impl::_Vector_impl
+     0.01%  main     [.] std::_Vector_base<LLcol, std::allocator<LLcol> >::_Vector_impl::~_Vector_impl
+     0.01%  main     [.] std::_Vector_base<LLcol, std::allocator<LLcol> >::_M_get_Tp_allocator
+     0.01%  main     [.] __gnu_cxx::new_allocator<LLord>::deallocate
+     0.01%  main     [.] __gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >::__normal_iterator
+     0.01%  main     [.] std::vector<LLcol, std::allocator<LLcol> >::~vector
+     0.01%  main     [.] __gnu_cxx::__alloc_traits<std::allocator<int> >::_S_select_on_copy
+     0.01%  main     [.] std::__miter_base<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > > >
+     0.01%  main     [.] __gnu_cxx::new_allocator<LLord>::allocate
+     0.01%  main     [.] std::vector<int, std::allocator<int> >::end
+     0.01%  main     [.] std::vector<double, std::allocator<double> >::push_back
+     0.01%  main     [.] std::allocator<LLord>::allocator
+     0.01%  main     [.] std::allocator_traits<std::allocator<double> >::_S_construct<double, double const&>
+     0.01%  main     [.] __gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >::operator++
+     0.01%  main     [.] std::_Vector_base<LLord, std::allocator<LLord> >::_M_get_Tp_allocator
+     0.01%  main     [.] std::copy<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, int*>
+     0.01%  main     [.] __gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >::base
+     0.01%  main     [.] std::allocator_traits<std::allocator<double> >::construct<double, double const&>
+     0.01%  main     [.] __gnu_cxx::new_allocator<LLord>::new_allocator
+     0.01%  main     [.] std::_Vector_base<int, std::allocator<int> >::_Vector_impl::~_Vector_impl
+     0.01%  main     [.] __gnu_cxx::new_allocator<int>::~new_allocator
+     0.01%  main     [.] __gnu_cxx::__alloc_traits<std::allocator<LLord> >::_S_select_on_copy
+     0.01%  main     [.] std::vector<double, std::allocator<double> >::begin
+     0.01%  main     [.] std::allocator_traits<std::allocator<double> >::_S_construct<double, double>
+     0.01%  main     [.] std::_Destroy<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >, LLcol>
+     0.01%  main     [.] std::less<int>::operator()
+     0.01%  main     [.] std::__iterator_category<__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > > >
+     0.01%  main     [.] __gnu_cxx::new_allocator<LLcol>::max_size
+     0.01%  main     [.] std::copy<__gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, __gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > > >
+     0.01%  main     [.] std::allocator<LLcol>::~allocator
+     0.01%  main     [.] __gnu_cxx::new_allocator<LLcol>::new_allocator
+     0.01%  main     [.] std::vector<int, std::allocator<int> >::_M_emplace_back_aux<int const&>
+     0.01%  main     [.] __gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >::base
+     0.01%  main     [.] std::__niter_base<int*>
+     0.01%  main     [.] std::move_backward<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >, __gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > > >
+     0.01%  main     [.] std::_Vector_base<int, std::allocator<int> >::_M_get_Tp_allocator
+     0.01%  main     [.] __gnu_cxx::new_allocator<int>::max_size
+     0.01%  main     [.] operator delete@plt
+     0.01%  main     [.] std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::max
+     0.01%  main     [.] __gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >::operator--
+     0.01%  main     [.] std::__detail::__mod<unsigned long, 2147483647ul, 16807ul, 0ul>
+     0.01%  main     [.] std::log
+     0.01%  main     [.] std::_Vector_base<LLcol, std::allocator<LLcol> >::_Vector_base
+     0.01%  main     [.] std::__uninitialized_copy<true>::__uninit_copy<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, int*>
+     0.01%  main     [.] std::_Destroy_aux<true>::__destroy<__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > > >
+     0.01%  main     [.] std::_Vector_base<int, std::allocator<int> >::_M_allocate
+     0.01%  main     [.] std::allocator_traits<std::allocator<LLord> >::select_on_container_copy_construction
+     0.00%  main     [.] std::_Identity<int>::operator()
+     0.00%  main     [.] std::_Rb_tree<int, int, std::_Identity<int>, std::less<int>, std::allocator<int> >::_M_get_insert_unique_pos
+     0.00%  main     [.] std::min<unsigned long>
+     0.00%  main     [.] __gnu_cxx::new_allocator<int>::new_allocator
+     0.00%  main     [.] std::__miter_base<std::move_iterator<int*> >
+     0.00%  main     [.] std::vector<int, std::allocator<int> >::max_size
+     0.00%  main     [.] operator new@plt
+     0.00%  main     [.] __gnu_cxx::new_allocator<LLcol>::~new_allocator
+     0.00%  main     [.] std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::min
+     0.00%  main     [.] std::_Destroy<LLcol*>
+     0.00%  main     [.] std::__distance<__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > > >
+     0.00%  main     [.] memmove@plt
+     0.00%  main     [.] __gnu_cxx::new_allocator<LLcol>::deallocate
+     0.00%  main     [.] std::_Destroy_aux<true>::__destroy<LLord*>
+     0.00%  main     [.] std::vector<int, std::allocator<int> >::_M_check_len
+     0.00%  main     [.] approxChol_count
+     0.00%  main     [.] std::__miter_base<std::move_iterator<double*> >
+     0.00%  main     [.] __gnu_cxx::new_allocator<LLord>::max_size
+     0.00%  main     [.] std::_Iter_base<LLcol*, false>::_S_base
+     0.00%  main     [.] std::copy<std::move_iterator<double*>, double*>
+     0.00%  main     [.] std::move<double&>
+     0.00%  main     [.] std::allocator_traits<std::allocator<double> >::max_size
+     0.00%  main     [.] std::_Iter_base<int*, false>::_S_base
+     0.00%  main     [.] std::uniform_real_distribution<double>::param_type::b
+     0.00%  main     [.] __gnu_cxx::new_allocator<double>::~new_allocator
+     0.00%  main     [.] std::__uninitialized_copy_a<std::move_iterator<double*>, double*, double>
+     0.00%  main     [.] std::vector<double, std::allocator<double> >::_M_emplace_back_aux<double>
+     0.00%  main     [.] std::_Destroy<LLcol*, LLcol>
+     0.00%  main     [.] std::allocator<double>::~allocator
+     0.00%  main     [.] std::_Destroy_aux<true>::__destroy<int*>
+     0.00%  main     [.] __gnu_cxx::__alloc_traits<std::allocator<LLcol> >::_S_propagate_on_copy_assign
+     0.00%  main     [.] std::_Rb_tree<int, int, std::_Identity<int>, std::less<int>, std::allocator<int> >::_M_lower_bound
+     0.00%  main     [.] cmp_edge
+     0.00%  main     [.] std::_Rb_tree<int, int, std::_Identity<int>, std::less<int>, std::allocator<int> >::end
+     0.00%  main     [.] __gnu_cxx::new_allocator<std::_Rb_tree_node<Edge> >::allocate
+     0.00%  main     [.] std::_Identity<Edge>::operator()
+     0.00%  main     [.] std::less<Edge>::operator()
+     0.00%  main     [.] std::forward<bool&>
+
+
+#
+# (Tip: To change sampling frequency to 100 Hz: perf record -F 100)
+#

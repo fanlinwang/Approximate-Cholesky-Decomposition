@@ -1,0 +1,1045 @@
+ Percent |	Source code & Disassembly of main for cycles:u (3 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	000000000042e1a2 <__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >::__normal_iterator(LLcol* const&)>:
+         :	_ZN9__gnu_cxx17__normal_iteratorIP5LLcolSt6vectorIS1_SaIS1_EEEC2ERKS2_():
+         :	      typedef typename __traits_type::pointer           pointer;
+         :
+         :	      _GLIBCXX_CONSTEXPR __normal_iterator() : _M_current(_Iterator()) { }
+         :
+         :	      explicit
+         :	      __normal_iterator(const _Iterator& __i) : _M_current(__i) { }
+    0.00 :	  42e1a2:       push   %rbp
+    0.00 :	  42e1a3:       mov    %rsp,%rbp
+   33.33 :	  42e1a6:       mov    %rdi,-0x8(%rbp)
+    0.00 :	  42e1aa:       mov    %rsi,-0x10(%rbp)
+    0.00 :	  42e1ae:       mov    -0x10(%rbp),%rax
+   33.33 :	  42e1b2:       mov    (%rax),%rdx
+    0.00 :	  42e1b5:       mov    -0x8(%rbp),%rax
+    0.00 :	  42e1b9:       mov    %rdx,(%rax)
+    0.00 :	  42e1bc:       pop    %rbp
+   33.33 :	  42e1bd:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (2 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000427d1a <__gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >::operator++()>:
+         :	_ZN9__gnu_cxx17__normal_iteratorIPK5LLordSt6vectorIS1_SaIS1_EEEppEv():
+         :	      pointer
+         :	      operator->() const
+         :	      { return _M_current; }
+         :
+         :	      __normal_iterator&
+         :	      operator++()
+    0.00 :	  427d1a:       push   %rbp
+    0.00 :	  427d1b:       mov    %rsp,%rbp
+   50.00 :	  427d1e:       mov    %rdi,-0x8(%rbp)
+         :	      {
+         :	        ++_M_current;
+    0.00 :	  427d22:       mov    -0x8(%rbp),%rax
+    0.00 :	  427d26:       mov    (%rax),%rax
+    0.00 :	  427d29:       lea    0x10(%rax),%rdx
+    0.00 :	  427d2d:       mov    -0x8(%rbp),%rax
+    0.00 :	  427d31:       mov    %rdx,(%rax)
+         :	        return *this;
+    0.00 :	  427d34:       mov    -0x8(%rbp),%rax
+         :	      }
+    0.00 :	  427d38:       pop    %rbp
+   50.00 :	  427d39:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (2 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000427d67 <_ZSt10_ConstructI5LLordIRKS0_EEvPT_DpOT0_>:
+         :	_ZSt10_ConstructI5LLordIRKS0_EEvPT_DpOT0_():
+         :	   * object's constructor with an initializer.
+         :	   */
+         :	#if __cplusplus >= 201103L
+         :	  template<typename _T1, typename... _Args>
+         :	    inline void
+         :	    _Construct(_T1* __p, _Args&&... __args)
+   50.00 :	  427d67:       push   %rbp
+    0.00 :	  427d68:       mov    %rsp,%rbp
+    0.00 :	  427d6b:       push   %rbx
+    0.00 :	  427d6c:       sub    $0x18,%rsp
+    0.00 :	  427d70:       mov    %rdi,-0x18(%rbp)
+    0.00 :	  427d74:       mov    %rsi,-0x20(%rbp)
+         :	    { ::new(static_cast<void*>(__p)) _T1(std::forward<_Args>(__args)...); }
+    0.00 :	  427d78:       mov    -0x20(%rbp),%rax
+    0.00 :	  427d7c:       mov    %rax,%rdi
+    0.00 :	  427d7f:       callq  427d59 <LLord const& std::forward<LLord const&>(std::remove_reference<LLord const&>::type&)>
+    0.00 :	  427d84:       mov    %rax,%rbx
+    0.00 :	  427d87:       mov    -0x18(%rbp),%rax
+    0.00 :	  427d8b:       mov    %rax,%rsi
+    0.00 :	  427d8e:       mov    $0x10,%edi
+    0.00 :	  427d93:       callq  41eb2a <operator new(unsigned long, void*)>
+    0.00 :	  427d98:       mov    %rax,%rcx
+    0.00 :	  427d9b:       test   %rcx,%rcx
+    0.00 :	  427d9e:       je     427dae <_ZSt10_ConstructI5LLordIRKS0_EEvPT_DpOT0_+0x47>
+    0.00 :	  427da0:       mov    (%rbx),%rax
+    0.00 :	  427da3:       mov    0x8(%rbx),%rdx
+    0.00 :	  427da7:       mov    %rax,(%rcx)
+   50.00 :	  427daa:       mov    %rdx,0x8(%rcx)
+    0.00 :	  427dae:       add    $0x18,%rsp
+    0.00 :	  427db2:       pop    %rbx
+    0.00 :	  427db3:       pop    %rbp
+    0.00 :	  427db4:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	000000000041f9b8 <LDLinv::~LDLinv()>:
+         :	_ZN6LDLinvD2Ev():
+         :	//   But, it is specially constructed for this particular solver.
+         :	//   It does not explicitly make the matrix triangular.
+         :	//   Rather, col[i] is the name of the ith col to be eliminated
+         :	// """
+         :
+         :	struct LDLinv{
+    0.00 :	  41f9b8:       push   %rbp
+    0.00 :	  41f9b9:       mov    %rsp,%rbp
+    0.00 :	  41f9bc:       sub    $0x10,%rsp
+    0.00 :	  41f9c0:       mov    %rdi,-0x8(%rbp)
+    0.00 :	  41f9c4:       mov    -0x8(%rbp),%rax
+    0.00 :	  41f9c8:       add    $0x60,%rax
+    0.00 :	  41f9cc:       mov    %rax,%rdi
+    0.00 :	  41f9cf:       callq  41fa2c <std::vector<double, std::allocator<double> >::~vector()>
+  100.00 :	  41f9d4:       mov    -0x8(%rbp),%rax
+    0.00 :	  41f9d8:       add    $0x48,%rax
+    0.00 :	  41f9dc:       mov    %rax,%rdi
+    0.00 :	  41f9df:       callq  41fa2c <std::vector<double, std::allocator<double> >::~vector()>
+    0.00 :	  41f9e4:       mov    -0x8(%rbp),%rax
+    0.00 :	  41f9e8:       add    $0x30,%rax
+    0.00 :	  41f9ec:       mov    %rax,%rdi
+    0.00 :	  41f9ef:       callq  41fa8a <std::vector<int, std::allocator<int> >::~vector()>
+    0.00 :	  41f9f4:       mov    -0x8(%rbp),%rax
+    0.00 :	  41f9f8:       add    $0x18,%rax
+    0.00 :	  41f9fc:       mov    %rax,%rdi
+    0.00 :	  41f9ff:       callq  41fa8a <std::vector<int, std::allocator<int> >::~vector()>
+    0.00 :	  41fa04:       mov    -0x8(%rbp),%rax
+    0.00 :	  41fa08:       mov    %rax,%rdi
+    0.00 :	  41fa0b:       callq  41fa8a <std::vector<int, std::allocator<int> >::~vector()>
+    0.00 :	  41fa10:       leaveq
+    0.00 :	  41fa11:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000430210 <__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >::operator*() const>:
+         :	_ZNK9__gnu_cxx17__normal_iteratorIP5LLcolSt6vectorIS1_SaIS1_EEEdeEv():
+         :	                      _Container>::__type>& __i)
+         :	        : _M_current(__i.base()) { }
+         :
+         :	      // Forward iterator requirements
+         :	      reference
+         :	      operator*() const
+    0.00 :	  430210:       push   %rbp
+  100.00 :	  430211:       mov    %rsp,%rbp
+    0.00 :	  430214:       mov    %rdi,-0x8(%rbp)
+         :	      { return *_M_current; }
+    0.00 :	  430218:       mov    -0x8(%rbp),%rax
+    0.00 :	  43021c:       mov    (%rax),%rax
+    0.00 :	  43021f:       pop    %rbp
+    0.00 :	  430220:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	000000000042d0fc <__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >::operator+(long const&) const>:
+         :	_ZNK9__gnu_cxx17__normal_iteratorIP5LLcolSt6vectorIS1_SaIS1_EEEplERKl():
+         :	      __normal_iterator&
+         :	      operator+=(const difference_type& __n)
+         :	      { _M_current += __n; return *this; }
+         :
+         :	      __normal_iterator
+         :	      operator+(const difference_type& __n) const
+    0.00 :	  42d0fc:       push   %rbp
+    0.00 :	  42d0fd:       mov    %rsp,%rbp
+    0.00 :	  42d100:       sub    $0x20,%rsp
+    0.00 :	  42d104:       mov    %rdi,-0x18(%rbp)
+    0.00 :	  42d108:       mov    %rsi,-0x20(%rbp)
+         :	      { return __normal_iterator(_M_current + __n); }
+    0.00 :	  42d10c:       mov    -0x18(%rbp),%rax
+    0.00 :	  42d110:       mov    (%rax),%rdx
+  100.00 :	  42d113:       mov    -0x20(%rbp),%rax
+    0.00 :	  42d117:       mov    (%rax),%rax
+    0.00 :	  42d11a:       shl    $0x4,%rax
+    0.00 :	  42d11e:       add    %rdx,%rax
+    0.00 :	  42d121:       mov    %rax,-0x8(%rbp)
+    0.00 :	  42d125:       lea    -0x8(%rbp),%rdx
+    0.00 :	  42d129:       lea    -0x10(%rbp),%rax
+    0.00 :	  42d12d:       mov    %rdx,%rsi
+    0.00 :	  42d130:       mov    %rax,%rdi
+    0.00 :	  42d133:       callq  42e1a2 <__gnu_cxx::__normal_iterator<LLcol*, std::vector<LLcol, std::allocator<LLcol> > >::__normal_iterator(LLcol* const&)>
+    0.00 :	  42d138:       mov    -0x10(%rbp),%rax
+    0.00 :	  42d13c:       leaveq
+    0.00 :	  42d13d:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	00000000004251da <__gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >::__normal_iterator(LLord const* const&)>:
+         :	_ZN9__gnu_cxx17__normal_iteratorIPK5LLordSt6vectorIS1_SaIS1_EEEC2ERKS3_():
+         :	      typedef typename __traits_type::pointer           pointer;
+         :
+         :	      _GLIBCXX_CONSTEXPR __normal_iterator() : _M_current(_Iterator()) { }
+         :
+         :	      explicit
+         :	      __normal_iterator(const _Iterator& __i) : _M_current(__i) { }
+    0.00 :	  4251da:       push   %rbp
+    0.00 :	  4251db:       mov    %rsp,%rbp
+    0.00 :	  4251de:       mov    %rdi,-0x8(%rbp)
+    0.00 :	  4251e2:       mov    %rsi,-0x10(%rbp)
+    0.00 :	  4251e6:       mov    -0x10(%rbp),%rax
+    0.00 :	  4251ea:       mov    (%rax),%rdx
+    0.00 :	  4251ed:       mov    -0x8(%rbp),%rax
+    0.00 :	  4251f1:       mov    %rdx,(%rax)
+    0.00 :	  4251f4:       pop    %rbp
+  100.00 :	  4251f5:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	000000000042558c <__gnu_cxx::new_allocator<double>::deallocate(double*, unsigned long)>:
+         :	_ZN9__gnu_cxx13new_allocatorIdE10deallocateEPdm():
+         :	        return static_cast<_Tp*>(::operator new(__n * sizeof(_Tp)));
+         :	      }
+         :
+         :	      // __p is not permitted to be a null pointer.
+         :	      void
+         :	      deallocate(pointer __p, size_type)
+    0.00 :	  42558c:       push   %rbp
+    0.00 :	  42558d:       mov    %rsp,%rbp
+    0.00 :	  425590:       sub    $0x20,%rsp
+    0.00 :	  425594:       mov    %rdi,-0x8(%rbp)
+  100.00 :	  425598:       mov    %rsi,-0x10(%rbp)
+    0.00 :	  42559c:       mov    %rdx,-0x18(%rbp)
+         :	      { ::operator delete(__p); }
+    0.00 :	  4255a0:       mov    -0x10(%rbp),%rax
+    0.00 :	  4255a4:       mov    %rax,%rdi
+    0.00 :	  4255a7:       callq  41db20 <operator delete(void*)@plt>
+    0.00 :	  4255ac:       leaveq
+    0.00 :	  4255ad:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000429632 <get_ll_col(LLMatOrd, int, std::vector<LLcol, std::allocator<LLcol> >&)>:
+         :	_Z10get_ll_col8LLMatOrdiRSt6vectorI5LLcolSaIS1_EE():
+         :
+         :	        ptr = ll.next;
+         :	    }
+         :	}
+         :
+         :	int get_ll_col(LLMatOrd llmat, int i, std::vector<LLcol> &colspace) {
+    0.00 :	  429632:       push   %rbp
+    0.00 :	  429633:       mov    %rsp,%rbp
+    0.00 :	  429636:       push   %rbx
+    0.00 :	  429637:       sub    $0x48,%rsp
+    0.00 :	  42963b:       mov    %rdi,-0x38(%rbp)
+    0.00 :	  42963f:       mov    %esi,-0x3c(%rbp)
+    0.00 :	  429642:       mov    %rdx,-0x48(%rbp)
+         :
+         :	    Tind ptr = llmat.cols[i];
+    0.00 :	  429646:       mov    -0x3c(%rbp),%eax
+    0.00 :	  429649:       cltq
+    0.00 :	  42964b:       mov    -0x38(%rbp),%rdx
+    0.00 :	  42964f:       add    $0x8,%rdx
+    0.00 :	  429653:       mov    %rax,%rsi
+    0.00 :	  429656:       mov    %rdx,%rdi
+    0.00 :	  429659:       callq  41fdba <std::vector<int, std::allocator<int> >::operator[](unsigned long)>
+    0.00 :	  42965e:       mov    (%rax),%eax
+    0.00 :	  429660:       mov    %eax,-0x14(%rbp)
+         :	    int len = 0;
+    0.00 :	  429663:       movl   $0x0,-0x18(%rbp)
+         :
+         :	    while (ptr != -1) {
+    0.00 :	  42966a:       jmpq   42972c <get_ll_col(LLMatOrd, int, std::vector<LLcol, std::allocator<LLcol> >&)+0xfa>
+         :	        LLcol item = {llmat.lles[ptr].row, ptr, llmat.lles[ptr].val};
+    0.00 :	  42966f:       mov    -0x14(%rbp),%eax
+    0.00 :	  429672:       cltq
+    0.00 :	  429674:       mov    -0x38(%rbp),%rdx
+    0.00 :	  429678:       add    $0x20,%rdx
+    0.00 :	  42967c:       mov    %rax,%rsi
+    0.00 :	  42967f:       mov    %rdx,%rdi
+    0.00 :	  429682:       callq  42cff6 <std::vector<LLord, std::allocator<LLord> >::operator[](unsigned long)>
+    0.00 :	  429687:       mov    (%rax),%eax
+    0.00 :	  429689:       mov    %eax,-0x30(%rbp)
+    0.00 :	  42968c:       mov    -0x14(%rbp),%eax
+    0.00 :	  42968f:       mov    %eax,-0x2c(%rbp)
+    0.00 :	  429692:       mov    -0x14(%rbp),%eax
+    0.00 :	  429695:       cltq
+    0.00 :	  429697:       mov    -0x38(%rbp),%rdx
+    0.00 :	  42969b:       add    $0x20,%rdx
+    0.00 :	  42969f:       mov    %rax,%rsi
+    0.00 :	  4296a2:       mov    %rdx,%rdi
+    0.00 :	  4296a5:       callq  42cff6 <std::vector<LLord, std::allocator<LLord> >::operator[](unsigned long)>
+    0.00 :	  4296aa:       mov    0x8(%rax),%rax
+    0.00 :	  4296ae:       mov    %rax,-0x28(%rbp)
+         :
+         :	        if (len >= colspace.size()) {
+    0.00 :	  4296b2:       mov    -0x18(%rbp),%eax
+    0.00 :	  4296b5:       movslq %eax,%rbx
+    0.00 :	  4296b8:       mov    -0x48(%rbp),%rax
+    0.00 :	  4296bc:       mov    %rax,%rdi
+    0.00 :	  4296bf:       callq  42d016 <std::vector<LLcol, std::allocator<LLcol> >::size() const>
+    0.00 :	  4296c4:       cmp    %rax,%rbx
+    0.00 :	  4296c7:       setae  %al
+    0.00 :	  4296ca:       test   %al,%al
+    0.00 :	  4296cc:       je     4296e3 <get_ll_col(LLMatOrd, int, std::vector<LLcol, std::allocator<LLcol> >&)+0xb1>
+         :	            colspace.push_back(item);
+    0.00 :	  4296ce:       lea    -0x30(%rbp),%rdx
+    0.00 :	  4296d2:       mov    -0x48(%rbp),%rax
+    0.00 :	  4296d6:       mov    %rdx,%rsi
+    0.00 :	  4296d9:       mov    %rax,%rdi
+    0.00 :	  4296dc:       callq  42d04a <std::vector<LLcol, std::allocator<LLcol> >::push_back(LLcol const&)>
+    0.00 :	  4296e1:       jmp    42970a <get_ll_col(LLMatOrd, int, std::vector<LLcol, std::allocator<LLcol> >&)+0xd8>
+         :	        } else {
+         :	            colspace[len] = item;
+    0.00 :	  4296e3:       mov    -0x18(%rbp),%eax
+    0.00 :	  4296e6:       movslq %eax,%rdx
+    0.00 :	  4296e9:       mov    -0x48(%rbp),%rax
+    0.00 :	  4296ed:       mov    %rdx,%rsi
+    0.00 :	  4296f0:       mov    %rax,%rdi
+    0.00 :	  4296f3:       callq  42d0b6 <std::vector<LLcol, std::allocator<LLcol> >::operator[](unsigned long)>
+    0.00 :	  4296f8:       mov    %rax,%rcx
+    0.00 :	  4296fb:       mov    -0x30(%rbp),%rax
+    0.00 :	  4296ff:       mov    -0x28(%rbp),%rdx
+    0.00 :	  429703:       mov    %rax,(%rcx)
+    0.00 :	  429706:       mov    %rdx,0x8(%rcx)
+         :	        }
+         :
+         :	        len += 1;
+    0.00 :	  42970a:       addl   $0x1,-0x18(%rbp)
+         :	        ptr = llmat.lles[ptr].next;
+    0.00 :	  42970e:       mov    -0x14(%rbp),%eax
+    0.00 :	  429711:       cltq
+    0.00 :	  429713:       mov    -0x38(%rbp),%rdx
+    0.00 :	  429717:       add    $0x20,%rdx
+    0.00 :	  42971b:       mov    %rax,%rsi
+    0.00 :	  42971e:       mov    %rdx,%rdi
+    0.00 :	  429721:       callq  42cff6 <std::vector<LLord, std::allocator<LLord> >::operator[](unsigned long)>
+    0.00 :	  429726:       mov    0x4(%rax),%eax
+    0.00 :	  429729:       mov    %eax,-0x14(%rbp)
+         :	    while (ptr != -1) {
+    0.00 :	  42972c:       cmpl   $0xffffffff,-0x14(%rbp)
+  100.00 :	  429730:       jne    42966f <get_ll_col(LLMatOrd, int, std::vector<LLcol, std::allocator<LLcol> >&)+0x3d>
+         :	    }
+         :
+         :	    return len;
+    0.00 :	  429736:       mov    -0x18(%rbp),%eax
+    0.00 :	  429739:       jmp    429743 <get_ll_col(LLMatOrd, int, std::vector<LLcol, std::allocator<LLcol> >&)+0x111>
+    0.00 :	  42973b:       mov    %rax,%rdi
+    0.00 :	  42973e:       callq  41dda0 <_Unwind_Resume@plt>
+         :	}
+    0.00 :	  429743:       add    $0x48,%rsp
+    0.00 :	  429747:       pop    %rbx
+    0.00 :	  429748:       pop    %rbp
+    0.00 :	  429749:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	000000000042e541 <void std::_Destroy<LLcol*, LLcol>(LLcol*, LLcol*, std::allocator<LLcol>&)>:
+         :	_ZSt8_DestroyIP5LLcolS0_EvT_S2_RSaIT0_E():
+         :	        __traits::destroy(__alloc, std::__addressof(*__first));
+         :	    }
+         :
+         :	  template<typename _ForwardIterator, typename _Tp>
+         :	    inline void
+         :	    _Destroy(_ForwardIterator __first, _ForwardIterator __last,
+    0.00 :	  42e541:       push   %rbp
+    0.00 :	  42e542:       mov    %rsp,%rbp
+    0.00 :	  42e545:       sub    $0x20,%rsp
+    0.00 :	  42e549:       mov    %rdi,-0x8(%rbp)
+    0.00 :	  42e54d:       mov    %rsi,-0x10(%rbp)
+    0.00 :	  42e551:       mov    %rdx,-0x18(%rbp)
+         :	             allocator<_Tp>&)
+         :	    {
+         :	      _Destroy(__first, __last);
+    0.00 :	  42e555:       mov    -0x10(%rbp),%rdx
+    0.00 :	  42e559:       mov    -0x8(%rbp),%rax
+  100.00 :	  42e55d:       mov    %rdx,%rsi
+    0.00 :	  42e560:       mov    %rax,%rdi
+    0.00 :	  42e563:       callq  42f5e9 <void std::_Destroy<LLcol*>(LLcol*, LLcol*)>
+         :	    }
+    0.00 :	  42e568:       leaveq
+    0.00 :	  42e569:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000428eda <std::_Iter_base<int*, false>::_S_base(int*)>:
+         :	_ZNSt10_Iter_baseIPiLb0EE7_S_baseES0_():
+         :	  // untouched
+         :	  template<typename _Iterator, bool _HasBase>
+         :	    struct _Iter_base
+         :	    {
+         :	      typedef _Iterator iterator_type;
+         :	      static iterator_type _S_base(_Iterator __it)
+    0.00 :	  428eda:       push   %rbp
+  100.00 :	  428edb:       mov    %rsp,%rbp
+    0.00 :	  428ede:       mov    %rdi,-0x8(%rbp)
+         :	      { return __it; }
+    0.00 :	  428ee2:       mov    -0x8(%rbp),%rax
+    0.00 :	  428ee6:       pop    %rbp
+    0.00 :	  428ee7:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000423752 <std::_Vector_base<double, std::allocator<double> >::_M_create_storage(unsigned long)>:
+         :	_ZNSt12_Vector_baseIdSaIdEE17_M_create_storageEm():
+         :	          _M_impl.deallocate(__p, __n);
+         :	      }
+         :
+         :	    private:
+         :	      void
+         :	      _M_create_storage(size_t __n)
+    0.00 :	  423752:       push   %rbp
+    0.00 :	  423753:       mov    %rsp,%rbp
+    0.00 :	  423756:       sub    $0x10,%rsp
+    0.00 :	  42375a:       mov    %rdi,-0x8(%rbp)
+    0.00 :	  42375e:       mov    %rsi,-0x10(%rbp)
+         :	      {
+         :	        this->_M_impl._M_start = this->_M_allocate(__n);
+    0.00 :	  423762:       mov    -0x10(%rbp),%rdx
+    0.00 :	  423766:       mov    -0x8(%rbp),%rax
+    0.00 :	  42376a:       mov    %rdx,%rsi
+    0.00 :	  42376d:       mov    %rax,%rdi
+    0.00 :	  423770:       callq  42350a <std::_Vector_base<double, std::allocator<double> >::_M_allocate(unsigned long)>
+    0.00 :	  423775:       mov    -0x8(%rbp),%rdx
+    0.00 :	  423779:       mov    %rax,(%rdx)
+         :	        this->_M_impl._M_finish = this->_M_impl._M_start;
+  100.00 :	  42377c:       mov    -0x8(%rbp),%rax
+    0.00 :	  423780:       mov    (%rax),%rdx
+    0.00 :	  423783:       mov    -0x8(%rbp),%rax
+    0.00 :	  423787:       mov    %rdx,0x8(%rax)
+         :	        this->_M_impl._M_end_of_storage = this->_M_impl._M_start + __n;
+    0.00 :	  42378b:       mov    -0x8(%rbp),%rax
+    0.00 :	  42378f:       mov    (%rax),%rax
+    0.00 :	  423792:       mov    -0x10(%rbp),%rdx
+    0.00 :	  423796:       shl    $0x3,%rdx
+    0.00 :	  42379a:       add    %rax,%rdx
+    0.00 :	  42379d:       mov    -0x8(%rbp),%rax
+    0.00 :	  4237a1:       mov    %rdx,0x10(%rax)
+         :	      }
+    0.00 :	  4237a5:       leaveq
+    0.00 :	  4237a6:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000429355 <double* std::__copy_move<true, true, std::random_access_iterator_tag>::__copy_m<double>(double const*, double const*, double*)>:
+         :	_ZNSt11__copy_moveILb1ELb1ESt26random_access_iterator_tagE8__copy_mIdEEPT_PKS3_S6_S4_():
+         :	  template<bool _IsMove>
+         :	    struct __copy_move<_IsMove, true, random_access_iterator_tag>
+         :	    {
+         :	      template<typename _Tp>
+         :	        static _Tp*
+         :	        __copy_m(const _Tp* __first, const _Tp* __last, _Tp* __result)
+    0.00 :	  429355:       push   %rbp
+    0.00 :	  429356:       mov    %rsp,%rbp
+    0.00 :	  429359:       sub    $0x30,%rsp
+    0.00 :	  42935d:       mov    %rdi,-0x18(%rbp)
+    0.00 :	  429361:       mov    %rsi,-0x20(%rbp)
+    0.00 :	  429365:       mov    %rdx,-0x28(%rbp)
+         :	        {
+         :	          const ptrdiff_t _Num = __last - __first;
+    0.00 :	  429369:       mov    -0x20(%rbp),%rdx
+    0.00 :	  42936d:       mov    -0x18(%rbp),%rax
+    0.00 :	  429371:       sub    %rax,%rdx
+    0.00 :	  429374:       mov    %rdx,%rax
+    0.00 :	  429377:       sar    $0x3,%rax
+    0.00 :	  42937b:       mov    %rax,-0x8(%rbp)
+         :	          if (_Num)
+    0.00 :	  42937f:       cmpq   $0x0,-0x8(%rbp)
+    0.00 :	  429384:       je     4293a5 <double* std::__copy_move<true, true, std::random_access_iterator_tag>::__copy_m<double>(double const*, double const*, double*)+0x50>
+         :	            __builtin_memmove(__result, __first, sizeof(_Tp) * _Num);
+    0.00 :	  429386:       mov    -0x8(%rbp),%rax
+    0.00 :	  42938a:       lea    0x0(,%rax,8),%rdx
+    0.00 :	  429392:       mov    -0x18(%rbp),%rcx
+  100.00 :	  429396:       mov    -0x28(%rbp),%rax
+    0.00 :	  42939a:       mov    %rcx,%rsi
+    0.00 :	  42939d:       mov    %rax,%rdi
+    0.00 :	  4293a0:       callq  41dc60 <memmove@plt>
+         :	          return __result + _Num;
+    0.00 :	  4293a5:       mov    -0x8(%rbp),%rax
+    0.00 :	  4293a9:       lea    0x0(,%rax,8),%rdx
+    0.00 :	  4293b1:       mov    -0x28(%rbp),%rax
+    0.00 :	  4293b5:       add    %rdx,%rax
+         :	        }
+    0.00 :	  4293b8:       leaveq
+    0.00 :	  4293b9:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000428750 <std::_Miter_base<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > > >::iterator_type std::__miter_base<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > > >(__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >)>:
+         :	_ZSt12__miter_baseIN9__gnu_cxx17__normal_iteratorIPKiSt6vectorIiSaIiEEEEENSt11_Miter_baseIT_E13iterator_typeES9_():
+         :	    : _Iter_base<_Iterator, __is_move_iterator<_Iterator>::__value>
+         :	    { };
+         :
+         :	  template<typename _Iterator>
+         :	    inline typename _Miter_base<_Iterator>::iterator_type
+         :	    __miter_base(_Iterator __it)
+  100.00 :	  428750:       push   %rbp
+    0.00 :	  428751:       mov    %rsp,%rbp
+    0.00 :	  428754:       sub    $0x10,%rsp
+    0.00 :	  428758:       mov    %rdi,-0x10(%rbp)
+         :	    { return std::_Miter_base<_Iterator>::_S_base(__it); }
+    0.00 :	  42875c:       mov    -0x10(%rbp),%rax
+    0.00 :	  428760:       mov    %rax,%rdi
+    0.00 :	  428763:       callq  428e01 <std::_Iter_base<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, false>::_S_base(__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >)>
+    0.00 :	  428768:       leaveq
+    0.00 :	  428769:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000426e18 <int* std::__uninitialized_copy<true>::__uninit_copy<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, int*>(__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, __gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, int*)>:
+         :	_ZNSt20__uninitialized_copyILb1EE13__uninit_copyIN9__gnu_cxx17__normal_iteratorIPKiSt6vectorIiSaIiEEEEPiEET0_T_SC_SB_():
+         :	  template<>
+         :	    struct __uninitialized_copy<true>
+         :	    {
+         :	      template<typename _InputIterator, typename _ForwardIterator>
+         :	        static _ForwardIterator
+         :	        __uninit_copy(_InputIterator __first, _InputIterator __last,
+    0.00 :	  426e18:       push   %rbp
+    0.00 :	  426e19:       mov    %rsp,%rbp
+    0.00 :	  426e1c:       sub    $0x20,%rsp
+    0.00 :	  426e20:       mov    %rdi,-0x10(%rbp)
+    0.00 :	  426e24:       mov    %rsi,-0x20(%rbp)
+    0.00 :	  426e28:       mov    %rdx,-0x18(%rbp)
+         :	                      _ForwardIterator __result)
+         :	        { return std::copy(__first, __last, __result); }
+    0.00 :	  426e2c:       mov    -0x18(%rbp),%rdx
+    0.00 :	  426e30:       mov    -0x20(%rbp),%rcx
+    0.00 :	  426e34:       mov    -0x10(%rbp),%rax
+  100.00 :	  426e38:       mov    %rcx,%rsi
+    0.00 :	  426e3b:       mov    %rax,%rdi
+    0.00 :	  426e3e:       callq  427c98 <int* std::copy<__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, int*>(__gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, __gnu_cxx::__normal_iterator<int const*, std::vector<int, std::allocator<int> > >, int*)>
+    0.00 :	  426e43:       leaveq
+    0.00 :	  426e44:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000422d27 <LLord* std::__uninitialized_copy_a<__gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >, LLord*, LLord>(__gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >, __gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >, LLord*, std::allocator<LLord>&)>:
+         :	_ZSt22__uninitialized_copy_aIN9__gnu_cxx17__normal_iteratorIPK5LLordSt6vectorIS2_SaIS2_EEEEPS2_S2_ET0_T_SB_SA_RSaIT1_E():
+         :	        }
+         :	    }
+         :
+         :	  template<typename _InputIterator, typename _ForwardIterator, typename _Tp>
+         :	    inline _ForwardIterator
+         :	    __uninitialized_copy_a(_InputIterator __first, _InputIterator __last,
+    0.00 :	  422d27:       push   %rbp
+    0.00 :	  422d28:       mov    %rsp,%rbp
+    0.00 :	  422d2b:       sub    $0x20,%rsp
+    0.00 :	  422d2f:       mov    %rdi,-0x10(%rbp)
+    0.00 :	  422d33:       mov    %rsi,-0x20(%rbp)
+    0.00 :	  422d37:       mov    %rdx,-0x18(%rbp)
+    0.00 :	  422d3b:       mov    %rcx,-0x8(%rbp)
+         :	                           _ForwardIterator __result, allocator<_Tp>&)
+         :	    { return std::uninitialized_copy(__first, __last, __result); }
+    0.00 :	  422d3f:       mov    -0x18(%rbp),%rdx
+    0.00 :	  422d43:       mov    -0x20(%rbp),%rcx
+    0.00 :	  422d47:       mov    -0x10(%rbp),%rax
+    0.00 :	  422d4b:       mov    %rcx,%rsi
+    0.00 :	  422d4e:       mov    %rax,%rdi
+  100.00 :	  422d51:       callq  4251f6 <LLord* std::uninitialized_copy<__gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >, LLord*>(__gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >, __gnu_cxx::__normal_iterator<LLord const*, std::vector<LLord, std::allocator<LLord> > >, LLord*)>
+    0.00 :	  422d56:       leaveq
+    0.00 :	  422d57:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000425cf9 <int* std::__uninitialized_copy_a<std::move_iterator<int*>, int*, int>(std::move_iterator<int*>, std::move_iterator<int*>, int*, std::allocator<int>&)>:
+         :	_ZSt22__uninitialized_copy_aISt13move_iteratorIPiES1_iET0_T_S4_S3_RSaIT1_E():
+         :	        }
+         :	    }
+         :
+         :	  template<typename _InputIterator, typename _ForwardIterator, typename _Tp>
+         :	    inline _ForwardIterator
+         :	    __uninitialized_copy_a(_InputIterator __first, _InputIterator __last,
+    0.00 :	  425cf9:       push   %rbp
+    0.00 :	  425cfa:       mov    %rsp,%rbp
+    0.00 :	  425cfd:       sub    $0x20,%rsp
+    0.00 :	  425d01:       mov    %rdi,-0x10(%rbp)
+    0.00 :	  425d05:       mov    %rsi,-0x20(%rbp)
+    0.00 :	  425d09:       mov    %rdx,-0x18(%rbp)
+    0.00 :	  425d0d:       mov    %rcx,-0x8(%rbp)
+         :	                           _ForwardIterator __result, allocator<_Tp>&)
+         :	    { return std::uninitialized_copy(__first, __last, __result); }
+    0.00 :	  425d11:       mov    -0x18(%rbp),%rdx
+  100.00 :	  425d15:       mov    -0x20(%rbp),%rcx
+    0.00 :	  425d19:       mov    -0x10(%rbp),%rax
+    0.00 :	  425d1d:       mov    %rcx,%rsi
+    0.00 :	  425d20:       mov    %rax,%rdi
+    0.00 :	  425d23:       callq  4274dd <int* std::uninitialized_copy<std::move_iterator<int*>, int*>(std::move_iterator<int*>, std::move_iterator<int*>, int*)>
+    0.00 :	  425d28:       leaveq
+    0.00 :	  425d29:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	000000000042048a <std::allocator<int>::~allocator()>:
+         :	_ZNSaIiED2Ev():
+         :	      : __allocator_base<_Tp>(__a) { }
+         :
+         :	      template<typename _Tp1>
+         :	        allocator(const allocator<_Tp1>&) throw() { }
+         :
+         :	      ~allocator() throw() { }
+    0.00 :	  42048a:       push   %rbp
+    0.00 :	  42048b:       mov    %rsp,%rbp
+    0.00 :	  42048e:       sub    $0x10,%rsp
+    0.00 :	  420492:       mov    %rdi,-0x8(%rbp)
+    0.00 :	  420496:       mov    -0x8(%rbp),%rax
+    0.00 :	  42049a:       mov    %rax,%rdi
+    0.00 :	  42049d:       callq  422124 <__gnu_cxx::new_allocator<int>::~new_allocator()>
+  100.00 :	  4204a2:       leaveq
+    0.00 :	  4204a3:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000420751 <int const& std::forward<int const&>(std::remove_reference<int const&>::type&)>:
+         :	_ZSt7forwardIRKiEOT_RNSt16remove_referenceIS2_E4typeE():
+         :	   *
+         :	   *  This function is used to implement "perfect forwarding".
+         :	   */
+         :	  template<typename _Tp>
+         :	    constexpr _Tp&&
+         :	    forward(typename std::remove_reference<_Tp>::type& __t) noexcept
+    0.00 :	  420751:       push   %rbp
+    0.00 :	  420752:       mov    %rsp,%rbp
+  100.00 :	  420755:       mov    %rdi,-0x8(%rbp)
+         :	    { return static_cast<_Tp&&>(__t); }
+    0.00 :	  420759:       mov    -0x8(%rbp),%rax
+    0.00 :	  42075d:       pop    %rbp
+    0.00 :	  42075e:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000430f58 <std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>::operator()()>:
+         :	_ZNSt26linear_congruential_engineImLm16807ELm0ELm2147483647EEclEv():
+         :
+         :	      /**
+         :	       * @brief Gets the next random number in the sequence.
+         :	       */
+         :	      result_type
+         :	      operator()()
+    0.00 :	  430f58:       push   %rbp
+    0.00 :	  430f59:       mov    %rsp,%rbp
+    0.00 :	  430f5c:       sub    $0x10,%rsp
+    0.00 :	  430f60:       mov    %rdi,-0x8(%rbp)
+         :	      {
+         :	        _M_x = __detail::__mod<_UIntType, __m, __a, __c>(_M_x);
+    0.00 :	  430f64:       mov    -0x8(%rbp),%rax
+    0.00 :	  430f68:       mov    (%rax),%rax
+    0.00 :	  430f6b:       mov    %rax,%rdi
+    0.00 :	  430f6e:       callq  431555 <unsigned long std::__detail::__mod<unsigned long, 2147483647ul, 16807ul, 0ul>(unsigned long)>
+    0.00 :	  430f73:       mov    -0x8(%rbp),%rdx
+    0.00 :	  430f77:       mov    %rax,(%rdx)
+         :	        return _M_x;
+    0.00 :	  430f7a:       mov    -0x8(%rbp),%rax
+    0.00 :	  430f7e:       mov    (%rax),%rax
+         :	      }
+  100.00 :	  430f81:       leaveq
+    0.00 :	  430f82:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	000000000042d1bc <std::vector<LLcol, std::allocator<LLcol> >::vector(std::vector<LLcol, std::allocator<LLcol> > const&)>:
+         :	_ZNSt6vectorI5LLcolSaIS0_EEC2ERKS2_():
+         :	       *  The newly-created %vector uses a copy of the allocation
+         :	       *  object used by @a __x.  All the elements of @a __x are copied,
+         :	       *  but any extra memory in
+         :	       *  @a __x (for fast expansion) will not be copied.
+         :	       */
+         :	      vector(const vector& __x)
+    0.00 :	  42d1bc:       push   %rbp
+    0.00 :	  42d1bd:       mov    %rsp,%rbp
+    0.00 :	  42d1c0:       push   %r13
+    0.00 :	  42d1c2:       push   %r12
+    0.00 :	  42d1c4:       push   %rbx
+    0.00 :	  42d1c5:       sub    $0x28,%rsp
+    0.00 :	  42d1c9:       mov    %rdi,-0x38(%rbp)
+    0.00 :	  42d1cd:       mov    %rsi,-0x40(%rbp)
+         :	      : _Base(__x.size(),
+         :	        _Alloc_traits::_S_select_on_copy(__x._M_get_Tp_allocator()))
+    0.00 :	  42d1d1:       mov    -0x40(%rbp),%rax
+    0.00 :	  42d1d5:       mov    %rax,%rdi
+    0.00 :	  42d1d8:       callq  42e3ca <std::_Vector_base<LLcol, std::allocator<LLcol> >::_M_get_Tp_allocator() const>
+    0.00 :	  42d1dd:       mov    %rax,%rdx
+    0.00 :	  42d1e0:       lea    -0x21(%rbp),%rax
+    0.00 :	  42d1e4:       mov    %rdx,%rsi
+    0.00 :	  42d1e7:       mov    %rax,%rdi
+    0.00 :	  42d1ea:       callq  42e3a0 <__gnu_cxx::__alloc_traits<std::allocator<LLcol> >::_S_select_on_copy(std::allocator<LLcol> const&)>
+    0.00 :	  42d1ef:       mov    -0x40(%rbp),%rax
+  100.00 :	  42d1f3:       mov    %rax,%rdi
+    0.00 :	  42d1f6:       callq  42d016 <std::vector<LLcol, std::allocator<LLcol> >::size() const>
+    0.00 :	  42d1fb:       mov    %rax,%rcx
+    0.00 :	  42d1fe:       mov    -0x38(%rbp),%rax
+    0.00 :	  42d202:       lea    -0x21(%rbp),%rdx
+    0.00 :	  42d206:       mov    %rcx,%rsi
+    0.00 :	  42d209:       mov    %rax,%rdi
+    0.00 :	  42d20c:       callq  42e3f2 <std::_Vector_base<LLcol, std::allocator<LLcol> >::_Vector_base(unsigned long, std::allocator<LLcol> const&)>
+    0.00 :	  42d211:       lea    -0x21(%rbp),%rax
+    0.00 :	  42d215:       mov    %rax,%rdi
+    0.00 :	  42d218:       callq  42d632 <std::allocator<LLcol>::~allocator()>
+         :	      { this->_M_impl._M_finish =
+         :	          std::__uninitialized_copy_a(__x.begin(), __x.end(),
+         :	                                      this->_M_impl._M_start,
+         :	                                      _M_get_Tp_allocator());
+    0.00 :	  42d21d:       mov    -0x38(%rbp),%rax
+    0.00 :	  42d221:       mov    %rax,%rdi
+    0.00 :	  42d224:       callq  42e502 <std::_Vector_base<LLcol, std::allocator<LLcol> >::_M_get_Tp_allocator()>
+    0.00 :	  42d229:       mov    %rax,%r13
+    0.00 :	  42d22c:       mov    -0x38(%rbp),%rax
+    0.00 :	  42d230:       mov    (%rax),%r12
+    0.00 :	  42d233:       mov    -0x40(%rbp),%rax
+    0.00 :	  42d237:       mov    %rax,%rdi
+    0.00 :	  42d23a:       callq  42e4d0 <std::vector<LLcol, std::allocator<LLcol> >::end() const>
+    0.00 :	  42d23f:       mov    %rax,%rbx
+    0.00 :	  42d242:       mov    -0x40(%rbp),%rax
+    0.00 :	  42d246:       mov    %rax,%rdi
+    0.00 :	  42d249:       callq  42e4a0 <std::vector<LLcol, std::allocator<LLcol> >::begin() const>
+    0.00 :	  42d24e:       mov    %r13,%rcx
+    0.00 :	  42d251:       mov    %r12,%rdx
+    0.00 :	  42d254:       mov    %rbx,%rsi
+    0.00 :	  42d257:       mov    %rax,%rdi
+    0.00 :	  42d25a:       callq  42e510 <LLcol* std::__uninitialized_copy_a<__gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, LLcol*, LLcol>(__gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, __gnu_cxx::__normal_iterator<LLcol const*, std::vector<LLcol, std::allocator<LLcol> > >, LLcol*, std::allocator<LLcol>&)>
+         :	      { this->_M_impl._M_finish =
+    0.00 :	  42d25f:       mov    -0x38(%rbp),%rdx
+    0.00 :	  42d263:       mov    %rax,0x8(%rdx)
+    0.00 :	  42d267:       jmp    42d29d <std::vector<LLcol, std::allocator<LLcol> >::vector(std::vector<LLcol, std::allocator<LLcol> > const&)+0xe1>
+    0.00 :	  42d269:       mov    %rax,%rbx
+         :	        _Alloc_traits::_S_select_on_copy(__x._M_get_Tp_allocator()))
+    0.00 :	  42d26c:       lea    -0x21(%rbp),%rax
+    0.00 :	  42d270:       mov    %rax,%rdi
+    0.00 :	  42d273:       callq  42d632 <std::allocator<LLcol>::~allocator()>
+    0.00 :	  42d278:       mov    %rbx,%rax
+    0.00 :	  42d27b:       mov    %rax,%rdi
+    0.00 :	  42d27e:       callq  41dda0 <_Unwind_Resume@plt>
+    0.00 :	  42d283:       mov    %rax,%rbx
+    0.00 :	  42d286:       mov    -0x38(%rbp),%rax
+    0.00 :	  42d28a:       mov    %rax,%rdi
+    0.00 :	  42d28d:       callq  42e450 <std::_Vector_base<LLcol, std::allocator<LLcol> >::~_Vector_base()>
+    0.00 :	  42d292:       mov    %rbx,%rax
+    0.00 :	  42d295:       mov    %rax,%rdi
+    0.00 :	  42d298:       callq  41dda0 <_Unwind_Resume@plt>
+         :	      }
+    0.00 :	  42d29d:       add    $0x28,%rsp
+    0.00 :	  42d2a1:       pop    %rbx
+    0.00 :	  42d2a2:       pop    %r12
+    0.00 :	  42d2a4:       pop    %r13
+    0.00 :	  42d2a6:       pop    %rbp
+    0.00 :	  42d2a7:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	000000000042ea64 <void std::vector<double, std::allocator<double> >::_M_emplace_back_aux<double const&>(double const&)>:
+         :	_ZNSt6vectorIdSaIdEE19_M_emplace_back_auxIIRKdEEEvDpOT_():
+         :
+         :	#if __cplusplus >= 201103L
+         :	  template<typename _Tp, typename _Alloc>
+         :	    template<typename... _Args>
+         :	      void
+         :	      vector<_Tp, _Alloc>::
+    0.00 :	  42ea64:       push   %rbp
+    0.00 :	  42ea65:       mov    %rsp,%rbp
+    0.00 :	  42ea68:       push   %rbx
+    0.00 :	  42ea69:       sub    $0x38,%rsp
+    0.00 :	  42ea6d:       mov    %rdi,-0x38(%rbp)
+    0.00 :	  42ea71:       mov    %rsi,-0x40(%rbp)
+         :	      _M_emplace_back_aux(_Args&&... __args)
+         :	      {
+         :	        const size_type __len =
+         :	          _M_check_len(size_type(1), "vector::_M_emplace_back_aux");
+    0.00 :	  42ea75:       mov    -0x38(%rbp),%rax
+    0.00 :	  42ea79:       mov    $0x433c56,%edx
+    0.00 :	  42ea7e:       mov    $0x1,%esi
+    0.00 :	  42ea83:       mov    %rax,%rdi
+    0.00 :	  42ea86:       callq  423440 <std::vector<double, std::allocator<double> >::_M_check_len(unsigned long, char const*) const>
+    0.00 :	  42ea8b:       mov    %rax,-0x20(%rbp)
+         :	        pointer __new_start(this->_M_allocate(__len));
+    0.00 :	  42ea8f:       mov    -0x38(%rbp),%rax
+    0.00 :	  42ea93:       mov    -0x20(%rbp),%rdx
+    0.00 :	  42ea97:       mov    %rdx,%rsi
+    0.00 :	  42ea9a:       mov    %rax,%rdi
+    0.00 :	  42ea9d:       callq  42350a <std::_Vector_base<double, std::allocator<double> >::_M_allocate(unsigned long)>
+    0.00 :	  42eaa2:       mov    %rax,-0x28(%rbp)
+         :	        pointer __new_finish(__new_start);
+    0.00 :	  42eaa6:       mov    -0x28(%rbp),%rax
+    0.00 :	  42eaaa:       mov    %rax,-0x18(%rbp)
+         :	        __try
+         :	          {
+         :	            _Alloc_traits::construct(this->_M_impl, __new_start + size(),
+         :	                                     std::forward<_Args>(__args)...);
+    0.00 :	  42eaae:       mov    -0x40(%rbp),%rax
+    0.00 :	  42eab2:       mov    %rax,%rdi
+    0.00 :	  42eab5:       callq  422e23 <double const& std::forward<double const&>(std::remove_reference<double const&>::type&)>
+    0.00 :	  42eaba:       mov    %rax,%rbx
+         :	            _Alloc_traits::construct(this->_M_impl, __new_start + size(),
+    0.00 :	  42eabd:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eac1:       mov    %rax,%rdi
+    0.00 :	  42eac4:       callq  41fe5e <std::vector<double, std::allocator<double> >::size() const>
+         :	                                     std::forward<_Args>(__args)...);
+    0.00 :	  42eac9:       lea    0x0(,%rax,8),%rdx
+    0.00 :	  42ead1:       mov    -0x28(%rbp),%rax
+    0.00 :	  42ead5:       lea    (%rdx,%rax,1),%rcx
+    0.00 :	  42ead9:       mov    -0x38(%rbp),%rax
+         :	            _Alloc_traits::construct(this->_M_impl, __new_start + size(),
+    0.00 :	  42eadd:       mov    %rbx,%rdx
+    0.00 :	  42eae0:       mov    %rcx,%rsi
+    0.00 :	  42eae3:       mov    %rax,%rdi
+    0.00 :	  42eae6:       callq  42ea2b <decltype (_S_construct({parm#1}, {parm#2}, (forward<double const&>)({parm#3}))) std::allocator_traits<std::allocator<double> >::construct<double, double const&>(std::allocator<double>&, double*, double const&)>
+         :	            __new_finish = 0;
+    0.00 :	  42eaeb:       movq   $0x0,-0x18(%rbp)
+         :
+         :	            __new_finish
+         :	              = std::__uninitialized_move_if_noexcept_a
+         :	              (this->_M_impl._M_start, this->_M_impl._M_finish,
+         :	               __new_start, _M_get_Tp_allocator());
+    0.00 :	  42eaf3:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eaf7:       mov    %rax,%rdi
+    0.00 :	  42eafa:       callq  420d92 <std::_Vector_base<double, std::allocator<double> >::_M_get_Tp_allocator()>
+    0.00 :	  42eaff:       mov    %rax,%rcx
+    0.00 :	  42eb02:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eb06:       mov    0x8(%rax),%rsi
+    0.00 :	  42eb0a:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eb0e:       mov    (%rax),%rax
+         :	            __new_finish
+    0.00 :	  42eb11:       mov    -0x28(%rbp),%rdx
+    0.00 :	  42eb15:       mov    %rax,%rdi
+    0.00 :	  42eb18:       callq  423542 <double* std::__uninitialized_move_if_noexcept_a<double*, double*, std::allocator<double> >(double*, double*, double*, std::allocator<double>&)>
+    0.00 :	  42eb1d:       mov    %rax,-0x18(%rbp)
+         :
+         :	            ++__new_finish;
+    0.00 :	  42eb21:       addq   $0x8,-0x18(%rbp)
+         :	              std::_Destroy(__new_start, __new_finish, _M_get_Tp_allocator());
+         :	            _M_deallocate(__new_start, __len);
+         :	            __throw_exception_again;
+         :	          }
+         :	        std::_Destroy(this->_M_impl._M_start, this->_M_impl._M_finish,
+         :	                      _M_get_Tp_allocator());
+  100.00 :	  42eb26:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eb2a:       mov    %rax,%rdi
+    0.00 :	  42eb2d:       callq  420d92 <std::_Vector_base<double, std::allocator<double> >::_M_get_Tp_allocator()>
+    0.00 :	  42eb32:       mov    %rax,%rdx
+    0.00 :	  42eb35:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eb39:       mov    0x8(%rax),%rcx
+    0.00 :	  42eb3d:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eb41:       mov    (%rax),%rax
+         :	        std::_Destroy(this->_M_impl._M_start, this->_M_impl._M_finish,
+    0.00 :	  42eb44:       mov    %rcx,%rsi
+    0.00 :	  42eb47:       mov    %rax,%rdi
+    0.00 :	  42eb4a:       callq  420da0 <void std::_Destroy<double*, double>(double*, double*, std::allocator<double>&)>
+         :	        _M_deallocate(this->_M_impl._M_start,
+         :	                      this->_M_impl._M_end_of_storage
+         :	                      - this->_M_impl._M_start);
+    0.00 :	  42eb4f:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eb53:       mov    0x10(%rax),%rax
+    0.00 :	  42eb57:       mov    %rax,%rdx
+    0.00 :	  42eb5a:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eb5e:       mov    (%rax),%rax
+    0.00 :	  42eb61:       sub    %rax,%rdx
+    0.00 :	  42eb64:       mov    %rdx,%rax
+    0.00 :	  42eb67:       sar    $0x3,%rax
+    0.00 :	  42eb6b:       mov    %rax,%rdx
+    0.00 :	  42eb6e:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eb72:       mov    (%rax),%rcx
+    0.00 :	  42eb75:       mov    -0x38(%rbp),%rax
+         :	        _M_deallocate(this->_M_impl._M_start,
+    0.00 :	  42eb79:       mov    %rcx,%rsi
+    0.00 :	  42eb7c:       mov    %rax,%rdi
+    0.00 :	  42eb7f:       callq  422fe4 <std::_Vector_base<double, std::allocator<double> >::_M_deallocate(double*, unsigned long)>
+         :	        this->_M_impl._M_start = __new_start;
+    0.00 :	  42eb84:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eb88:       mov    -0x28(%rbp),%rdx
+    0.00 :	  42eb8c:       mov    %rdx,(%rax)
+         :	        this->_M_impl._M_finish = __new_finish;
+    0.00 :	  42eb8f:       mov    -0x38(%rbp),%rax
+    0.00 :	  42eb93:       mov    -0x18(%rbp),%rdx
+    0.00 :	  42eb97:       mov    %rdx,0x8(%rax)
+         :	        this->_M_impl._M_end_of_storage = __new_start + __len;
+    0.00 :	  42eb9b:       mov    -0x20(%rbp),%rax
+    0.00 :	  42eb9f:       lea    0x0(,%rax,8),%rdx
+    0.00 :	  42eba7:       mov    -0x28(%rbp),%rax
+    0.00 :	  42ebab:       add    %rax,%rdx
+    0.00 :	  42ebae:       mov    -0x38(%rbp),%rax
+    0.00 :	  42ebb2:       mov    %rdx,0x10(%rax)
+    0.00 :	  42ebb6:       jmpq   42ec47 <void std::vector<double, std::allocator<double> >::_M_emplace_back_aux<double const&>(double const&)+0x1e3>
+    0.00 :	  42ebbb:       mov    %rax,%rbx
+         :	        __catch(...)
+    0.00 :	  42ebbe:       callq  41dce0 <__cxa_end_catch@plt>
+    0.00 :	  42ebc3:       mov    %rbx,%rax
+    0.00 :	  42ebc6:       mov    %rax,%rdi
+    0.00 :	  42ebc9:       callq  41dda0 <_Unwind_Resume@plt>
+    0.00 :	  42ebce:       mov    %rax,%rdi
+    0.00 :	  42ebd1:       callq  41dd40 <__cxa_begin_catch@plt>
+         :	            if (!__new_finish)
+    0.00 :	  42ebd6:       cmpq   $0x0,-0x18(%rbp)
+    0.00 :	  42ebdb:       jne    42ec09 <void std::vector<double, std::allocator<double> >::_M_emplace_back_aux<double const&>(double const&)+0x1a5>
+         :	              _Alloc_traits::destroy(this->_M_impl, __new_start + size());
+    0.00 :	  42ebdd:       mov    -0x38(%rbp),%rax
+    0.00 :	  42ebe1:       mov    %rax,%rdi
+    0.00 :	  42ebe4:       callq  41fe5e <std::vector<double, std::allocator<double> >::size() const>
+    0.00 :	  42ebe9:       lea    0x0(,%rax,8),%rdx
+    0.00 :	  42ebf1:       mov    -0x28(%rbp),%rax
+    0.00 :	  42ebf5:       add    %rax,%rdx
+    0.00 :	  42ebf8:       mov    -0x38(%rbp),%rax
+    0.00 :	  42ebfc:       mov    %rdx,%rsi
+    0.00 :	  42ebff:       mov    %rax,%rdi
+    0.00 :	  42ec02:       callq  42f93f <void std::allocator_traits<std::allocator<double> >::destroy<double>(std::allocator<double>&, double*)>
+    0.00 :	  42ec07:       jmp    42ec2b <void std::vector<double, std::allocator<double> >::_M_emplace_back_aux<double const&>(double const&)+0x1c7>
+         :	              std::_Destroy(__new_start, __new_finish, _M_get_Tp_allocator());
+    0.00 :	  42ec09:       mov    -0x38(%rbp),%rax
+    0.00 :	  42ec0d:       mov    %rax,%rdi
+    0.00 :	  42ec10:       callq  420d92 <std::_Vector_base<double, std::allocator<double> >::_M_get_Tp_allocator()>
+    0.00 :	  42ec15:       mov    %rax,%rdx
+    0.00 :	  42ec18:       mov    -0x18(%rbp),%rcx
+    0.00 :	  42ec1c:       mov    -0x28(%rbp),%rax
+    0.00 :	  42ec20:       mov    %rcx,%rsi
+    0.00 :	  42ec23:       mov    %rax,%rdi
+    0.00 :	  42ec26:       callq  420da0 <void std::_Destroy<double*, double>(double*, double*, std::allocator<double>&)>
+         :	            _M_deallocate(__new_start, __len);
+    0.00 :	  42ec2b:       mov    -0x38(%rbp),%rax
+    0.00 :	  42ec2f:       mov    -0x20(%rbp),%rdx
+    0.00 :	  42ec33:       mov    -0x28(%rbp),%rcx
+    0.00 :	  42ec37:       mov    %rcx,%rsi
+    0.00 :	  42ec3a:       mov    %rax,%rdi
+    0.00 :	  42ec3d:       callq  422fe4 <std::_Vector_base<double, std::allocator<double> >::_M_deallocate(double*, unsigned long)>
+         :	            __throw_exception_again;
+    0.00 :	  42ec42:       callq  41db40 <__cxa_rethrow@plt>
+         :	      }
+    0.00 :	  42ec47:       add    $0x38,%rsp
+    0.00 :	  42ec4b:       pop    %rbx
+    0.00 :	  42ec4c:       pop    %rbp
+    0.00 :	  42ec4d:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	0000000000425b64 <std::vector<double, std::allocator<double> >::max_size() const>:
+         :	_ZNKSt6vectorIdSaIdEE8max_sizeEv():
+         :	      size() const _GLIBCXX_NOEXCEPT
+         :	      { return size_type(this->_M_impl._M_finish - this->_M_impl._M_start); }
+         :
+         :	      /**  Returns the size() of the largest possible %vector.  */
+         :	      size_type
+         :	      max_size() const _GLIBCXX_NOEXCEPT
+    0.00 :	  425b64:       push   %rbp
+  100.00 :	  425b65:       mov    %rsp,%rbp
+    0.00 :	  425b68:       sub    $0x10,%rsp
+    0.00 :	  425b6c:       mov    %rdi,-0x8(%rbp)
+         :	      { return _Alloc_traits::max_size(_M_get_Tp_allocator()); }
+    0.00 :	  425b70:       mov    -0x8(%rbp),%rax
+    0.00 :	  425b74:       mov    %rax,%rdi
+    0.00 :	  425b77:       callq  4273f4 <std::_Vector_base<double, std::allocator<double> >::_M_get_Tp_allocator() const>
+    0.00 :	  425b7c:       mov    %rax,%rdi
+    0.00 :	  425b7f:       callq  4273d9 <std::allocator_traits<std::allocator<double> >::max_size(std::allocator<double> const&)>
+    0.00 :	  425b84:       leaveq
+    0.00 :	  425b85:       retq
+ Percent |	Source code & Disassembly of main for cycles:u (1 samples)
+--------------------------------------------------------------------------
+         :
+         :
+         :
+         :	Disassembly of section .text:
+         :
+         :	000000000041fdfa <std::vector<double, std::allocator<double> >::operator[](unsigned long)>:
+         :	_ZNSt6vectorIdSaIdEEixEm():
+         :	       *  Note that data access with this operator is unchecked and
+         :	       *  out_of_range lookups are not defined. (For checked lookups
+         :	       *  see at().)
+         :	       */
+         :	      reference
+         :	      operator[](size_type __n)
+    0.00 :	  41fdfa:       push   %rbp
+  100.00 :	  41fdfb:       mov    %rsp,%rbp
+    0.00 :	  41fdfe:       mov    %rdi,-0x8(%rbp)
+    0.00 :	  41fe02:       mov    %rsi,-0x10(%rbp)
+         :	      { return *(this->_M_impl._M_start + __n); }
+    0.00 :	  41fe06:       mov    -0x8(%rbp),%rax
+    0.00 :	  41fe0a:       mov    (%rax),%rax
+    0.00 :	  41fe0d:       mov    -0x10(%rbp),%rdx
+    0.00 :	  41fe11:       shl    $0x3,%rdx
+    0.00 :	  41fe15:       add    %rdx,%rax
+    0.00 :	  41fe18:       pop    %rbp
+    0.00 :	  41fe19:       retq

@@ -2,4 +2,5 @@ build/
 .vscode/
 .DS_Store
 .ipynb_checkpoints
-
+.data
+bin/
