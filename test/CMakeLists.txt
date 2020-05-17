@@ -10,3 +10,6 @@ target_link_libraries(test_LLMatOrd PRIVATE approxChol)
 
 add_executable(test_pcg test_pcg.cpp)
 target_link_libraries(test_pcg PRIVATE approxChol)
+
+add_executable(test_validation test_validation.cpp)
+target_link_libraries(test_validation PRIVATE approxChol)
