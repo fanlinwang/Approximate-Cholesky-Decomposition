@@ -1,3 +1,8 @@
+## Benchmarking
+1. Make sure the flags in `CMakeLists.txt` are set correctly
+2. Check if `test/test_solver` is calling the correct solver to be tested.
+3. `bash run.sh`
+
 ## Profiling 
 
 - `flops_log.txt`:
