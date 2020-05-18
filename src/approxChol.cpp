@@ -893,7 +893,7 @@ std::vector<Tval> pcg(const SparseMatrix& la, const std::vector<Tval>& b,
           break;
         }
 
-        bzbeta(beta,p,z);
+        bzbeta(beta,z,p);
 
         if ((time(NULL) - t1) > paras.maxtime){
             if (paras.verbose) 
