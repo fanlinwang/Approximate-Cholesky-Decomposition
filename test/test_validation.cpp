@@ -18,8 +18,8 @@ int main(){
         {1,1,0,0,0},
         {1,1,0,0,0},
         {0,1,0,0,0}};
-    SparseMatrix A(matrix2);
-    // SparseMatrix A(20, 50, 1);
+    // SparseMatrix A(matrix);
+    SparseMatrix A(1000, 5000, 1);
     // std::cout << A;
     SparseMatrix la = adj2lap(A);
     std::cout << la;
@@ -37,7 +37,7 @@ int main(){
     std::vector<Tval> b = {-0.46397, 0.0910944, -0.572403, 0.504353, 0.440926};
 
 
-    Tval ratio = ApproxCholValidation(A, ldli, 1e-5);
+    Tval ratio = ApproxCholValidation(A, ldli, 1e-4);
 
     return 0;
 }
