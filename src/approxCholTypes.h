@@ -5,6 +5,7 @@
 #include <cstdlib>
 typedef int Tind;
 typedef double Tval;
+#define RESERVE_FACTOR 10
 
 struct Edge{
     Tind r, c;
@@ -172,6 +173,9 @@ struct LLord{
     LLord(Tind row, Tind next, Tval val):row(row), next(next), val(val){}
 };
 
+//convert a sparsematrix from connected graph to laplacian
+void laplacian(const SparseMatrix& A, SparseMatrix& L);
+
 std::vector<Tind> invperm(std::vector<Tind> &perm);
 
 struct LLMatOrd{
@@ -236,6 +240,107 @@ struct LLMatOrd{
     }
 };
 std::ostream& operator << (std::ostream &out, LLMatOrd& mat);
+
+struct LLMatOrd_vector2{
+    long n, m;
+    std::vector<std::vector<Tind> > row;
+    std::vector<std::vector<Tval> > val;
+    LLMatOrd_vector2(){}
+    LLMatOrd_vector2(SparseMatrix &a)
+    {
+        n = a.colnum;
+        m = a.elems;
+        row.resize(n);
+        val.resize(n);
+        long reserve_len = m / n * RESERVE_FACTOR;
+        // std::cout << "n m len:" << n << " " << m << " " << reserve_len << std::endl;
+        for (int i = 0; i < n; i++)
+        {
+            // std::cout << "col " << i << std::endl;
+            row[i].reserve(reserve_len);
+            val[i].reserve(reserve_len);
+            
+            for (int ind = a.colptrs[i]; ind < a.colptrs[i + 1]; ind++)
+            {
+                Tind j = a.rows[ind];
+                // std::cout << "check:" << i << " " << j << std::endl;
+                if (i < j)
+                {
+                    Tval v = a.vals[ind];
+                    // std::cout << "new edge:" << i << " " << j << std::endl;
+                    row[i].push_back(j);
+                    val[i].push_back(v);
+                }
+            }
+        }
+    }
+
+    LLMatOrd_vector2(SparseMatrix &a, std::vector<Tind> &perm)
+    {
+        n = a.colnum;
+        m = a.elems;
+        row.resize(n);
+        val.resize(n);
+        long reserve_len = m / n * RESERVE_FACTOR;
+        std::vector<Tind> invp = invperm(perm);//why invperm
+        for (int i0 = 0; i0 < n; i0++)
+        {
+            int i = invp[i0];
+            for (int ind = a.colptrs[i0]; ind < a.colptrs[i0 + 1]; ind++)
+            {
+                Tind j = invp[a.rows[ind]];
+                if (i < j)
+                {
+                    Tval v = a.vals[ind];
+                    row[i].push_back(j);
+                    val[i].push_back(v);
+                }
+            }
+        }
+    }
+};
+
+std::ostream& operator << (std::ostream &out, LLMatOrd_vector2& mat);
+
+struct LLcol{
+    Tind row;
+    Tind ptr;
+    Tval cval;
+};
+
+
+// LDLinv
+
+// =============================================================#
+
+// """
+//   LDLinv contains the information needed to solve the Laplacian systems.
+//   It does it by applying Linv, then Dinv, then Linv (transpose).
+//   But, it is specially constructed for this particular solver.
+//   It does not explicitly make the matrix triangular.
+//   Rather, col[i] is the name of the ith col to be eliminated
+// """
+
+struct LDLinv{
+    std::vector<Tind> col;
+    std::vector<Tind> colptr; // store 1-based indices
+    std::vector<Tind> rowval;
+    std::vector<Tval> fval;
+    std::vector<Tval> d;
+    // LDLinv(LLmatp a):col(std::vector<Tind>(a.n-1, 0)),
+    //                 colptr(std::vector<Tind>(a.n, 0)),
+    //                 rowval(std::vector<Tind>()),
+    //                 fval(std::vector<Tval>()),
+    //                 d(std::vector<Tval>(a.n, 0)) {}
+    LDLinv(LLMatOrd a):col(std::vector<Tind>(a.n-1, 0)),
+                    colptr(std::vector<Tind>(a.n, 0)),
+                    rowval(std::vector<Tind>()),
+                    fval(std::vector<Tval>()),
+                    d(std::vector<Tval>(a.n, 0)) {}
+    // LDLinv(SparseMatrix a);
+};
+std::ostream& operator << (std::ostream &out, LDLinv &ldli);
+
 /*
 """
   LLp elements are all in the same column.
@@ -272,47 +377,5 @@ struct LLmatp{
     std::vector<LLp> lles;
     // LLmatp(SparseMatrix a)
 };
-
-struct LLcol{
-    Tind row;
-    Tind ptr;
-    Tval cval;
-};
-
-//convert a sparsematrix from connected graph to laplacian
-void laplacian(const SparseMatrix& A, SparseMatrix& L);
-
-
-// LDLinv
-
-// =============================================================#
-
-// """
-//   LDLinv contains the information needed to solve the Laplacian systems.
-//   It does it by applying Linv, then Dinv, then Linv (transpose).
-//   But, it is specially constructed for this particular solver.
-//   It does not explicitly make the matrix triangular.
-//   Rather, col[i] is the name of the ith col to be eliminated
-// """
-
-struct LDLinv{
-    std::vector<Tind> col;
-    std::vector<Tind> colptr; // store 1-based indices
-    std::vector<Tind> rowval;
-    std::vector<Tval> fval;
-    std::vector<Tval> d;
-    LDLinv(LLmatp a):col(std::vector<Tind>(a.n-1, 0)),
-                    colptr(std::vector<Tind>(a.n, 0)),
-                    rowval(std::vector<Tind>()),
-                    fval(std::vector<Tval>()),
-                    d(std::vector<Tval>(a.n, 0)) {}
-    LDLinv(LLMatOrd a):col(std::vector<Tind>(a.n-1, 0)),
-                    colptr(std::vector<Tind>(a.n, 0)),
-                    rowval(std::vector<Tind>()),
-                    fval(std::vector<Tval>()),
-                    d(std::vector<Tval>(a.n, 0)) {}
-    // LDLinv(SparseMatrix a);
-};
-std::ostream& operator << (std::ostream &out, LDLinv &ldli);
 
 #endif

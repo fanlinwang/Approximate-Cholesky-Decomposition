@@ -91,6 +91,22 @@ std::ostream& operator << (std::ostream &out, LLMatOrd& mat)
     return out;
 }
 
+std::ostream& operator << (std::ostream &out, LLMatOrd_vector2& mat)
+{
+    out << "LLMatOrd:" << std::endl;
+    out << "num of columns:" << mat.n << std::endl;
+    out << "num of elems:" << mat.m << std::endl;
+    out << "(col, row, val):" << std::endl;
+    for (int col = 0; col < mat.n; col++)
+    {
+        for (int idx = 0; idx < mat.row[col].size(); idx++)
+        {
+            out << "(" << col << ", " << mat.row[col][idx] << ", " << mat.val[col][idx] << ")\n";
+        }
+    }
+    return out;
+}
+
 void laplacian(const SparseMatrix& A, SparseMatrix& L)
 {
     std::vector<Edge> edges_list;
