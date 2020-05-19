@@ -304,22 +304,33 @@ LDLinv approxChol_vector2(LLMatOrd_vector2 a) {
                 // a.lles[ptr].next = jhead;
                 // a.lles[ptr].val = newEdgeVal;
                 // a.cols[j] = ptr;
+                // std::cout << "start create j < k" << j << " " << k << std::endl;
                 auto iter = std::lower_bound(a.row[j].begin(), a.row[j].end(), k);
+                int idx = iter - a.row[j].begin();
+                // std::cout << "iter" << int(iter - a.row[j].begin()) << iter - a.row[j].begin() <<  std::endl;
                 if (iter != a.row[j].end() && *iter == k)
-                    *iter += newEdgeVal;
+                {
+                    // std::cout << "exist" << std::endl;
+                    a.val[j][idx] += newEdgeVal;
+                }
                 else
                 {
-                    a.row[j].push_back(k);
-                    a.val[j].push_back(newEdgeVal);
+                    // std::cout << "new" << std::endl;
+                    a.row[j].insert(iter, k);
+                    // std::cout << "new row finish" << std::endl;
+                    a.val[j].insert(a.val[j].begin() + idx, newEdgeVal);
+                    // std::cout << "new val finish" << std::endl;
                 } 
+                // std::cout << "created j < k" << std::endl;
             } else {        // put it in col k
                 auto iter = std::lower_bound(a.row[k].begin(), a.row[k].end(), j);
+                int idx = iter - a.row[k].begin();
                 if (iter != a.row[k].end() && *iter == j)
-                    *iter += newEdgeVal;
+                    a.val[k][idx] += newEdgeVal;
                 else
                 {
-                    a.row[k].push_back(j);
-                    a.val[k].push_back(newEdgeVal);
+                    a.row[k].insert(iter, j);
+                    a.val[k].insert(a.val[k].begin() + idx, newEdgeVal);
                 } 
             }
         }
@@ -334,6 +345,12 @@ LDLinv approxChol_vector2(LLMatOrd_vector2 a) {
         ldli_row_ptr += 1;
 
         d[i] = w;
+
+        //free column
+        a.row[i].clear();
+        a.row[i].shrink_to_fit();
+        a.val[i].clear();
+        a.val[i].shrink_to_fit();
     }
 
     ldli.colptr[n-1] = ldli_row_ptr;
