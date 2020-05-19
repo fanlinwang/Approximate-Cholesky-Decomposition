@@ -334,6 +334,12 @@ LDLinv approxChol_vector2(LLMatOrd_vector2 a) {
         ldli_row_ptr += 1;
 
         d[i] = w;
+
+        //free column
+        a.row[i].clear();
+        a.row[i].shrink_to_fit();
+        a.val[i].clear();
+        a.val[i].shrink_to_fit();
     }
 
     ldli.colptr[n-1] = ldli_row_ptr;
