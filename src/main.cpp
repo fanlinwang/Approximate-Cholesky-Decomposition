@@ -47,6 +47,7 @@ void register_functions()
 {
     // add_function(&approxchol_lapGiven, "Base iterative solver", 1);
     add_function(&approxChol, "Base approxChol", 1);
+    add_function(&approxChol_opt, "Base approxChol", 1);
 }
 
 /* Global vars, used to keep track of student functions */
@@ -232,6 +233,7 @@ int main(int argc, char **argv) {
         perf = perf_test(userFuncs[i], funcNames[i], 12*EDGE);
         cout << endl << "Running: " << funcNames[i] << endl;
         cout << perf << " flops / cycles" << endl;
+        cout << endl << endl;
     }
 
     return 0;
