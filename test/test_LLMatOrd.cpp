@@ -24,6 +24,8 @@ void test_LLMatOrd()
     std::cout << sparse;
     LLMatOrd llmat(sparse);
     std::cout << llmat;
+    LLMatOrd_vector2 llmat_vector2(sparse);
+    std::cout << llmat_vector2;
 }
 
 int main()
