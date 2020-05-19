@@ -351,12 +351,12 @@ LDLinv approxChol_opt(LLMatOrd a) {
         }
         for (; joffset <= len-2; joffset++)
         {
-            LLcol llcol = colspace[joffset];
-            Tval w = llcol.cval * colScale;
+            LLcol llcol = colspace[joffset]; // slow
+            Tval w = llcol.cval * colScale; // slow
             js[joffset] = llcol.row;
             ptrs[joffset] = llcol.ptr;
 
-            Tval f = w/wdeg;
+            Tval f = w/wdeg; // slow
             // flop count: 1 mul
 
             newEdgeVals[joffset] = w*(1-f);
@@ -377,13 +377,13 @@ LDLinv approxChol_opt(LLMatOrd a) {
             Tval newEdgeVal = newEdgeVals[joffset];
             Tind ptr = ptrs[joffset];
             if (j < k) {    // put it in col j
-                Tind jhead = a.cols[j];
+                Tind jhead = a.cols[j]; // slow
                 a.lles[ptr].row = k;
                 a.lles[ptr].next = jhead;
                 a.lles[ptr].val = newEdgeVal;
                 a.cols[j] = ptr;
             } else {        // put it in col k
-                Tind khead = a.cols[k];
+                Tind khead = a.cols[k]; // slow
                 a.lles[ptr].row = j;
                 a.lles[ptr].next = khead;
                 a.lles[ptr].val = newEdgeVal;
