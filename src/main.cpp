@@ -27,7 +27,9 @@ using namespace std;
 int VERTICE;
 int EDGE;
 
-typedef LDLinv(*comp_func)(LLMatOrd a);
+// typedef LDLinv(*comp_func)(LLMatOrd a);
+typedef LDLinv(*comp_func)(LLMatOrd_vector2 a);
+
 // typedef void(*comp_func)(SparseMatrix& A, SparseMatrix& lap_A,
 //                          const std::vector<Tval>& b,          
 //                          std::vector<Tval>& sol, SolverParameter paras);
@@ -46,8 +48,9 @@ void build_x(double ** m, unsigned n1, unsigned n2);
 void register_functions()
 {
     // add_function(&approxchol_lapGiven, "Base iterative solver", 1);
-    add_function(&approxChol, "Base approxChol", 1);
-    add_function(&approxChol_opt, "Base approxChol", 1);
+    // add_function(&approxChol, "Base approxChol", 1);
+   //  add_function(&approxChol_opt, "Base approxChol", 1);
+   add_function(&approxChol_vector2, "Base approxChol", 1);
 }
 
 /* Global vars, used to keep track of student functions */
@@ -132,6 +135,8 @@ double perf_test(comp_func f, string desc, int flops)
     cout << "#int comparisons: " << intcomp_count << std::endl;
     cout << "#total ops: " << ops_count << std::endl;
 
+    LLMatOrd_vector2 llmat2 = LLMatOrd_vector2(A);
+
     // SparseMatrix lap_A;
     // laplacian(A, lap_A);
 
@@ -167,7 +172,7 @@ double perf_test(comp_func f, string desc, int flops)
 
         start = start_tsc();
         for (size_t i = 0; i < num_runs; ++i) {
-            f(llmat); 
+            f(llmat2); 
         }
         end = stop_tsc(start);
 

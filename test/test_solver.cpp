@@ -10,9 +10,9 @@ int main(int argc, char **argv){
     int e = atoi(argv[2]);
 
     SparseMatrix A(v, e);
-    LLMatOrd llmat = LLMatOrd(A);
+    LLMatOrd_vector2 llmat = LLMatOrd_vector2(A);
 
-    approxChol_opt(llmat);
+    approxChol_vector2(llmat);
 
     return 0;
 

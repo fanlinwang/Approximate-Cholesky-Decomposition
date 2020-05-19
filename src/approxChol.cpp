@@ -303,8 +303,8 @@ LDLinv approxChol_vector2(LLMatOrd_vector2 a) {
 
         int len = a.row[i].size();
         // TODO: is sort by val necessary
-        typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexIt;
-        std::sort(IndexIt(&a.row[i][0], &a.val[i][0]), IndexIt(&a.row[i][0] + len, &a.val[i][0] + len) );
+        // typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexIt;
+        // std::sort(IndexIt(&a.row[i][0], &a.val[i][0]), IndexIt(&a.row[i][0] + len, &a.val[i][0] + len) );
         // flop count: sort LLcol len*log(len)?
 
         Tval csum = 0;
