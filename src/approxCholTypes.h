@@ -327,11 +327,11 @@ struct LDLinv{
     std::vector<Tind> rowval;
     std::vector<Tval> fval;
     std::vector<Tval> d;
-    // LDLinv(LLmatp a):col(std::vector<Tind>(a.n-1, 0)),
-    //                 colptr(std::vector<Tind>(a.n, 0)),
-    //                 rowval(std::vector<Tind>()),
-    //                 fval(std::vector<Tval>()),
-    //                 d(std::vector<Tval>(a.n, 0)) {}
+    LDLinv(LLMatOrd_vector2 a):col(std::vector<Tind>(a.n-1, 0)),
+                    colptr(std::vector<Tind>(a.n, 0)),
+                    rowval(std::vector<Tind>()),
+                    fval(std::vector<Tval>()),
+                    d(std::vector<Tval>(a.n, 0)) {}
     LDLinv(LLMatOrd a):col(std::vector<Tind>(a.n-1, 0)),
                     colptr(std::vector<Tind>(a.n, 0)),
                     rowval(std::vector<Tind>()),
