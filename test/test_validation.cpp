@@ -26,7 +26,7 @@ int main(){
     // LDLinv ldli = approxChol(llmat);
     LLMatOrd_vector2 llmat(A);
 
-    LDLinv ldli = approxChol_vector2(llmat);
+    LDLinv ldli = approxChol_vector3(llmat);
     // std::cout << ldli << std::endl;
 
     Tval ratio = ApproxCholValidation(A, ldli, 1e-4);

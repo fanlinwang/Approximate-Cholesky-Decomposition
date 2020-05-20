@@ -243,8 +243,8 @@ std::ostream& operator << (std::ostream &out, LLMatOrd& mat);
 
 struct LLMatOrd_vector2{
     long n, m;
-    std::vector<std::vector<Tind> > row;
-    std::vector<std::vector<Tval> > val;
+    std::vector<std::vector<Tind>> row;
+    std::vector<std::vector<Tval>> val;
     LLMatOrd_vector2(){}
     LLMatOrd_vector2(SparseMatrix &a)
     {

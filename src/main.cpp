@@ -50,7 +50,9 @@ void register_functions()
     // add_function(&approxchol_lapGiven, "Base iterative solver", 1);
     // add_function(&approxChol, "Base approxChol", 1);
    //  add_function(&approxChol_opt, "Base approxChol", 1);
-   add_function(&approxChol_vector2, "Base approxChol", 1);
+  // add_function(&approxChol_vector2, "approxChol2", 1);
+   add_function(&approxChol_vector3, "approxChol3", 1);
+
 }
 
 /* Global vars, used to keep track of student functions */
