@@ -53,6 +53,7 @@ void register_functions()
     add_function(&approxChol_opt, "approxChol opt1", 1);
     add_function(&approxChol_vector2, "approxChol vec2", 1);
     add_function(&approxChol_vector2_opt, "approxChol vec2 opt", 1);
+   // add_function(&approxChol_vector3, "approxChol 3", 1);
 }
 
 /* Global vars, used to keep track of student functions */
@@ -62,6 +63,9 @@ vector<string> funcNames;
 vector<string> funcNames2;
 vector<int> funcFlops;
 int numFuncs = 0;
+vector<Tval> b;
+SparseMatrix A;
+int ops_count = 0;
 
 float get_random()
 {
@@ -81,22 +85,6 @@ void init_vec(std::vector<Tval>& b)
     }
     std::cout << "b generated.\n";
 }
-
-/*
-* Compare the solution of the functions 
-*/
-// double nrm_sqr_diff(double *x, double *y, int n) {
-//     double nrm_sqr = 0.0;
-//     for(int i = 0; i < n; i++) {
-//         nrm_sqr += (x[i] - y[i]) * (x[i] - y[i]);
-//     }
-    
-//     if (isnan(nrm_sqr)) {
-//       nrm_sqr = INFINITY;
-//     }
-    
-//     return nrm_sqr;
-// }
 
 /*
 * Registers a user function to be tested by the driver program. Registers a
@@ -130,55 +118,9 @@ double perf_test(comp_func f, string desc, int flops)
     long num_runs = 100;
     double multiplier = 1;
     myInt64 start, end;
-
-    // initialize input 
-    std::vector<Tval> b(VERTICE, 0.0);
-    init_vec(b);
-
-    SparseMatrix A(VERTICE, EDGE);
     LLMatOrd llmat = LLMatOrd(A);
-    cout << "Created random sparse matrix A.\n";
-
-    int flops_count, flcomp_count, intops_count, intcomp_count, ops_count;
-    approxChol_count(llmat, flops_count, flcomp_count, intops_count, intcomp_count);
-    ops_count = flops_count + flcomp_count + intops_count + intcomp_count;
-    cout << "#fl ops: " << flops_count << std::endl;
-    cout << "#fl comparisons: " << flcomp_count << std::endl;
-    cout << "#int ops: " << intops_count << std::endl;
-    cout << "#int comparisons: " << intcomp_count << std::endl;
-    cout << "#total ops: " << ops_count << std::endl;
-
-    // SparseMatrix lap_A;
-    // laplacian(A, lap_A);
-
-    // SolverParameter para;
-    // para.maxits = 100;
-    // para.maxtime = 1000;
-    // para.verbose = false;
-    // para.tolerance = 1e-10;
-    // std::vector<Tval> sol(VERTICE, 0.0);
-
-    // Warm-up phase: we determine a number of executions that allows
-    // the code to be executed for at least CYCLES_REQUIRED cycles.
-    // This helps excluding timing overhead when measuring small runtimes.
-    // do {
-    //     num_runs = num_runs * multiplier;
-    //     start = start_tsc();
-    //     for (size_t i = 0; i < num_runs; i++) {
-    //         // f(A, lap_A, b, sol, para);   
-    //         f(llmat);   
-    //     }
-    //     end = stop_tsc(start);
-
-    //     cycles = (double)end;
-    //     multiplier = (CYCLES_REQUIRED) / (cycles);
-        
-    // } while (multiplier > 2);
-
     list<double> cyclesList;
 
-    // Actual performance measurements repeated REP times.
-    // We simply store all results and compute medians during post-processing.
     for (size_t j = 0; j < REP; j++) {
 
         start = start_tsc();
@@ -194,7 +136,6 @@ double perf_test(comp_func f, string desc, int flops)
 
     cyclesList.sort();
     cycles = cyclesList.front();
-    // return cycles; 
     cout << "#cycles: " << cycles << std::endl;
     return (1.0 * ops_count) / cycles;
 }
@@ -204,30 +145,11 @@ double perf_test(comp_func2 f, string desc, int flops)
     double cycles = 0.;
     long num_runs = 100;
     double multiplier = 1;
-    myInt64 start, end;
-
-    // initialize input 
-    std::vector<Tval> b(VERTICE, 0.0);
-    init_vec(b);
-
-    SparseMatrix A(VERTICE, EDGE);
-    LLMatOrd llmat = LLMatOrd(A);
-    LLMatOrd_vector2 llmat2(A);
-    cout << "Created random sparse matrix A.\n";
-
-    int flops_count, flcomp_count, intops_count, intcomp_count, ops_count;
-    approxChol_count(llmat, flops_count, flcomp_count, intops_count, intcomp_count);
-    ops_count = flops_count + flcomp_count + intops_count + intcomp_count;
-    cout << "#fl ops: " << flops_count << std::endl;
-    cout << "#fl comparisons: " << flcomp_count << std::endl;
-    cout << "#int ops: " << intops_count << std::endl;
-    cout << "#int comparisons: " << intcomp_count << std::endl;
-    cout << "#total ops: " << ops_count << std::endl;
+    myInt64 start, end;    
 
     list<double> cyclesList;
+    LLMatOrd_vector2 llmat2(A);
 
-    // Actual performance measurements repeated REP times.
-    // We simply store all results and compute medians during post-processing.
     for (size_t j = 0; j < REP; j++) {
 
         start = start_tsc();
@@ -267,34 +189,28 @@ int main(int argc, char **argv) {
     }
     cout << numFuncs << " functions registered." << endl;
 
-    //Check validity of functions. 
-    // build(&x, n);
-    // build(&y, n);
+    b.reserve(VERTICE);
+    init_vec(b);
 
-    // y_base = static_cast<double *>(malloc(n * sizeof(double)));
-    // y_old  = static_cast<double *>(malloc(n * sizeof(double)));
+    SparseMatrix init_a(VERTICE, EDGE);
+    A = init_a;
+    cout << "Created random sparse matrix A. colnum: " << A.colnum << " elems:" << A.elems << "\n";
 
-    // memcpy(y_old,  y, n*sizeof(double));
-    // // base(); 
-    // // TODO: baseline function to be compared
-    // memcpy(y_base, y, n*sizeof(double));
+    LLMatOrd llmat = LLMatOrd(A);
 
-    // for (i = 0; i < numFuncs; i++) {
-    //     memcpy(y, y_old, n*sizeof(double));
-    //     comp_func f = userFuncs[i];
-    //     // f(); // TODO
-    //     double error = nrm_sqr_diff(y, y_base, n);
-
-    //     if (error > TOLERANCE) {
-    //         cout << error << endl;
-    //         cout << "ERROR!!!!  the results for the " << i+1 << "th function are different to the previous" << std::endl;
-    //     }
-    // }
+    int flops_count, flcomp_count, intops_count, intcomp_count;
+    approxChol_count(llmat, flops_count, flcomp_count, intops_count, intcomp_count);
+    ops_count = flops_count + flcomp_count + intops_count + intcomp_count;
+    cout << "#fl ops: " << flops_count << std::endl;
+    cout << "#fl comparisons: " << flcomp_count << std::endl;
+    cout << "#int ops: " << intops_count << std::endl;
+    cout << "#int comparisons: " << intcomp_count << std::endl;
+    cout << "#total ops: " << ops_count << std::endl;
 
     for (i = 0; i < userFuncs.size(); i++)
     {
         cout << "V: " << VERTICE << ", E:" << EDGE << "\n";
-        cout << endl << "Running: " << funcNames[i] << endl;
+        cout << "Running: " << funcNames[i] << endl;
         perf = perf_test(userFuncs[i], funcNames[i], 12*EDGE);
         cout << perf << " flops / cycles" << endl;
         cout << endl << endl;
@@ -302,7 +218,7 @@ int main(int argc, char **argv) {
     for (i = 0; i < userFuncs2.size(); i++)
     {
         cout << "V: " << VERTICE << ", E:" << EDGE << "\n";
-        cout << endl << "Running: " << funcNames2[i] << endl;
+        cout << "Running: " << funcNames2[i] << endl;
         perf = perf_test(userFuncs2[i], funcNames2[i], 12*EDGE);
         cout << perf << " flops / cycles" << endl;
         cout << endl << endl;
