@@ -154,6 +154,16 @@ struct SparseMatrix{
         std::vector<Edge> edges_list(edges.begin(), edges.end());
         new (this)SparseMatrix(edges_list, n);//placement new
     }
+    SparseMatrix& operator=(const SparseMatrix& a){
+        vals = a.vals; 
+        rows = a.rows;
+        colptrs = a.colptrs;
+        degs = a.degs;
+        colnum = a.colnum;
+        elems = a.elems;
+        return *this;
+    };
+
 };
 
 std::ostream& operator << (std::ostream &out, SparseMatrix &sparse);

@@ -9,9 +9,9 @@
 #include <cassert>
 #include <stdlib.h>
 #include <boost/align/aligned_allocator.hpp>
-typedef std::vector<int, boost::alignment::aligned_allocator<int, 32>> aligned_VI;
-typedef std::vector<double, boost::alignment::
-    aligned_allocator<double, 32>> aligned_VV;
+// typedef std::vector<int, boost::alignment::aligned_allocator<int, 32>> aligned_VI;
+// typedef std::vector<double, boost::alignment::
+//     aligned_allocator<double, 32>> aligned_VV;
 typedef int Tind;
 typedef double Tval;
 // #define VERTICE 10000
