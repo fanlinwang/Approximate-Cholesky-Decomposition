@@ -19,6 +19,7 @@ Tind compressCol(std::vector<LLcol> &colspace, int len);
 LDLinv approxChol(LLMatOrd a);
 LDLinv approxChol_vector2(LLMatOrd_vector2 a);
 LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a);
+LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 a);
 LDLinv approxChol_opt(LLMatOrd a);
 void approxChol_count(LLMatOrd a, int &flops_count, int &flcomp_count, int &intops_count, int &intcomp_count);
 void forward(const LDLinv& ldli, std::vector<Tval>& y);
