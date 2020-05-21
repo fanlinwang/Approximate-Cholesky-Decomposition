@@ -854,6 +854,8 @@ LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a) {
 
     std::vector<Tval> d(n, 0);
 
+    std::vector<Tind> row(n);
+    std::vector<Tval> val(n);
 
     std::vector<Tval> cumspace(n);
 
@@ -867,8 +869,35 @@ LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a) {
         ldli.colptr[i] = ldli_row_ptr;
 
         int len = a.row[i].size();
-        typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexIt;
-        std::sort(IndexIt(&a.row[i][0], &a.val[i][0]), IndexIt(&a.row[i][0] + len, &a.val[i][0] + len) );
+        
+        if (len > 0)
+        {
+            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
+            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
+            row.clear();
+            val.clear();
+
+            int idx = 1;
+            Tval last_val = a.val[i][0];
+            Tind last_row = a.row[i][0];
+            // std::cout << "merge" << std::endl;
+            while (idx < len)
+            {
+                while (idx < len && a.row[i][idx] == last_row)
+                    last_val += a.val[i][idx++];
+                row.push_back(last_row);
+                val.push_back(last_val);
+                if (idx < len)
+                {
+                    last_val = a.val[i][idx];
+                    last_row = a.row[i][idx];
+                }
+            }
+            // std::cout << "merge done" << std::endl;
+            len = row.size();
+            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
+            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
+        }
         // flop count: sort LLcol len*log(len)?
 
         Tval csum = 0;
@@ -1005,6 +1034,8 @@ LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 a) {
 
     std::vector<Tval> d(n, 0);
 
+    std::vector<Tind> row(n);
+    std::vector<Tval> val(n);
 
     std::vector<Tval> cumspace(n);
 
@@ -1018,8 +1049,34 @@ LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 a) {
         ldli.colptr[i] = ldli_row_ptr;
 
         int len = a.row[i].size();
-        typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexIt;
-        std::sort(IndexIt(&a.row[i][0], &a.val[i][0]), IndexIt(&a.row[i][0] + len, &a.val[i][0] + len) );
+        if (len > 0)
+        {
+            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
+            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
+            row.clear();
+            val.clear();
+
+            int idx = 1;
+            Tval last_val = a.val[i][0];
+            Tind last_row = a.row[i][0];
+            // std::cout << "merge" << std::endl;
+            while (idx < len)
+            {
+                while (idx < len && a.row[i][idx] == last_row)
+                    last_val += a.val[i][idx++];
+                row.push_back(last_row);
+                val.push_back(last_val);
+                if (idx < len)
+                {
+                    last_val = a.val[i][idx];
+                    last_row = a.row[i][idx];
+                }
+            }
+            // std::cout << "merge done" << std::endl;
+            len = row.size();
+            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
+            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
+        }
         // flop count: sort LLcol len*log(len)?
 
         Tval csum = 0;
