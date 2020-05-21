@@ -55,7 +55,7 @@ void register_functions()
     add_function(&approxChol_vector2_merge, "approxChol vec2 merge", 1);
     add_function(&approxChol_vector2_opt, "approxChol vec2 opt", 1);
     add_function(&approxChol_vector2_opt2, "approxChol vec2 opt2", 1);
-    add_function(&approxChol_vector2_rand, "approxChol vec2 rand", 1);
+    add_function(&approxChol_vector2_mergerand, "approxChol vec2 merge+rand", 1);
 }
 
 /* Global vars, used to keep track of student functions */
