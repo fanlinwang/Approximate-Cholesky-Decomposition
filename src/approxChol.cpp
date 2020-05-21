@@ -464,13 +464,14 @@ LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a) {
 
         Tval colScale = 1;
 
-        //Tind js[len-1];
-        //Tind ks[len-1];
+        int newlen = ceil(double(len-1)/4)*4;
+        Tind js[newlen];
+        Tind ks[newlen];
         
-        Tind *js, *ks;
+        /*Tind *js, *ks;
         int newlen = ceil(double(len-1)/4)*4;
         js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));*/
         
         Tval randnums[len-1];
         for (int joffset = 0; joffset <= len-2; joffset++)
@@ -510,10 +511,11 @@ LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a) {
             ldli.fval.push_back(f);
             ldli_row_ptr += 1;
         }
+        
         __m128i allone = _mm_set1_epi32(0xffffffff);
         for (int joffset = 0; joffset < newlen; joffset+=4) {
-            __m128i j_4 = _mm_load_si128((__m128i *)(js+joffset));
-            __m128i k_4 = _mm_load_si128((__m128i *)(ks+joffset));
+            __m128i j_4 = _mm_loadu_si128((__m128i *)(js+joffset));
+            __m128i k_4 = _mm_loadu_si128((__m128i *)(ks+joffset));
 
             __m128i mask1 = _mm_cmplt_epi32(k_4, j_4);
             __m128i res1 = _mm_blendv_epi8(j_4, k_4, mask1);
@@ -525,8 +527,8 @@ LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a) {
             //__m128i res1 = _mm_min_epi32(j_4, k_4);
             //__m128i res2 = _mm_max_epi32(j_4, k_4);
 
-            _mm_store_si128((__m128i *)(js+joffset), res1);
-            _mm_store_si128((__m128i *)(ks+joffset), res2);
+            _mm_storeu_si128((__m128i *)(js+joffset), res1);
+            _mm_storeu_si128((__m128i *)(ks+joffset), res2);
         }
         
         for (int joffset = 0; joffset <= len-2; joffset++) {
@@ -550,8 +552,8 @@ LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a) {
             }
         }
         
-        free(js);
-        free(ks);
+        //free(js);
+        //free(ks);
         // LLcol llcol = colspace[len-1];
         Tval w = a.val[i][len - 1] * colScale;
         // flop count: 1 mul
