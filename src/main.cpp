@@ -53,7 +53,8 @@ void register_functions()
     add_function(&approxChol_opt, "approxChol opt1", 1);
     add_function(&approxChol_vector2, "approxChol vec2", 1);
     add_function(&approxChol_vector2_opt, "approxChol vec2 opt", 1);
-   // add_function(&approxChol_vector3, "approxChol 3", 1);
+    add_function(&approxChol_vector2_rand, "approxChol vec2 rand", 1);
+    // add_function(&approxChol_vector2_opt1, "approxChol vec2 opt2", 1);
 }
 
 /* Global vars, used to keep track of student functions */
