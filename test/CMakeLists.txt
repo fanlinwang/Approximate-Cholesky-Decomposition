@@ -14,5 +14,5 @@ target_link_libraries(test_pcg PRIVATE approxChol)
 add_executable(test_validation test_validation.cpp)
 target_link_libraries(test_validation PRIVATE approxChol)
 
-add_executable(test_solver test_solver.cpp)
-target_link_libraries(test_solver PRIVATE approxChol)
+add_executable(runtime runtime.cpp)
+target_link_libraries(runtime PRIVATE approxChol)
