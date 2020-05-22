@@ -56,7 +56,9 @@ void register_functions()
     add_function(&approxChol_vector2_merge, "approxChol vec2 merge", 1);
     add_function(&approxChol_vector2_opt, "approxChol vec2 merge simd(jkswap)", 1);
     add_function(&approxChol_vector2_opt2, "approxChol vec2 merge simd(jkswap sampling)", 1);
+    add_function(&approxChol_vector2_opt3, "approxChol vec2 merge simd(aligned jkswap sampling)", 1);
     add_function(&approxChol_vector2_mergerand, "approxChol vec2 merge+rand", 1);
+    add_function(&approxChol_vector2_mergerand_simd, "approxChol vec2 merge rand simd", 1);
    // add_function(&approxChol_vector3, "approxChol 3", 1);
 }
 
