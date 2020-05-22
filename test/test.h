@@ -26,19 +26,25 @@ inline void test(const bool pred, const std::string& error_message = "")
 typedef LDLinv(*func1)(LLMatOrd a);
 typedef LDLinv(*func2)(LLMatOrd_vector2 a);
 
-void elapsed_time(func1 f1, LLMatOrd llmat, std::string func_name) {
-    auto start = std::chrono::steady_clock::now();
-    f1(llmat);
-    auto end = std::chrono::steady_clock::now();        
-	std::cout << func_name << " elapsed time in nanoseconds : " 
-		<< std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << " ns" << std::endl;
+void elapsed_time(func1 f1, LLMatOrd llmat, std::string func_name, int rep) {
+    long count = 0;
+    for (int i = 0; i < rep; ++i){
+        auto start = std::chrono::steady_clock::now();
+        f1(llmat);
+        auto end = std::chrono::steady_clock::now();   
+        count += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+    }
+    std::cout << " " <<  count/(float)(rep)/1e9 << " ";
 
 }
-void elapsed_time(func2 f2, LLMatOrd_vector2 llmat, std::string func_name) {
-    auto start = std::chrono::steady_clock::now();
-    f2(llmat);
-    auto end = std::chrono::steady_clock::now();        
-    std::cout << func_name << " elapsed time in nanoseconds : " 
-		<< std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << " ns" << std::endl;
+void elapsed_time(func2 f2, LLMatOrd_vector2 llmat, std::string func_name, int rep) {
+    long count = 0;
+    for (int i = 0; i < rep; ++i){
+        auto start = std::chrono::steady_clock::now();
+        f2(llmat);
+        auto end = std::chrono::steady_clock::now();   
+        count += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+    }
+    std::cout << " " <<  count/(float)(rep)/1e9 << " ";
 }
 

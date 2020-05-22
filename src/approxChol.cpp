@@ -721,7 +721,7 @@ LDLinv approxChol_vector2_mergerand(LLMatOrd_vector2 a) {
     for (int joffset = 0; joffset < n; joffset++)
     {
         randnums[joffset] = u(engine);
-        randidx[joffset] = u(engine);
+        randidx[joffset] = uidx(engine);
     }
     for (long i = 0; i <= n-2; i++) {
 
