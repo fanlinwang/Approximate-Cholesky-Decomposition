@@ -24,6 +24,7 @@ LDLinv approxChol_vector2_mergerand_simd(LLMatOrd_vector2 a);
 LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a);
 LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 a);
 LDLinv approxChol_vector2_opt3(LLMatOrd_vector2 a);
+LDLinv approxChol_vector2_opt4(LLMatOrd_vector2 a);
 LDLinv approxChol_opt(LLMatOrd a);
 LDLinv approxChol_opt2(LLMatOrd a);
 void approxChol_count(LLMatOrd a, int &flops_count, int &flcomp_count, int &intops_count, int &intcomp_count);
