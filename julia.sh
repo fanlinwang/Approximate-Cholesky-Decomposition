@@ -9,9 +9,10 @@ do
     do
         if [[ $E -gt $(($V)) ]] && [[ $E -lt $(($V*100)) ]]
         then
-            # to get exact cycles, run main without perf. 
-            ./build/test/runtime $V $E 2 | tee -a "./log/runtime.txt"
-         fi
+            # to get general measures from perf
+            ./julia/runtime.jl $V $E | tee -a "./log/julia_runtime.txt"
+
+        fi
     done
 done
 

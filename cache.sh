@@ -10,7 +10,7 @@ do
         if [[ $E -gt $(($V)) ]] && [[ $E -lt $(($V*100)) ]]
         then
             # to get exact cycles, run main without perf. 
-            ./build/test/runtime $V $E 2 | tee -a "./log/runtime.txt"
+            valgrind --tool=cachegrind --cache-sim=yes --branch-sim=yes ./build/test/runtime $V $E 1 | tee -a "./log/cache.txt"
          fi
     done
 done
