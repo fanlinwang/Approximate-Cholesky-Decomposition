@@ -3,7 +3,6 @@ using SuiteSparse
 using LinearAlgebra
 using SparseArrays
 using Statistics
-using BenchmarkTools
 import Laplacians.LLMatOrd
 import Laplacians.approxChol
 import Laplacians.LDLsolver

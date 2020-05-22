@@ -7,10 +7,11 @@ for V in ${vertice[@]}
 do
     for E in ${edge[@]}
     do
-        if [[ $E -gt $(($V)) ]] && [[ $E -lt $(($V*100)) ]]
+        if [[ $E -gt $(($V)) ]] && [[ $E -lt $(($V*50)) ]]
         then
             # to get general measures from perf
-            ./julia/runtime.jl $V $E | tee -a "./log/julia_runtime.txt"
+            echo "$V $E" | tee -a "./log/julia_runtime.txt"
+            julia ./julia/runtime.jl $V $E | tee -a "./log/julia_runtime.txt"
 
         fi
     done

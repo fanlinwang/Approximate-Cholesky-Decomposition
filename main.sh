@@ -7,7 +7,7 @@ for V in ${vertice[@]}
 do
     for E in ${edge[@]}
     do
-        if [[ $E -gt $(($V)) ]] && [[ $E -lt $(($V*100)) ]]
+        if [[ $E -gt $(($V)) ]] && [[ $E -lt $(($V*50)) ]]
         then
             # to get exact cycles, run main without perf. 
             ./build/src/main $V $E | tee -a "./log/exact_cycle.txt"
