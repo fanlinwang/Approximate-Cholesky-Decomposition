@@ -27,6 +27,7 @@ int main(int argc, char **argv){
     elapsed_time(&approxChol_vector2_mergerand, llmat2, "vec2_merge_rand",r);
     elapsed_time(&approxChol_vector2_mergerand_simd, llmat2, "vec2_merge_rand_simd", r);
 
+    std::cout << "\n";
     return 0;
 
 }

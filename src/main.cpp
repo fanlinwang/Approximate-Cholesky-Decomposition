@@ -227,7 +227,7 @@ int main(int argc, char **argv) {
             << flcomp_count << " " << intops_count << " " << intcomp_count << " " << ops_count << " ";
         perf = perf_test(userFuncs2[i], funcNames2[i], 12*EDGE);
         cout << perf << " ";
-        cout << funcNames[i] << "\n";
+        cout << funcNames2[i] << "\n";
     }
 
     return 0;
