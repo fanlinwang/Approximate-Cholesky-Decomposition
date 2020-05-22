@@ -18,9 +18,9 @@ int main(){
         {1,1,0,0,0},
         {1,1,0,0,0},
         {0,1,0,0,0}};
-    SparseMatrix A(matrix);
-    // SparseMatrix A(matrix2);
-    // SparseMatrix A(10000, 50000, 1);
+    
+    // SparseMatrix A(matrix);
+    SparseMatrix A(10000, 50000, 1);
     // LLMatOrd llmat = LLMatOrd(A);
 
     // LDLinv ldli = approxChol(llmat);
