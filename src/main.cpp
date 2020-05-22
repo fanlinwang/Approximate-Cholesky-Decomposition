@@ -50,11 +50,13 @@ void register_functions()
 {
     // add_function(&approxchol_lapGiven, "Base iterative solver", 1);
     add_function(&approxChol, "Base approxChol", 1);
-    add_function(&approxChol_opt, "approxChol opt1", 1);
+    add_function(&approxChol_opt, "approxChol inline", 1);
+    add_function(&approxChol_opt2, "approxChol inline simd", 1);
     add_function(&approxChol_vector2, "approxChol vec2", 1);
     add_function(&approxChol_vector2_merge, "approxChol vec2 merge", 1);
-    add_function(&approxChol_vector2_opt, "approxChol vec2 opt", 1);
-    add_function(&approxChol_vector2_opt2, "approxChol vec2 opt2", 1);
+    add_function(&approxChol_vector2_opt, "approxChol vec2 simd(jkswap)", 1);
+    add_function(&approxChol_vector2_opt2, "approxChol vec2 merge simd(jkswap sampling)", 1);
+    add_function(&approxChol_vector2_mergerand, "approxChol vec2 merge+rand", 1);
    // add_function(&approxChol_vector3, "approxChol 3", 1);
 }
 
