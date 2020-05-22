@@ -22,6 +22,7 @@ LDLinv approxChol_vector2_merge(LLMatOrd_vector2 a);
 LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a);
 LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 a);
 LDLinv approxChol_opt(LLMatOrd a);
+LDLinv approxChol_opt2(LLMatOrd a);
 void approxChol_count(LLMatOrd a, int &flops_count, int &flcomp_count, int &intops_count, int &intcomp_count);
 void forward(const LDLinv& ldli, std::vector<Tval>& y);
 void backward(const LDLinv& ldli, std::vector<Tval>& y); 

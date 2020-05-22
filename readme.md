@@ -22,15 +22,25 @@
 .
 ├── CMakeLists.txt
 ├── src
-│   └── main.cpp
+│   ├── main.cpp
 │   ├── approxChol.hpp
-│   └── approxChol.cpp
-│   └── approxCholTypes.h
-│   └── common.h
-│   └── tsc_x86.h
+│   ├── approxChol.cpp
+│   ├── approxCholTypes.h
+│   ├── approxCholTypes.cpp
+│   ├── conditionNumber.hpp
+│   ├── conditionNumber.cpp
+│   ├── common.h
+│   ├── tsc_x86.h
 │   └── CMakeLists.txt
 └── test
+    ├── test_approxChol.cpp
+    ├── test_flops.cpp
     ├── test_LDLsolver.cpp
+    ├── test_LLMatOrd.cpp
+    ├── test_pcg.cpp
+    ├── test_solver.cpp
+    ├── test_validation.cpp
+    ├── matrix.hpp
     ├── test.h
     └── CMakeLists.txt
 ```
