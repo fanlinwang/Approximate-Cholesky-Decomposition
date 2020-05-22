@@ -11,7 +11,6 @@
   Print a column in an LLMatOrd matrix.
   This is here for diagnostics.
 */
-
 void print_ll_col(LLMatOrd llmat, int i);
 int get_ll_col(LLMatOrd llmat, int i, std::vector<LLcol> &colspace);
 bool cmp_row(const LLcol &a, const LLcol &b);
@@ -21,9 +20,14 @@ LDLinv approxChol(LLMatOrd a);
 LDLinv approxChol_opt(LLMatOrd a);
 LDLinv approxChol_vector2(LLMatOrd_vector2 a);
 LDLinv approxChol_vector2_merge(LLMatOrd_vector2 a);
+LDLinv approxChol_vector2_mergerand(LLMatOrd_vector2 a);
+LDLinv approxChol_vector2_mergerand_simd(LLMatOrd_vector2 a);
 LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a);
 LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 a);
-LDLinv approxChol_vector2_mergerand(LLMatOrd_vector2 a);
+LDLinv approxChol_vector2_opt3(LLMatOrd_vector2 a);
+LDLinv approxChol_vector2_opt4(LLMatOrd_vector2 a);
+LDLinv approxChol_opt(LLMatOrd a);
+LDLinv approxChol_opt2(LLMatOrd a);
 void approxChol_count(LLMatOrd a, int &flops_count, int &flcomp_count, int &intops_count, int &intcomp_count);
 void forward(const LDLinv& ldli, std::vector<Tval>& y);
 void backward(const LDLinv& ldli, std::vector<Tval>& y); 

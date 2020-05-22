@@ -12,17 +12,15 @@ int main(int argc, char **argv){
 
     SparseMatrix A(v, e);
     LLMatOrd llmat = LLMatOrd(A);
-    std::cout << v << " " <<  e << " ";
 
-    elapsed_time(approxChol, llmat, "Orig", r);
-    elapsed_time(approxChol_opt, llmat, "approxChol_opt", r);
+    elapsed_time(approxChol, llmat, "Orig");
+    elapsed_time(approxChol_opt, llmat, "approxChol_opt");
 
     LLMatOrd_vector2 llmat2 = LLMatOrd_vector2(A);
-    elapsed_time(approxChol_vector2, llmat2, "approxChol_vector2", r);
-    elapsed_time(approxChol_vector2_merge, llmat2, "approxChol_vector2_merge", r);
-    elapsed_time(approxChol_vector2_opt2, llmat2, "approxChol_vector2_opt2", r);
-    elapsed_time(approxChol_vector2_mergerand, llmat2, "approxChol_vector2_mergerand", r);
-    std::cout << "\n";
+    elapsed_time(approxChol_vector2, llmat2, "approxChol_vector2");
+    elapsed_time(approxChol_vector2_merge, llmat2, "approxChol_vector2_merge");
+    elapsed_time(approxChol_vector2_opt2, llmat2, "approxChol_vector2_opt2");
+    elapsed_time(approxChol_vector2_mergerand, llmat2, "approxChol_vector2_mergerand");
     
     return 0;
 
