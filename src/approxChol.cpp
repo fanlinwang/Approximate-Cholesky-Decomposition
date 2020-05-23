@@ -1656,6 +1656,27 @@ LDLinv approxChol_vector2_opt5(LLMatOrd_vector2 a) {
         }
         // flop count: sort LLcol len*log(len)?
 
+        if (len <= 1)
+        {
+            Tval w = val[len - 1];
+            // flop count: 1 mul
+            Tind j = row[len - 1];
+
+            ldli.rowval.push_back(j);
+            ldli.fval.push_back(1);
+            ldli_row_ptr += 1;
+
+            d[i] = w;
+
+            //free column
+            a.row[i].clear();
+            a.row[i].shrink_to_fit();
+            a.val[i].clear();
+            a.val[i].shrink_to_fit();
+
+            continue;
+        }
+
         /*int newlen = ceil(double(len-1)/4)*4;
         Tind js[newlen];
         Tind ks[newlen];
@@ -2032,6 +2053,21 @@ LDLinv approxChol_opt2(LLMatOrd a) {
         len = ptr+1;
 
 
+        if (len <= 1)
+        {
+            LLcol llcol = colspace[len-1];
+            Tval w = llcol.cval;
+            // flop count: 1 mul
+            Tind j = llcol.row;
+
+            ldli.rowval.push_back(j);
+            ldli.fval.push_back(1);
+            ldli_row_ptr += len;
+
+            d[i] = w;
+
+            continue;
+        }
 
         Tval csum = 0;
         for (int ii = 0; ii < len; ii++) {
@@ -2043,11 +2079,14 @@ LDLinv approxChol_opt2(LLMatOrd a) {
 
         Tval colScale = 1;
 
+        Tind *js, *ks;
+        Tval *randnums;
         int newlen = ceil(double(len-1)/4)*4;
-        Tind js[newlen];
-        Tind ks[newlen];
+        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        randnums = static_cast<Tval *>(aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
+
         
-        Tval randnums[newlen];
         for (int joffset = 0; joffset <= len-2; joffset++)
         {
             randnums[joffset] = u(engine);
@@ -2127,6 +2166,10 @@ LDLinv approxChol_opt2(LLMatOrd a) {
             a.lles[ptr].val = newEdgeVal;
             a.cols[j] = ptr;
         }
+
+        free(js);
+        free(ks);
+        free(randnums);
 
         LLcol llcol = colspace[len-1];
         Tval w = llcol.cval * colScale;
