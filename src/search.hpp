@@ -1,3 +1,4 @@
+#pragma once
 //modification of http://bannalia.blogspot.com/2015/06/cache-friendly-binary-search.html
 #include <algorithm>
 #include <vector>
@@ -27,6 +28,7 @@ public:
     vector aux(first,last);
     // std::sort(aux.begin(),aux.end());
     impl=aux;
+    idx.resize(impl.size());
     insert(0,aux.size(),aux.begin());
   }
   
@@ -56,10 +58,10 @@ public:
     //     j=2*j+1;
     //   }
         bool flag = (impl[j] < x);
-        i = flag ? j : i;
+        i = flag ? i : j;
         j = flag ? (j << 1) + 2 : (j << 1) + 1;
     }
-    return i;
+    return idx[i];
   }
   
 private:
@@ -68,6 +70,7 @@ private:
     if(n){
       size_type h=root(n);
       impl[i]=*(first+h);
+      idx[i]=first + h - begin();
       insert(2*i+1,h,first);
       insert(2*i+2,n-h-1,first+h+1);
     }
@@ -80,6 +83,20 @@ private:
     while(i<=n)i*=2;
     return std::min(i/2-1,n-i/4);
   }
-  
+public: 
   vector impl;
+  std::vector<int> idx;
 };
+
+inline int bitset_search(std::vector<double>& x, const int n, double z)
+{
+  int i = 0;
+  int k = (n >> 1) + 1;
+  int r;
+  while(k >>= 1)
+  {
+    r = i | k;
+    i = z >= x[r] ? r : i;
+  }
+  return i;
+}
