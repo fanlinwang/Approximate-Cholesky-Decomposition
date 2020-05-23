@@ -312,6 +312,44 @@ struct LLMatOrd_vector2{
 
 std::ostream& operator << (std::ostream &out, LLMatOrd_vector2& mat);
 
+struct Elem{
+    long row;
+    double val;
+    Elem(){}
+    Elem(long row, double val):row(row), val(val){}
+};
+
+struct LLMatOrd_vector2_struct{
+    long n, m;
+    std::vector<std::vector<Elem> > elems;
+    LLMatOrd_vector2_struct(){}
+    LLMatOrd_vector2_struct(SparseMatrix &a)
+    {
+        n = a.colnum;
+        m = a.elems;
+        elems.resize(n);
+        long reserve_len = m / n * RESERVE_FACTOR;
+        // std::cout << "n m len:" << n << " " << m << " " << reserve_len << std::endl;
+        for (int i = 0; i < n; i++)
+        {
+            // std::cout << "col " << i << std::endl;
+            elems[i].reserve(reserve_len);
+            
+            for (int ind = a.colptrs[i]; ind < a.colptrs[i + 1]; ind++)
+            {
+                Tind j = a.rows[ind];
+                // std::cout << "check:" << i << " " << j << std::endl;
+                if (i < j)
+                {
+                    Tval v = a.vals[ind];
+                    // std::cout << "new edge:" << i << " " << j << std::endl;
+                    elems[i].push_back(Elem(j, v));
+                }
+            }
+        }
+    }
+};
+
 struct LLcol{
     Tind row;
     Tind ptr;
@@ -338,6 +376,11 @@ struct LDLinv{
     std::vector<Tval> fval;
     std::vector<Tval> d;
     LDLinv(LLMatOrd_vector2 a):col(std::vector<Tind>(a.n-1, 0)),
+                    colptr(std::vector<Tind>(a.n, 0)),
+                    rowval(std::vector<Tind>()),
+                    fval(std::vector<Tval>()),
+                    d(std::vector<Tval>(a.n, 0)) {}
+    LDLinv(LLMatOrd_vector2_struct a):col(std::vector<Tind>(a.n-1, 0)),
                     colptr(std::vector<Tind>(a.n, 0)),
                     rowval(std::vector<Tind>()),
                     fval(std::vector<Tval>()),
