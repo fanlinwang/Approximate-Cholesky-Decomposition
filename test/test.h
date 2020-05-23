@@ -36,6 +36,7 @@ void elapsed_time(func1 f1, LLMatOrd llmat, std::string func_name, int rep) {
         count += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     }
     std::cout << " " <<  count/(float)(rep)/1e9 << " ";
+}
 
 void elapsed_time(func2 f2, LLMatOrd_vector2 llmat, std::string func_name, int rep) {
     long count = 0;
