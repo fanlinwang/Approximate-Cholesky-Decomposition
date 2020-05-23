@@ -1,4 +1,4 @@
-V, E, Orig, approxChol_opt, approxChol_vector2, approxChol_vector2_merge, approxChol_vector2_opt2, approxChol_vector2_mergerand
+V, E, Baseline, Inline, Inline+simd, Vector, Vector+Merge, Vector+Merge+simd(jkswap), Vector+Merge+simd(jkswap+sampling), Vector+Merge+simd(aligned+jkswap+sampling), Vector+Merge+simd(aligned+jkswap+sampling)+precompute_csum, Vector+Merge+pcgrand, Vector+Merge+pcgrand+simd(jkswap)
 100 200  8.25005e-05  5.59e-05  8.67505e-05  9.99005e-05  7.67005e-05  7.81505e-05  7.62005e-05  0.000111951  9.16005e-05  9.19505e-05  8.29505e-05
 100 500  0.000201351  0.00014225  0.000162951  0.000192451  0.000150551  0.000164701  0.000168301  0.000162751  0.000168751  0.000180401  0.000161051
 100 1000  0.000419553  0.000325202  0.000301252  0.000311152  0.000294802  0.000336302  0.000474103  0.000310902  0.000264502  0.000305752  0.000324252

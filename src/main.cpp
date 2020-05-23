@@ -18,8 +18,8 @@
 
 using namespace std;
 
-#define CYCLES_REQUIRED 1e8
-#define REP 2
+#define CYCLES_REQUIRED 1e6
+#define REP 5
 #define MAX_FUNCS 32
 
 // #define FLOPS (4.*n)
@@ -46,17 +46,17 @@ void build_x(double ** m, unsigned n1, unsigned n2);
 void register_functions()
 {
     // add_function(&approxchol_lapGiven, "Base iterative solver", 1);
-    add_function(&approxChol, "Base approxChol", 1);
-    add_function(&approxChol_opt, "approxChol inline", 1);
-    add_function(&approxChol_opt2, "approxChol inline simd", 1);
-    add_function(&approxChol_vector2, "approxChol vec2", 1);
-    add_function(&approxChol_vector2_merge, "approxChol vec2 merge", 1);
-    add_function(&approxChol_vector2_opt, "approxChol vec2 merge simd(jkswap)", 1);
-    add_function(&approxChol_vector2_opt2, "approxChol vec2 merge simd(jkswap sampling)", 1);
-    add_function(&approxChol_vector2_opt3, "approxChol vec2 merge simd(aligned jkswap sampling)", 1);
-    add_function(&approxChol_vector2_opt4, "approxChol vec2 merge simd(aligned jkswap sampling) precompute csum", 1);
-    add_function(&approxChol_vector2_mergerand, "approxChol vec2 merge+rand", 1);
-    add_function(&approxChol_vector2_mergerand_simd, "approxChol vec2 merge rand simd", 1);
+    add_function(&approxChol, "Baseline", 1);
+    add_function(&approxChol_opt, "Inline", 1);
+    add_function(&approxChol_opt2, "Inline+simd", 1);
+    add_function(&approxChol_vector2, "Vector", 1);
+    add_function(&approxChol_vector2_merge, "Vector+Merge", 1);
+    add_function(&approxChol_vector2_opt, "Vector+Merge+simd(jkswap)", 1);
+    add_function(&approxChol_vector2_opt2, "Vector+Merge+simd(jkswap+sampling)", 1);
+    add_function(&approxChol_vector2_opt3, "Vector+Merge+simd(aligned+jkswap+sampling)", 1);
+    add_function(&approxChol_vector2_opt4, "Vector+Merge+simd(aligned+jkswap+sampling)+precompute_csum", 1);
+    add_function(&approxChol_vector2_mergerand, "Vector+Merge+pcgrand", 1);
+    add_function(&approxChol_vector2_mergerand_simd, "Vector+Merge+pcgrand+simd(jkswap)", 1);
    // add_function(&approxChol_vector3, "approxChol 3", 1);
 }
 
@@ -119,13 +119,14 @@ void add_function(comp_func2 f, string name, int flops)
 double perf_test(comp_func f, string desc, int flops)
 {
     double cycles = 0.;
-    long num_runs = 100;
+    long num_runs = 3;
     double multiplier = 1;
     myInt64 start, end;
     LLMatOrd llmat = LLMatOrd(A);
     list<double> cyclesList;
 
     for (size_t j = 0; j < REP; j++) {
+        num_runs = num_runs * multiplier;
         vector<LLMatOrd> llmats(num_runs, llmat);
         start = start_tsc();
         for (size_t i = 0; i < num_runs; ++i) {
@@ -134,7 +135,7 @@ double perf_test(comp_func f, string desc, int flops)
         end = stop_tsc(start);
 
         cycles = ((double)end) / num_runs;
-
+        multiplier = (CYCLES_REQUIRED) / (cycles);
         cyclesList.push_back(cycles);
     }
 
@@ -147,7 +148,7 @@ double perf_test(comp_func f, string desc, int flops)
 double perf_test(comp_func2 f, string desc, int flops)
 {
     double cycles = 0.;
-    long num_runs = 100;
+    long num_runs = 3;
     double multiplier = 1;
     myInt64 start, end;    
 
@@ -155,6 +156,7 @@ double perf_test(comp_func2 f, string desc, int flops)
     LLMatOrd_vector2 llmat2(A);
 
     for (size_t j = 0; j < REP; j++) {
+        num_runs = num_runs * multiplier;
         vector<LLMatOrd_vector2> llmats(num_runs, llmat2);
         start = start_tsc();
         for (size_t i = 0; i < num_runs; ++i) {
@@ -163,7 +165,7 @@ double perf_test(comp_func2 f, string desc, int flops)
         end = stop_tsc(start);
 
         cycles = ((double)end) / num_runs;
-
+        multiplier = (CYCLES_REQUIRED) / (cycles);
         cyclesList.push_back(cycles);
     }
 
