@@ -11,6 +11,15 @@
 #include <ctime>
 #include <limits>
 
+bool cmp_row_elem(const Elem &a, const Elem &b) {
+    return a.row < b.row;
+}
+
+bool cmp_val_elem(const Elem &a, const Elem &b) {
+    return a.val < b.val;
+}
+
+
 void print_ll_col(LLMatOrd llmat, int i) {
     Tind ptr = llmat.cols[i];
     while (ptr != -1)
@@ -1084,8 +1093,8 @@ LDLinv approxChol_vector2_mergerand_simd(LLMatOrd_vector2 &a) {
         
         Tind *js, *ks;
         int newlen = ceil(double(len-1)/4)*4;
-        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        js = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
 
         for (int joffset = 0; joffset <= len-2; joffset++) {
             Tval r = randnums[randidx[(i+joffset)%n]];
@@ -1276,9 +1285,9 @@ LDLinv approxChol_vector2_opt3(LLMatOrd_vector2 &a) {
         Tind *js, *ks;
         Tval *randnums;
         int newlen = ceil(double(len-1)/4)*4;
-        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        randnums = static_cast<Tval *>(aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
+        js = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        randnums = static_cast<Tval *>(boost::alignment::aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
         
         for (int joffset = 0; joffset <= len-2; joffset++)
         {
@@ -1478,9 +1487,9 @@ LDLinv approxChol_vector2_opt4(LLMatOrd_vector2 &a) {
         Tind *js, *ks;
         Tval *randnums;
         int newlen = ceil(double(len-1)/4)*4;
-        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        randnums = static_cast<Tval *>(aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
+        js = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        randnums = static_cast<Tval *>(boost::alignment::aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
 
 
         Tval wdeg = csum;
@@ -1685,9 +1694,9 @@ LDLinv approxChol_vector2_opt5(LLMatOrd_vector2 &a) {
         Tind *js, *ks;
         Tval *randnums;
         int newlen = ceil(double(len-1)/4)*4;
-        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        randnums = static_cast<Tval *>(aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
+        js = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        randnums = static_cast<Tval *>(boost::alignment::aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
 
 
         Tval wdeg = csum;
@@ -1802,7 +1811,7 @@ LDLinv approxChol_vector2_opt5(LLMatOrd_vector2 &a) {
     return ldli;
 }
 
-LDLinv approxChol_vector2_struct_merge(LLMatOrd_vector2_struct a) {
+LDLinv approxChol_vector2_struct_merge(LLMatOrd_vector2_struct& a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -2222,9 +2231,9 @@ LDLinv approxChol_opt2(LLMatOrd &a) {
         Tind *js, *ks;
         Tval *randnums;
         int newlen = ceil(double(len-1)/4)*4;
-        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        randnums = static_cast<Tval *>(aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
+        js = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        randnums = static_cast<Tval *>(boost::alignment::aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
 
         
         for (int joffset = 0; joffset <= len-2; joffset++)

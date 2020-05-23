@@ -22,14 +22,19 @@ int main(int argc, char **argv){
 
     LLMatOrd_vector2 llmat2 = LLMatOrd_vector2(A);
     std::vector<LLMatOrd_vector2> llmats2(9, llmat2);
-    elapsed_time(&approxChol_vector2, llmats2[0], "Vector",r);
-    elapsed_time(&approxChol_vector2_merge, llmats2[1], "Vector+Merge",r);
-    elapsed_time(&approxChol_vector2_opt, llmats2[2], "Vector+Merge+simd(jkswap)", r);
-    elapsed_time(&approxChol_vector2_opt2, llmats2[3], "Vector+Merge+simd(jkswap+sampling)", r);
-    elapsed_time(&approxChol_vector2_opt3, llmats2[4], "Vector+Merge+simd(aligned+jkswap+sampling)", r);
-    elapsed_time(&approxChol_vector2_opt4, llmats2[5], "Vector+Merge+simd(aligned+jkswap+sampling)+precompute_csum", r);
-    elapsed_time(&approxChol_vector2_mergerand, llmats2[6], "Vector+Merge+pcgrand",r);
-    elapsed_time(&approxChol_vector2_mergerand_simd, llmats2[7], "Vector+Merge+pcgrand+simd(jkswap)", r);
+    elapsed_time(&approxChol_vector2, llmats2[0], "Vec",r);
+    elapsed_time(&approxChol_vector2_merge, llmats2[1], "VecMg",r);
+    elapsed_time(&approxChol_vector2_opt, llmats2[2], "VecMgSIMD1", r);
+    elapsed_time(&approxChol_vector2_opt2, llmats2[3], "VecMgSIMD2", r);
+    elapsed_time(&approxChol_vector2_opt3, llmats2[4], "VecMgSIMD3", r);
+    elapsed_time(&approxChol_vector2_opt4, llmats2[5], "VecMgSIMD3csum", r);
+    elapsed_time(&approxChol_vector2_mergerand, llmats2[6], "VecMgRand",r);
+    elapsed_time(&approxChol_vector2_mergerand_simd, llmats2[7], "VecMgRandSIMD1", r);
+    
+    LLMatOrd_vector2_struct llmat3 = LLMatOrd_vector2_struct(A);
+    std::vector<LLMatOrd_vector2_struct> llmats3(1, llmat3);
+    elapsed_time(&approxChol_vector2_struct_merge, llmats3[0], "VecStructMg", r);
+
 
     std::cout << "\n";
 

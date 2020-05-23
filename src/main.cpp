@@ -1,5 +1,4 @@
 // adapted from course website. 
-
 #include <iostream>
 #include <list>
 #include <vector>
@@ -29,15 +28,18 @@ int EDGE;
 
 typedef LDLinv(*comp_func)(LLMatOrd &a);
 typedef LDLinv(*comp_func2)(LLMatOrd_vector2 &a);
+typedef LDLinv(*comp_func3)(LLMatOrd_vector2_struct &a);
 
 void add_function(comp_func f, std::string name, int flop);
 void add_function(comp_func2 f, std::string name, int flop);
+void add_function(comp_func3 f, std::string name, int flop);
 
 /* prototype of the function you need to optimize */
 double get_perf_score(comp_func f);
 void register_functions();
 double perf_test(comp_func f, string desc, int flops);
 double perf_test(comp_func2 f, string desc, int flops);
+double perf_test(comp_func3 f, string desc, int flops);
 void build_x(double ** m, unsigned n1, unsigned n2);
 /*
 * Called by the driver to register your functions
@@ -49,22 +51,25 @@ void register_functions()
     add_function(&approxChol, "Baseline", 1);
     add_function(&approxChol_opt, "Inline", 1);
     add_function(&approxChol_opt2, "Inline+simd", 1);
-    add_function(&approxChol_vector2, "Vector", 1);
-    add_function(&approxChol_vector2_merge, "Vector+Merge", 1);
-    add_function(&approxChol_vector2_opt, "Vector+Merge+simd(jkswap)", 1);
-    add_function(&approxChol_vector2_opt2, "Vector+Merge+simd(jkswap+sampling)", 1);
-    add_function(&approxChol_vector2_opt3, "Vector+Merge+simd(aligned+jkswap+sampling)", 1);
-    add_function(&approxChol_vector2_opt4, "Vector+Merge+simd(aligned+jkswap+sampling)+precompute_csum", 1);
-    add_function(&approxChol_vector2_mergerand, "Vector+Merge+pcgrand", 1);
-    add_function(&approxChol_vector2_mergerand_simd, "Vector+Merge+pcgrand+simd(jkswap)", 1);
+    add_function(&approxChol_vector2, "Vec", 1);
+    add_function(&approxChol_vector2_merge, "VecMg", 1);
+    add_function(&approxChol_vector2_opt, "VecMgSIMD1", 1);
+    add_function(&approxChol_vector2_opt2, "VecMgSIMD2", 1);
+    add_function(&approxChol_vector2_opt3, "VecMgSIMD3", 1);
+    add_function(&approxChol_vector2_opt4, "VecMgSIMD3csum", 1);
+    add_function(&approxChol_vector2_mergerand, "VecMgRand", 1);
+    add_function(&approxChol_vector2_mergerand_simd, "VecMgRandSIMD1", 1);
+    add_function(&approxChol_vector2_struct_merge, "VecStructMg", 1);
    // add_function(&approxChol_vector3, "approxChol 3", 1);
 }
 
 /* Global vars, used to keep track of student functions */
 vector<comp_func> userFuncs;
 vector<comp_func2> userFuncs2;
+vector<comp_func3> userFuncs3;
 vector<string> funcNames;
 vector<string> funcNames2;
+vector<string> funcNames3;
 vector<int> funcFlops;
 int numFuncs = 0;
 vector<Tval> b;
@@ -107,6 +112,15 @@ void add_function(comp_func2 f, string name, int flops)
 {
     userFuncs2.push_back(f);
     funcNames2.emplace_back(name);
+    funcFlops.push_back(flops);
+
+    numFuncs++;
+}
+
+void add_function(comp_func3 f, string name, int flops)
+{
+    userFuncs3.push_back(f);
+    funcNames3.emplace_back(name);
     funcFlops.push_back(flops);
 
     numFuncs++;
@@ -176,6 +190,37 @@ double perf_test(comp_func2 f, string desc, int flops)
     return (1.0 * ops_count) / cycles;
 }
 
+double perf_test(comp_func3 f, string desc, int flops)
+{
+    double cycles = 0.;
+    long num_runs = 3;
+    double multiplier = 1;
+    myInt64 start, end;    
+
+    list<double> cyclesList;
+    LLMatOrd_vector2_struct llmat2(A);
+
+    for (size_t j = 0; j < REP; j++) {
+        num_runs = num_runs * multiplier;
+        vector<LLMatOrd_vector2_struct> llmats(num_runs, llmat2);
+        start = start_tsc();
+        for (size_t i = 0; i < num_runs; ++i) {
+            f(llmats[i]);
+        }
+        end = stop_tsc(start);
+
+        cycles = ((double)end) / num_runs;
+        multiplier = (CYCLES_REQUIRED) / (cycles);
+        cyclesList.push_back(cycles);
+    }
+
+    cyclesList.sort();
+    cycles = cyclesList.front();
+    // return cycles; 
+    cout << " " << cycles << " ";
+    return (1.0 * ops_count) / cycles;
+}
+
 int main(int argc, char **argv) {
     // cout << "Starting program. ";
     double perf;
@@ -227,6 +272,14 @@ int main(int argc, char **argv) {
         perf = perf_test(userFuncs2[i], funcNames2[i], 12*EDGE);
         cout << perf << " ";
         cout << funcNames2[i] << "\n";
+    }
+    for (i = 0; i < userFuncs3.size(); i++)
+    {
+        cout << VERTICE << " " << EDGE << " " << flops_count << " " 
+            << flcomp_count << " " << intops_count << " " << intcomp_count << " " << ops_count << " ";
+        perf = perf_test(userFuncs3[i], funcNames3[i], 12*EDGE);
+        cout << perf << " ";
+        cout << funcNames3[i] << "\n";
     }
 
     return 0;

@@ -11,7 +11,7 @@
 typedef int Tind;
 typedef double Tval;
 
-// #include <boost/align/aligned_allocator.hpp>
+#include <boost/align/aligned_allocator.hpp>
 // typedef std::vector<Tind, boost::alignment::aligned_allocator<int, 4*sizeof(Tind)>> aligned_VI;
 // typedef std::vector<Tval, boost::alignment::
 //     aligned_allocator<Tval, 4*sizeof(Tval)>> aligned_VV;
