@@ -1,5 +1,4 @@
 // adapted from course website. 
-
 #include <iostream>
 #include <list>
 #include <vector>
@@ -18,7 +17,7 @@
 
 using namespace std;
 
-#define CYCLES_REQUIRED 1e8
+#define CYCLES_REQUIRED 1e6
 #define REP 5
 #define MAX_FUNCS 32
 
@@ -27,20 +26,20 @@ using namespace std;
 int VERTICE;
 int EDGE;
 
-typedef LDLinv(*comp_func)(LLMatOrd a);
-typedef LDLinv(*comp_func2)(LLMatOrd_vector2 a);
-// typedef void(*comp_func)(SparseMatrix& A, SparseMatrix& lap_A,
-//                          const std::vector<Tval>& b,          
-//                          std::vector<Tval>& sol, SolverParameter paras);
+typedef LDLinv(*comp_func)(LLMatOrd &a);
+typedef LDLinv(*comp_func2)(LLMatOrd_vector2 &a);
+typedef LDLinv(*comp_func3)(LLMatOrd_vector2_struct &a);
 
 void add_function(comp_func f, std::string name, int flop);
 void add_function(comp_func2 f, std::string name, int flop);
+void add_function(comp_func3 f, std::string name, int flop);
 
 /* prototype of the function you need to optimize */
 double get_perf_score(comp_func f);
 void register_functions();
 double perf_test(comp_func f, string desc, int flops);
 double perf_test(comp_func2 f, string desc, int flops);
+double perf_test(comp_func3 f, string desc, int flops);
 void build_x(double ** m, unsigned n1, unsigned n2);
 /*
 * Called by the driver to register your functions
@@ -49,22 +48,29 @@ void build_x(double ** m, unsigned n1, unsigned n2);
 void register_functions()
 {
     // add_function(&approxchol_lapGiven, "Base iterative solver", 1);
-    add_function(&approxChol, "Base approxChol", 1);
-    add_function(&approxChol_opt, "approxChol inline", 1);
-    add_function(&approxChol_opt2, "approxChol inline simd", 1);
-    add_function(&approxChol_vector2, "approxChol vec2", 1);
-    add_function(&approxChol_vector2_merge, "approxChol vec2 merge", 1);
-    add_function(&approxChol_vector2_opt, "approxChol vec2 simd(jkswap)", 1);
-    add_function(&approxChol_vector2_opt2, "approxChol vec2 merge simd(jkswap sampling)", 1);
-    add_function(&approxChol_vector2_mergerand, "approxChol vec2 merge+rand", 1);
+    add_function(&approxChol, "Baseline", 1);
+    add_function(&approxChol_opt, "Inline", 1);
+    add_function(&approxChol_opt2, "Inline+simd", 1);
+    add_function(&approxChol_vector2, "Vec", 1);
+    add_function(&approxChol_vector2_merge, "VecMg", 1);
+    add_function(&approxChol_vector2_opt, "VecMgSIMD1", 1);
+    add_function(&approxChol_vector2_opt2, "VecMgSIMD2", 1);
+    add_function(&approxChol_vector2_opt3, "VecMgSIMD3", 1);
+    add_function(&approxChol_vector2_opt4, "VecMgSIMD3csum", 1);
+    add_function(&approxChol_vector2_mergerand, "VecMgRand", 1);
+    add_function(&approxChol_vector2_mergerand_simd, "VecMgRandSIMD1", 1);
+    add_function(&approxChol_vector2_struct_merge, "VecStructMg", 1);
+    add_function(&approxChol_vector2_struct_merge_simd, "VecStructMgSIMD1", 1);
    // add_function(&approxChol_vector3, "approxChol 3", 1);
 }
 
 /* Global vars, used to keep track of student functions */
 vector<comp_func> userFuncs;
 vector<comp_func2> userFuncs2;
+vector<comp_func3> userFuncs3;
 vector<string> funcNames;
 vector<string> funcNames2;
+vector<string> funcNames3;
 vector<int> funcFlops;
 int numFuncs = 0;
 vector<Tval> b;
@@ -112,6 +118,15 @@ void add_function(comp_func2 f, string name, int flops)
     numFuncs++;
 }
 
+void add_function(comp_func3 f, string name, int flops)
+{
+    userFuncs3.push_back(f);
+    funcNames3.emplace_back(name);
+    funcFlops.push_back(flops);
+
+    numFuncs++;
+}
+
 /*
 * Checks the given function for validity. If valid, then computes and
 * reports and returns the number of cycles required per iteration
@@ -119,35 +134,36 @@ void add_function(comp_func2 f, string name, int flops)
 double perf_test(comp_func f, string desc, int flops)
 {
     double cycles = 0.;
-    long num_runs = 100;
+    long num_runs = 3;
     double multiplier = 1;
     myInt64 start, end;
     LLMatOrd llmat = LLMatOrd(A);
     list<double> cyclesList;
 
     for (size_t j = 0; j < REP; j++) {
-
+        num_runs = num_runs * multiplier;
+        vector<LLMatOrd> llmats(num_runs, llmat);
         start = start_tsc();
         for (size_t i = 0; i < num_runs; ++i) {
-            f(llmat); 
+            f(llmats[i]); 
         }
         end = stop_tsc(start);
 
         cycles = ((double)end) / num_runs;
-
+        multiplier = (CYCLES_REQUIRED) / (cycles);
         cyclesList.push_back(cycles);
     }
 
     cyclesList.sort();
     cycles = cyclesList.front();
-    cout << "#cycles: " << cycles << std::endl;
+    cout << " " << cycles << " ";
     return (1.0 * ops_count) / cycles;
 }
 
 double perf_test(comp_func2 f, string desc, int flops)
 {
     double cycles = 0.;
-    long num_runs = 100;
+    long num_runs = 3;
     double multiplier = 1;
     myInt64 start, end;    
 
@@ -155,27 +171,59 @@ double perf_test(comp_func2 f, string desc, int flops)
     LLMatOrd_vector2 llmat2(A);
 
     for (size_t j = 0; j < REP; j++) {
-
+        num_runs = num_runs * multiplier;
+        vector<LLMatOrd_vector2> llmats(num_runs, llmat2);
         start = start_tsc();
         for (size_t i = 0; i < num_runs; ++i) {
-            f(llmat2);
+            f(llmats[i]);
         }
         end = stop_tsc(start);
 
         cycles = ((double)end) / num_runs;
-
+        multiplier = (CYCLES_REQUIRED) / (cycles);
         cyclesList.push_back(cycles);
     }
 
     cyclesList.sort();
     cycles = cyclesList.front();
     // return cycles; 
-    cout << "#cycles: " << cycles << std::endl;
+    cout << " " << cycles << " ";
+    return (1.0 * ops_count) / cycles;
+}
+
+double perf_test(comp_func3 f, string desc, int flops)
+{
+    double cycles = 0.;
+    long num_runs = 3;
+    double multiplier = 1;
+    myInt64 start, end;    
+
+    list<double> cyclesList;
+    LLMatOrd_vector2_struct llmat2(A);
+
+    for (size_t j = 0; j < REP; j++) {
+        num_runs = num_runs * multiplier;
+        vector<LLMatOrd_vector2_struct> llmats(num_runs, llmat2);
+        start = start_tsc();
+        for (size_t i = 0; i < num_runs; ++i) {
+            f(llmats[i]);
+        }
+        end = stop_tsc(start);
+
+        cycles = ((double)end) / num_runs;
+        multiplier = (CYCLES_REQUIRED) / (cycles);
+        cyclesList.push_back(cycles);
+    }
+
+    cyclesList.sort();
+    cycles = cyclesList.front();
+    // return cycles; 
+    cout << " " << cycles << " ";
     return (1.0 * ops_count) / cycles;
 }
 
 int main(int argc, char **argv) {
-    cout << "Starting program. ";
+    // cout << "Starting program. ";
     double perf;
     int i;
     VERTICE = atoi(argv[1]);
@@ -191,41 +239,48 @@ int main(int argc, char **argv) {
 
         return 0;
     }
-    cout << numFuncs << " functions registered." << endl;
+    // cout << numFuncs << " functions registered." << endl;
 
-    b.reserve(VERTICE);
-    init_vec(b);
+    // b.reserve(VERTICE);
+    // init_vec(b);
 
     SparseMatrix init_a(VERTICE, EDGE);
     A = init_a;
-    cout << "Created random sparse matrix A. colnum: " << A.colnum << " elems:" << A.elems << "\n";
 
     LLMatOrd llmat = LLMatOrd(A);
 
     int flops_count, flcomp_count, intops_count, intcomp_count;
     approxChol_count(llmat, flops_count, flcomp_count, intops_count, intcomp_count);
     ops_count = flops_count + flcomp_count + intops_count + intcomp_count;
-    cout << "#fl ops: " << flops_count << std::endl;
-    cout << "#fl comparisons: " << flcomp_count << std::endl;
-    cout << "#int ops: " << intops_count << std::endl;
-    cout << "#int comparisons: " << intcomp_count << std::endl;
-    cout << "#total ops: " << ops_count << std::endl;
+    // cout << "#fl ops: " << flops_count << std::endl;
+    // cout << "#fl comparisons: " << flcomp_count << std::endl;
+    // cout << "#int ops: " << intops_count << std::endl;
+    // cout << "#int comparisons: " << intcomp_count << std::endl;
+    // cout << "#total ops: " << ops_count << std::endl;
 
     for (i = 0; i < userFuncs.size(); i++)
     {
-        cout << "V: " << VERTICE << ", E:" << EDGE << "\n";
-        cout << "Running: " << funcNames[i] << endl;
+        cout << VERTICE << " " << EDGE << " " << flops_count << " " 
+            << flcomp_count << " " << intops_count << " " << intcomp_count << " " << ops_count << " ";
         perf = perf_test(userFuncs[i], funcNames[i], 12*EDGE);
-        cout << perf << " flops / cycles" << endl;
-        cout << endl << endl;
+        cout << perf << " ";
+        cout << funcNames[i] << "\n";
     }
     for (i = 0; i < userFuncs2.size(); i++)
     {
-        cout << "V: " << VERTICE << ", E:" << EDGE << "\n";
-        cout << "Running: " << funcNames2[i] << endl;
+        cout << VERTICE << " " << EDGE << " " << flops_count << " " 
+            << flcomp_count << " " << intops_count << " " << intcomp_count << " " << ops_count << " ";
         perf = perf_test(userFuncs2[i], funcNames2[i], 12*EDGE);
-        cout << perf << " flops / cycles" << endl;
-        cout << endl << endl;
+        cout << perf << " ";
+        cout << funcNames2[i] << "\n";
+    }
+    for (i = 0; i < userFuncs3.size(); i++)
+    {
+        cout << VERTICE << " " << EDGE << " " << flops_count << " " 
+            << flcomp_count << " " << intops_count << " " << intcomp_count << " " << ops_count << " ";
+        perf = perf_test(userFuncs3[i], funcNames3[i], 12*EDGE);
+        cout << perf << " ";
+        cout << funcNames3[i] << "\n";
     }
 
     return 0;
