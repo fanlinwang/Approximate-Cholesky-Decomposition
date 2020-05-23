@@ -3,6 +3,7 @@
 #include "matrix.hpp"
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 int main(int argc, char **argv){
 
@@ -31,6 +32,7 @@ int main(int argc, char **argv){
     elapsed_time(&approxChol_vector2_mergerand_simd, llmats2[7], "vec2_merge_rand_simd", r);
 
     std::cout << "\n";
+
     return 0;
 
 }

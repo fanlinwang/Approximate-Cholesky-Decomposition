@@ -37,7 +37,6 @@ void elapsed_time(func1 f1, LLMatOrd llmat, std::string func_name, int rep) {
     }
     std::cout << " " <<  count/(float)(rep)/1e9 << " ";
 
-}
 void elapsed_time(func2 f2, LLMatOrd_vector2 llmat, std::string func_name, int rep) {
     long count = 0;
     std::vector<LLMatOrd_vector2> llmats(rep, llmat);

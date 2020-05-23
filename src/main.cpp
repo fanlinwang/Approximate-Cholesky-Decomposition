@@ -30,10 +30,6 @@ int EDGE;
 typedef LDLinv(*comp_func)(LLMatOrd &a);
 typedef LDLinv(*comp_func2)(LLMatOrd_vector2 &a);
 
-// typedef void(*comp_func)(SparseMatrix& A, SparseMatrix& lap_A,
-//                          const std::vector<Tval>& b,          
-//                          std::vector<Tval>& sol, SolverParameter paras);
-
 void add_function(comp_func f, std::string name, int flop);
 void add_function(comp_func2 f, std::string name, int flop);
 
