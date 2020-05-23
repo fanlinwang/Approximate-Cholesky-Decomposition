@@ -1802,6 +1802,146 @@ LDLinv approxChol_vector2_opt5(LLMatOrd_vector2 &a) {
     return ldli;
 }
 
+LDLinv approxChol_vector2_struct_merge(LLMatOrd_vector2_struct a) {
+    auto n = a.n;
+
+    // need to make custom one without col info later
+    LDLinv ldli(a);
+    Tind ldli_row_ptr = 0;
+
+    std::vector<Tval> d(n, 0);
+
+    // std::vector<LLcol> colspace(n);
+    std::vector<Elem> elems(n);
+
+
+    std::vector<Tval> cumspace(n);
+
+    // random engine and distribution
+    std::default_random_engine engine;
+    std::uniform_real_distribution<Tval> u(0.0, 1.0);
+
+
+    for (long i = 0; i <= n-2; i++) {
+
+        ldli.col[i] = i;
+        ldli.colptr[i] = ldli_row_ptr;
+
+        int len = a.elems[i].size();
+        // TODO: is sort by val necessary
+        if (len > 0)
+        {
+            std::sort(a.elems[i].begin(), a.elems[i].end(), cmp_row_elem);
+            elems.clear();
+
+            int idx = 1;
+            Tval last_val = a.elems[i][0].val;
+            Tind last_row = a.elems[i][0].row;
+            // std::cout << "merge" << std::endl;
+            while (idx < len)
+            {
+                while (idx < len && a.elems[i][idx].row == last_row)
+                    last_val += a.elems[i][idx++].val;
+                elems.push_back(Elem(last_row, last_val));
+                if (idx < len)
+                {
+                    last_val = a.elems[i][idx].val;
+                    last_row = a.elems[i][idx].row;
+                }
+            }
+            // std::cout << "merge done" << std::endl;
+            len = elems.size();
+            std::sort(elems.begin(), elems.end(), cmp_val_elem);
+        }
+        // flop count: sort LLcol len*log(len)?
+
+        Tval csum = 0;
+        for (int ii = 0; ii < len; ii++) {
+            csum += elems[ii].val;
+            // flop count: 1 add
+            cumspace[ii] = csum;
+        }
+        Tval wdeg = csum;
+
+        Tval colScale = 1;
+
+        Tind ks[len-1];
+        Tval randnums[len-1];
+        for (int joffset = 0; joffset <= len-2; joffset++)
+        {
+            randnums[joffset] = u(engine);
+        }
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            Tval r = randnums[joffset];
+            r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+
+            auto cumspace_last = cumspace.begin();
+            std::advance(cumspace_last, len);
+            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+
+            ks[joffset] = elems[koff].row;
+        }
+
+        Tval newEdgeVals[len-1];
+        Tind js[len-1];
+        Tind ptrs[len-1];
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // LLcol llcol = colspace[joffset];
+            Tval w = elems[joffset].val * colScale;
+            js[joffset] = elems[joffset].row;
+            // ptrs[joffset] = llcol.ptr;
+
+            Tval f = w/wdeg;
+            // flop count: 1 mul
+
+            newEdgeVals[joffset] = w*(1-f);
+
+            colScale *= 1 - f;
+            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
+            // flop count: 3 mul 3 add
+
+            ldli.rowval.push_back(js[joffset]);
+            ldli.fval.push_back(f);
+            ldli_row_ptr += 1;
+        }
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // create edge (j,k) with newEdgeVal
+            // do it by reassigning ll
+            Tind j = js[joffset];
+            Tind k = ks[joffset];
+            Tval newEdgeVal = newEdgeVals[joffset];
+            Tind ptr = ptrs[joffset];
+            if (j < k) {    // put it in col j
+                a.elems[j].push_back(Elem(k, newEdgeVal));
+            } else {        // put it in col k
+                a.elems[k].push_back(Elem(j, newEdgeVal));
+            }
+        }
+
+        // LLcol llcol = colspace[len-1];
+        Tval w = elems[len - 1].val * colScale;
+        // flop count: 1 mul
+        Tind j = elems[len - 1].row;
+
+        ldli.rowval.push_back(j);
+        ldli.fval.push_back(1);
+        ldli_row_ptr += 1;
+
+        d[i] = w;
+
+        //free column
+        a.elems[i].clear();
+        a.elems[i].shrink_to_fit();
+    }
+
+    ldli.colptr[n-1] = ldli_row_ptr;
+    ldli.d = d;
+
+    return ldli;
+}
+
 // inline
 LDLinv approxChol_opt(LLMatOrd &a) {
     auto n = a.n;

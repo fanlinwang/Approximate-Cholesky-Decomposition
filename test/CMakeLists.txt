@@ -16,3 +16,6 @@ target_link_libraries(test_validation PRIVATE approxChol)
 
 add_executable(runtime runtime.cpp)
 target_link_libraries(runtime PRIVATE approxChol)
+
+add_executable(test_search test_search.cpp)
+target_link_libraries(test_search PRIVATE approxChol)

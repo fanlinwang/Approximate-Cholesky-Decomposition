@@ -20,13 +20,13 @@ int main(){
         {0,1,0,0,0}};
     
     // SparseMatrix A(matrix);
-    SparseMatrix A(10000, 50000, 1);
+    SparseMatrix A(100, 500, 1);
     // LLMatOrd llmat = LLMatOrd(A);
 
     // LDLinv ldli = approxChol(llmat);
-    LLMatOrd_vector2 llmat(A);
+    LLMatOrd_vector2_struct llmat(A);
 
-    LDLinv ldli = approxChol_vector2_merge(llmat);
+    LDLinv ldli = approxChol_vector2_struct_merge(llmat);
     // std::cout << ldli << std::endl;
 
     Tval ratio = ApproxCholValidation(A, ldli, 1e-4);
