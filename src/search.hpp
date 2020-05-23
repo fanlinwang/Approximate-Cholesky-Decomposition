@@ -103,15 +103,15 @@ inline int bitset_search(std::vector<double>& x, const int n, double z)
   return i;
 }
 
-inline _mm128i bitset_search_simd(std::vector<double>& x, const int n, _mm256d z)
-{
-  _mm128i i = 0;
-  int k = (n >> 1) + 1;
-  _mm128i r;
-  while(k >>= 1)
-  {
-    r = i | k;
-    i = z >= x[r] ? r : i;
-  }
-  return i;
-}
+// inline __m128i bitset_search_simd(std::vector<double>& x, const int n, _mm256d z)
+// {
+//   __mm128i i = 0;
+//   int k = (n >> 1) + 1;
+//   __mm128i r;
+//   while(k >>= 1)
+//   {
+//     r = i | k;
+//     i = z >= x[r] ? r : i;
+//   }
+//   return i;
+// }
