@@ -103,15 +103,25 @@ inline int bitset_search(std::vector<double>& x, const int n, double z)
   return i;
 }
 
-inline _mm128i bitset_search_simd(std::vector<double>& x, const int n, _mm256d z)
+inline __m256i bitset_search_simd(std::vector<double>& x, const int n, __m256d z)
 {
-  _mm128i i = 0;
+  __m256i i = _mm256_set1_epi64x(0);
   int k = (n >> 1) + 1;
-  _mm128i r;
+  __m256i r;
   while(k >>= 1)
   {
-    r = i | k;
-    i = z >= x[r] ? r : i;
+    // r = i | k;
+    r = _mm256_or_si256(i, _mm256_set1_epi64x(k));
+    //load from 4 different places
+    // double xr0 = x[r[0]];
+    // double xr1 = x[r[1]];
+    // double xr2 = x[r[2]];
+    // double xr3 = x[r[3]];
+    // __m256d xr = _mm256_set_pd(xr3, xr2, xr1, xr0);
+    __m256d xr = _mm256_i64gather_pd(x, r, 8);
+    __m256d mask = _mm256_cmp_pd(z, xr, _CMP_GE_OQ)
+    i = _mm256_blendv_epi8(i, r, mask);
+    // i = z >= x[r] ? r : i;
   }
   return i;
 }

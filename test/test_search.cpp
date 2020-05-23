@@ -4,6 +4,18 @@
 
 using namespace std;
 
+std::ostream& operator << (std::ostream &out, __m256d d)
+{
+    out << d[0] << " " << d[1] << " "  << d[2] << " "  << d[3] << endl;
+    return out;
+}
+
+std::ostream& operator << (std::ostream &out, __m256i d)
+{
+    out << d[0] << " " << d[1] << " "  << d[2] << " "  << d[3] << endl;
+    return out;
+}
+
 int main()
 {
     vector<double> x{0.1, 0.3, 0.6, 1.0};
@@ -21,8 +33,11 @@ int main()
     x.resize(n_new);
     for (int i = n; i < n_new; i++)
         x[i] = x[n - 1];
-    for (int i = 0; i < r.size(); i++)
-        cout << r[i] << " " << bitset_search(x, n_new, r[i]) << endl;
+    for (int i = 0; i < r.size(); i+=4)
+    {
+        __m256d rv = _mm256_load_pd(&x[i]);
+        cout << rv << " " << bitset_search_simd(x, n_new, rv) << endl;
+    }
 
     return 0;
 }
