@@ -758,10 +758,10 @@ LDLinv approxChol_vector2_merge_search_opt(LLMatOrd_vector2 &a) {
             continue;
         }
 
-        /*int newlen = ceil(double(len-1)/4)*4;
-        Tind js[newlen];
-        Tind ks[newlen];
-        Tval randnums[newlen];*/
+        // int newlen = ceil(double(len-1)/4)*4;
+        // Tind js[newlen];
+        // Tind ks[newlen];
+        // Tval randnums[newlen];
         
         Tind *js, *ks;
         Tval *randnums;
@@ -825,11 +825,12 @@ LDLinv approxChol_vector2_merge_search_opt(LLMatOrd_vector2 &a) {
 
         for (int joffset = 0; joffset <= len-2; joffset++) {
             Tval r = randnums[joffset];
-            //r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+            // r = r * (csum - cumspace[joffset]) + cumspace[joffset];
 
             int koff = bitset_search(cumspace, n_new, r);
 
-            ks[joffset] = a.row[i][koff];
+            // ks[joffset] = a.row[i][koff];
+            ks[joffset] = row[koff];
         }
 
         __m128i allone = _mm_set1_epi32(0xffffffff);
@@ -1699,8 +1700,8 @@ LDLinv approxChol_vector2_opt3(LLMatOrd_vector2 &a) {
 
             int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
 
-            // ks[joffset] = row[koff];
-            ks[joffset] = a.row[i][koff];
+            ks[joffset] = row[koff];
+            // ks[joffset] = a.row[i][koff];
         }
 
         Tval newEdgeVals[len-1];
@@ -1930,8 +1931,8 @@ LDLinv approxChol_vector2_opt4(LLMatOrd_vector2 &a) {
 
             int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
 
-            // ks[joffset] = row[koff];
-            ks[joffset] = a.row[i][koff];
+            ks[joffset] = row[koff];
+            // ks[joffset] = a.row[i][koff];
         }
 
         __m128i allone = _mm_set1_epi32(0xffffffff);
