@@ -51,14 +51,6 @@ bool cmp_val(const LLcol &a, const LLcol &b) {
     return a.cval < b.cval;
 }
 
-bool cmp_row_elem(const Elem &a, const Elem &b) {
-    return a.row < b.row;
-}
-
-bool cmp_val_elem(const Elem &a, const Elem &b) {
-    return a.val < b.val;
-}
-
 Tind compressCol(std::vector<LLcol> &colspace, int len) {
 
     // sort colspace ? DY: just checked, yes! 
@@ -104,7 +96,7 @@ Tind compressCol(std::vector<LLcol> &colspace, int len) {
     return ptr+1; // if the returned value is used for vector length, then it should return ptr+1
 }
 
-LDLinv approxChol(LLMatOrd a) {
+LDLinv approxChol(LLMatOrd &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -221,7 +213,7 @@ LDLinv approxChol(LLMatOrd a) {
     return ldli;
 }
 
-LDLinv approxChol_vector2(LLMatOrd_vector2 a) {
+LDLinv approxChol_vector2(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -355,7 +347,7 @@ LDLinv approxChol_vector2(LLMatOrd_vector2 a) {
     return ldli;
 }
 
-LDLinv approxChol_vector2_merge(LLMatOrd_vector2 a) {
+LDLinv approxChol_vector2_merge(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -479,6 +471,1312 @@ LDLinv approxChol_vector2_merge(LLMatOrd_vector2 a) {
                 a.val[k].push_back(newEdgeVal);
             }
         }
+
+        // LLcol llcol = colspace[len-1];
+        Tval w = val[len - 1] * colScale;
+        // flop count: 1 mul
+        Tind j = row[len - 1];
+
+        ldli.rowval.push_back(j);
+        ldli.fval.push_back(1);
+        ldli_row_ptr += 1;
+
+        d[i] = w;
+
+        //free column
+        a.row[i].clear();
+        a.row[i].shrink_to_fit();
+        a.val[i].clear();
+        a.val[i].shrink_to_fit();
+    }
+
+    ldli.colptr[n-1] = ldli_row_ptr;
+    ldli.d = d;
+
+    return ldli;
+}
+
+
+LDLinv approxChol_vector2_opt(LLMatOrd_vector2 &a) {
+    auto n = a.n;
+
+    // need to make custom one without col info later
+    LDLinv ldli(a);
+    Tind ldli_row_ptr = 0;
+
+    std::vector<Tval> d(n, 0);
+
+    // std::vector<LLcol> colspace(n);
+    std::vector<Tind> row(n);
+    std::vector<Tval> val(n);
+
+
+    std::vector<Tval> cumspace(n);
+
+    // random engine and distribution
+    std::default_random_engine engine;
+    std::uniform_real_distribution<Tval> u(0.0, 1.0);
+
+
+    for (long i = 0; i <= n-2; i++) {
+
+        ldli.col[i] = i;
+        ldli.colptr[i] = ldli_row_ptr;
+
+        int len = a.row[i].size();
+        // TODO: is sort by val necessary
+        if (len > 0)
+        {
+            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
+            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
+            row.clear();
+            val.clear();
+
+            int idx = 1;
+            Tval last_val = a.val[i][0];
+            Tind last_row = a.row[i][0];
+            // std::cout << "merge" << std::endl;
+            while (idx < len)
+            {
+                while (idx < len && a.row[i][idx] == last_row)
+                    last_val += a.val[i][idx++];
+                row.push_back(last_row);
+                val.push_back(last_val);
+                if (idx < len)
+                {
+                    last_val = a.val[i][idx];
+                    last_row = a.row[i][idx];
+                }
+            }
+            // std::cout << "merge done" << std::endl;
+            len = row.size();
+            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
+            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
+        }
+        // flop count: sort LLcol len*log(len)?
+
+        Tval csum = 0;
+        for (int ii = 0; ii < len; ii++) {
+            csum += val[ii];
+            // flop count: 1 add
+            cumspace[ii] = csum;
+        }
+        Tval wdeg = csum;
+
+        Tval colScale = 1;
+
+        int newlen = ceil(double(len-1)/4)*4;
+        Tind js[newlen];
+        Tind ks[newlen];
+        
+        /*Tind *js, *ks;
+        int newlen = ceil(double(len-1)/4)*4;
+        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));*/
+        
+        Tval randnums[newlen];
+        for (int joffset = 0; joffset <= len-2; joffset++)
+        {
+            randnums[joffset] = u(engine);
+        }
+
+        auto cumspace_last = cumspace.begin();
+        std::advance(cumspace_last, len);
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            Tval r = randnums[joffset];
+            r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+
+            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+
+            ks[joffset] = row[koff];
+        }
+
+        Tval newEdgeVals[len-1];
+        Tind ptrs[len-1];
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // LLcol llcol = colspace[joffset];
+            Tval w = val[joffset] * colScale;
+            js[joffset] = row[joffset];
+            // ptrs[joffset] = llcol.ptr;
+
+            Tval f = w/wdeg;
+            // flop count: 1 mul
+
+            newEdgeVals[joffset] = w*(1-f);
+
+            colScale *= 1 - f;
+            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
+            // flop count: 3 mul 3 add
+
+            ldli.rowval.push_back(js[joffset]);
+            ldli.fval.push_back(f);
+            ldli_row_ptr += 1;
+        }
+
+        __m128i allone = _mm_set1_epi32(0xffffffff);
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m128i j_4 = _mm_loadu_si128((__m128i *)(js+joffset));
+            __m128i k_4 = _mm_loadu_si128((__m128i *)(ks+joffset));
+
+            __m128i mask1 = _mm_cmplt_epi32(k_4, j_4);
+            __m128i res1 = _mm_blendv_epi8(j_4, k_4, mask1);
+
+            //__m128i mask2 = _mm_cmplt_epi32(j_4, k_4);
+            __m128i mask2 = _mm_xor_si128(mask1, allone);
+            __m128i res2 = _mm_blendv_epi8(j_4, k_4, mask2);
+
+            //__m128i res1 = _mm_min_epi32(j_4, k_4);
+            //__m128i res2 = _mm_max_epi32(j_4, k_4);
+
+            _mm_storeu_si128((__m128i *)(js+joffset), res1);
+            _mm_storeu_si128((__m128i *)(ks+joffset), res2);
+        }
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // create edge (j,k) with newEdgeVal
+            // do it by reassigning ll
+            Tind j = js[joffset];
+            Tind k = ks[joffset];
+            Tval newEdgeVal = newEdgeVals[joffset];
+            Tind ptr = ptrs[joffset];
+            a.row[j].push_back(k);
+            a.val[j].push_back(newEdgeVal);
+        }
+
+        // LLcol llcol = colspace[len-1];
+        Tval w = val[len - 1] * colScale;
+        // flop count: 1 mul
+        Tind j = row[len - 1];
+
+        ldli.rowval.push_back(j);
+        ldli.fval.push_back(1);
+        ldli_row_ptr += 1;
+
+        d[i] = w;
+
+        //free column
+        a.row[i].clear();
+        a.row[i].shrink_to_fit();
+        a.val[i].clear();
+        a.val[i].shrink_to_fit();
+    }
+
+    ldli.colptr[n-1] = ldli_row_ptr;
+    ldli.d = d;
+
+    return ldli;
+}
+
+
+LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 &a) {
+    auto n = a.n;
+
+    // need to make custom one without col info later
+    LDLinv ldli(a);
+    Tind ldli_row_ptr = 0;
+
+    std::vector<Tval> d(n, 0);
+
+    // std::vector<LLcol> colspace(n);
+    std::vector<Tind> row(n);
+    std::vector<Tval> val(n);
+
+
+    std::vector<Tval> cumspace(n);
+
+    // random engine and distribution
+    std::default_random_engine engine;
+    std::uniform_real_distribution<Tval> u(0.0, 1.0);
+
+
+    for (long i = 0; i <= n-2; i++) {
+
+        ldli.col[i] = i;
+        ldli.colptr[i] = ldli_row_ptr;
+
+        int len = a.row[i].size();
+        // TODO: is sort by val necessary
+        if (len > 0)
+        {
+            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
+            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
+            row.clear();
+            val.clear();
+
+            int idx = 1;
+            Tval last_val = a.val[i][0];
+            Tind last_row = a.row[i][0];
+            // std::cout << "merge" << std::endl;
+            while (idx < len)
+            {
+                while (idx < len && a.row[i][idx] == last_row)
+                    last_val += a.val[i][idx++];
+                row.push_back(last_row);
+                val.push_back(last_val);
+                if (idx < len)
+                {
+                    last_val = a.val[i][idx];
+                    last_row = a.row[i][idx];
+                }
+            }
+            // std::cout << "merge done" << std::endl;
+            len = row.size();
+            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
+            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
+        }
+        // flop count: sort LLcol len*log(len)?
+
+        Tval csum = 0;
+        for (int ii = 0; ii < len; ii++) {
+            csum += val[ii];
+            // flop count: 1 add
+            cumspace[ii] = csum;
+        }
+        Tval wdeg = csum;
+
+        Tval colScale = 1;
+
+        int newlen = ceil(double(len-1)/4)*4;
+        Tind js[newlen];
+        Tind ks[newlen];
+        
+        /*Tind *js, *ks;
+        int newlen = ceil(double(len-1)/4)*4;
+        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));*/
+        
+        Tval randnums[newlen];
+        for (int joffset = 0; joffset <= len-2; joffset++)
+        {
+            randnums[joffset] = u(engine);
+        }
+
+        __m256d csum_4 = _mm256_set1_pd(csum);
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m256d r_4 = _mm256_loadu_pd(randnums+joffset);
+            __m256d cum_4 = _mm256_loadu_pd(&cumspace[joffset]);
+
+            __m256d res1_4 = _mm256_sub_pd(csum_4, cum_4);
+            __m256d res2_4 = _mm256_fmadd_pd(r_4, res1_4, cum_4);
+
+            _mm256_storeu_pd(randnums+joffset, res2_4);
+        }
+
+        auto cumspace_last = cumspace.begin();
+        std::advance(cumspace_last, len);
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            Tval r = randnums[joffset];
+            //r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+
+            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+
+            ks[joffset] = row[koff];
+        }
+
+        Tval newEdgeVals[len-1];
+        Tind ptrs[len-1];
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // LLcol llcol = colspace[joffset];
+            Tval w = val[joffset] * colScale;
+            js[joffset] = row[joffset];
+            // ptrs[joffset] = llcol.ptr;
+
+            Tval f = w/wdeg;
+            // flop count: 1 mul
+
+            newEdgeVals[joffset] = w*(1-f);
+
+            colScale *= 1 - f;
+            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
+            // flop count: 3 mul 3 add
+
+            ldli.rowval.push_back(js[joffset]);
+            ldli.fval.push_back(f);
+            ldli_row_ptr += 1;
+        }
+
+        __m128i allone = _mm_set1_epi32(0xffffffff);
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m128i j_4 = _mm_loadu_si128((__m128i *)(js+joffset));
+            __m128i k_4 = _mm_loadu_si128((__m128i *)(ks+joffset));
+
+            __m128i mask1 = _mm_cmplt_epi32(k_4, j_4);
+            __m128i res1 = _mm_blendv_epi8(j_4, k_4, mask1);
+
+            //__m128i mask2 = _mm_cmplt_epi32(j_4, k_4);
+            __m128i mask2 = _mm_xor_si128(mask1, allone);
+            __m128i res2 = _mm_blendv_epi8(j_4, k_4, mask2);
+
+            //__m128i res1 = _mm_min_epi32(j_4, k_4);
+            //__m128i res2 = _mm_max_epi32(j_4, k_4);
+
+            _mm_storeu_si128((__m128i *)(js+joffset), res1);
+            _mm_storeu_si128((__m128i *)(ks+joffset), res2);
+        }
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // create edge (j,k) with newEdgeVal
+            // do it by reassigning ll
+            Tind j = js[joffset];
+            Tind k = ks[joffset];
+            Tval newEdgeVal = newEdgeVals[joffset];
+            Tind ptr = ptrs[joffset];
+            a.row[j].push_back(k);
+            a.val[j].push_back(newEdgeVal);
+        }
+
+        // LLcol llcol = colspace[len-1];
+        Tval w = val[len - 1] * colScale;
+        // flop count: 1 mul
+        Tind j = row[len - 1];
+
+        ldli.rowval.push_back(j);
+        ldli.fval.push_back(1);
+        ldli_row_ptr += 1;
+
+        d[i] = w;
+
+        //free column
+        a.row[i].clear();
+        a.row[i].shrink_to_fit();
+        a.val[i].clear();
+        a.val[i].shrink_to_fit();
+    }
+
+    ldli.colptr[n-1] = ldli_row_ptr;
+    ldli.d = d;
+
+    return ldli;
+}
+
+
+
+LDLinv approxChol_vector2_mergerand(LLMatOrd_vector2 &a) {
+    auto n = a.n;
+
+    // need to make custom one without col info later
+    LDLinv ldli(a);
+    Tind ldli_row_ptr = 0;
+
+    std::vector<Tval> d(n, 0);
+
+    // std::vector<LLcol> colspace(n);
+    std::vector<Tind> row(n);
+    std::vector<Tval> val(n);
+
+
+    std::vector<Tval> cumspace(n);
+
+    // random engine and distribution
+    pcg_extras::seed_seq_from<std::random_device> seed_source;
+    pcg32_fast engine(seed_source);
+    std::uniform_real_distribution<Tval> u(0.0, 1.0);
+    std::uniform_real_distribution<Tval> uidx(0, n);
+    Tval randnums[n];
+    Tind randidx[n];
+    for (int joffset = 0; joffset < n; joffset++)
+    {
+        randnums[joffset] = u(engine);
+        randidx[joffset] = uidx(engine);
+    }
+    for (long i = 0; i <= n-2; i++) {
+
+        ldli.col[i] = i;
+        ldli.colptr[i] = ldli_row_ptr;
+
+        int len = a.row[i].size();
+        // TODO: is sort by val necessary
+        if (len > 0)
+        {
+            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
+            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
+            row.clear();
+            val.clear();
+
+            int idx = 1;
+            Tval last_val = a.val[i][0];
+            Tind last_row = a.row[i][0];
+            // std::cout << "merge" << std::endl;
+            while (idx < len)
+            {
+                while (idx < len && a.row[i][idx] == last_row)
+                    last_val += a.val[i][idx++];
+                row.push_back(last_row);
+                val.push_back(last_val);
+                if (idx < len)
+                {
+                    last_val = a.val[i][idx];
+                    last_row = a.row[i][idx];
+                }
+            }
+            // std::cout << "merge done" << std::endl;
+            len = row.size();
+            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
+            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
+        }
+        // flop count: sort LLcol len*log(len)?
+
+        Tval csum = 0;
+        for (int ii = 0; ii < len; ii++) {
+            csum += val[ii];
+            // flop count: 1 add
+            cumspace[ii] = csum;
+        }
+        Tval wdeg = csum;
+
+        Tval colScale = 1;
+
+        auto cumspace_last = cumspace.begin();
+        std::advance(cumspace_last, len);
+
+        Tind ks[len-1];
+        Tind js[len-1];
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            Tval r = randnums[randidx[(i+joffset)%n]];
+            r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+
+            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+
+            ks[joffset] = row[koff];
+        }
+
+        Tval newEdgeVals[len-1];
+        Tind ptrs[len-1];
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // LLcol llcol = colspace[joffset];
+            Tval w = val[joffset] * colScale;
+            js[joffset] = row[joffset];
+            // ptrs[joffset] = llcol.ptr;
+
+            Tval f = w/wdeg;
+            // flop count: 1 mul
+
+            newEdgeVals[joffset] = w*(1-f);
+
+            colScale *= 1 - f;
+            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
+            // flop count: 3 mul 3 add
+
+            ldli.rowval.push_back(js[joffset]);
+            ldli.fval.push_back(f);
+            ldli_row_ptr += 1;
+        }
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // create edge (j,k) with newEdgeVal
+            // do it by reassigning ll
+            Tind j = js[joffset];
+            Tind k = ks[joffset];
+            Tval newEdgeVal = newEdgeVals[joffset];
+            Tind ptr = ptrs[joffset];
+            if (j < k) {    // put it in col j
+                a.row[j].push_back(k);
+                a.val[j].push_back(newEdgeVal);
+            } else {        // put it in col k
+                a.row[k].push_back(j);
+                a.val[k].push_back(newEdgeVal);
+            }
+        }
+
+        // LLcol llcol = colspace[len-1];
+        Tval w = val[len - 1] * colScale;
+        // flop count: 1 mul
+        Tind j = row[len - 1];
+
+        ldli.rowval.push_back(j);
+        ldli.fval.push_back(1);
+        ldli_row_ptr += 1;
+
+        d[i] = w;
+
+        //free column
+        a.row[i].clear();
+        a.row[i].shrink_to_fit();
+        a.val[i].clear();
+        a.val[i].shrink_to_fit();
+    }
+
+    ldli.colptr[n-1] = ldli_row_ptr;
+    ldli.d = d;
+
+    return ldli;
+}
+
+
+LDLinv approxChol_vector2_mergerand_simd(LLMatOrd_vector2 &a) {
+    auto n = a.n;
+
+    // need to make custom one without col info later
+    LDLinv ldli(a);
+    Tind ldli_row_ptr = 0;
+
+    std::vector<Tval> d(n, 0);
+
+    // std::vector<LLcol> colspace(n);
+    std::vector<Tind> row(n);
+    std::vector<Tval> val(n);
+
+
+    std::vector<Tval> cumspace(n);
+
+    // random engine and distribution
+    pcg_extras::seed_seq_from<std::random_device> seed_source;
+    pcg32_fast engine(seed_source);
+    std::uniform_real_distribution<Tval> u(0.0, 1.0);
+    std::uniform_real_distribution<Tval> uidx(0, n);
+    Tval randnums[n];
+    Tind randidx[n];
+    for (int joffset = 0; joffset < n; joffset++)
+    {
+        randnums[joffset] = u(engine);
+        randidx[joffset] = uidx(engine);
+    }
+    for (long i = 0; i <= n-2; i++) {
+
+        ldli.col[i] = i;
+        ldli.colptr[i] = ldli_row_ptr;
+
+        int len = a.row[i].size();
+        // TODO: is sort by val necessary
+        if (len > 0)
+        {
+            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
+            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
+            row.clear();
+            val.clear();
+
+            int idx = 1;
+            Tval last_val = a.val[i][0];
+            Tind last_row = a.row[i][0];
+            // std::cout << "merge" << std::endl;
+            while (idx < len)
+            {
+                while (idx < len && a.row[i][idx] == last_row)
+                    last_val += a.val[i][idx++];
+                row.push_back(last_row);
+                val.push_back(last_val);
+                if (idx < len)
+                {
+                    last_val = a.val[i][idx];
+                    last_row = a.row[i][idx];
+                }
+            }
+            // std::cout << "merge done" << std::endl;
+            len = row.size();
+            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
+            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
+        }
+        // flop count: sort LLcol len*log(len)?
+
+        Tval csum = 0;
+        for (int ii = 0; ii < len; ii++) {
+            csum += val[ii];
+            // flop count: 1 add
+            cumspace[ii] = csum;
+        }
+        Tval wdeg = csum;
+
+        Tval colScale = 1;
+
+        
+        Tind *js, *ks;
+        int newlen = ceil(double(len-1)/4)*4;
+        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            Tval r = randnums[randidx[(i+joffset)%n]];
+            r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+
+            auto cumspace_last = cumspace.begin();
+            std::advance(cumspace_last, len);
+            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+
+            ks[joffset] = row[koff];
+        }
+
+        Tval newEdgeVals[len-1];
+        Tind ptrs[len-1];
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // LLcol llcol = colspace[joffset];
+            Tval w = val[joffset] * colScale;
+            js[joffset] = row[joffset];
+            // ptrs[joffset] = llcol.ptr;
+
+            Tval f = w/wdeg;
+            // flop count: 1 mul
+
+            newEdgeVals[joffset] = w*(1-f);
+
+            colScale *= 1 - f;
+            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
+            // flop count: 3 mul 3 add
+
+            ldli.rowval.push_back(js[joffset]);
+            ldli.fval.push_back(f);
+            ldli_row_ptr += 1;
+        }
+
+        __m128i allone = _mm_set1_epi32(0xffffffff);
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m128i j_4 = _mm_load_si128((__m128i *)(js+joffset));
+            __m128i k_4 = _mm_load_si128((__m128i *)(ks+joffset));
+
+            __m128i mask1 = _mm_cmplt_epi32(k_4, j_4);
+            __m128i res1 = _mm_blendv_epi8(j_4, k_4, mask1);
+
+            //__m128i mask2 = _mm_cmplt_epi32(j_4, k_4);
+            __m128i mask2 = _mm_xor_si128(mask1, allone);
+            __m128i res2 = _mm_blendv_epi8(j_4, k_4, mask2);
+
+            //__m128i res1 = _mm_min_epi32(j_4, k_4);
+            //__m128i res2 = _mm_max_epi32(j_4, k_4);
+
+            _mm_store_si128((__m128i *)(js+joffset), res1);
+            _mm_store_si128((__m128i *)(ks+joffset), res2);
+        }
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // create edge (j,k) with newEdgeVal
+            // do it by reassigning ll
+            Tind j = js[joffset];
+            Tind k = ks[joffset];
+            Tval newEdgeVal = newEdgeVals[joffset];
+            Tind ptr = ptrs[joffset];
+            a.row[j].push_back(k);
+            a.val[j].push_back(newEdgeVal);
+        }
+        
+        free(js);
+        free(ks);
+
+        // LLcol llcol = colspace[len-1];
+        Tval w = val[len - 1] * colScale;
+        // flop count: 1 mul
+        Tind j = row[len - 1];
+
+        ldli.rowval.push_back(j);
+        ldli.fval.push_back(1);
+        ldli_row_ptr += 1;
+
+        d[i] = w;
+
+        //free column
+        a.row[i].clear();
+        a.row[i].shrink_to_fit();
+        a.val[i].clear();
+        a.val[i].shrink_to_fit();
+    }
+
+    ldli.colptr[n-1] = ldli_row_ptr;
+    ldli.d = d;
+
+    return ldli;
+}
+
+
+// aligned simds
+LDLinv approxChol_vector2_opt3(LLMatOrd_vector2 &a) {
+    auto n = a.n;
+
+    // need to make custom one without col info later
+    LDLinv ldli(a);
+    Tind ldli_row_ptr = 0;
+
+    std::vector<Tval> d(n, 0);
+
+    // std::vector<LLcol> colspace(n);
+    std::vector<Tind> row(n);
+    std::vector<Tval> val(n);
+
+
+    std::vector<Tval> cumspace(n);
+
+    // random engine and distribution
+    std::default_random_engine engine;
+    std::uniform_real_distribution<Tval> u(0.0, 1.0);
+
+
+    for (long i = 0; i <= n-2; i++) {
+
+        ldli.col[i] = i;
+        ldli.colptr[i] = ldli_row_ptr;
+
+        int len = a.row[i].size();
+        // TODO: is sort by val necessary
+        if (len > 0)
+        {
+            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
+            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
+            row.clear();
+            val.clear();
+
+            int idx = 1;
+            Tval last_val = a.val[i][0];
+            Tind last_row = a.row[i][0];
+            // std::cout << "merge" << std::endl;
+            while (idx < len)
+            {
+                while (idx < len && a.row[i][idx] == last_row)
+                    last_val += a.val[i][idx++];
+                row.push_back(last_row);
+                val.push_back(last_val);
+                if (idx < len)
+                {
+                    last_val = a.val[i][idx];
+                    last_row = a.row[i][idx];
+                }
+            }
+            // std::cout << "merge done" << std::endl;
+            len = row.size();
+            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
+            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
+        }
+        // flop count: sort LLcol len*log(len)?
+
+        if (len <= 1)
+        {
+            Tval w = val[len - 1];
+            // flop count: 1 mul
+            Tind j = row[len - 1];
+
+            ldli.rowval.push_back(j);
+            ldli.fval.push_back(1);
+            ldli_row_ptr += 1;
+
+            d[i] = w;
+
+            //free column
+            a.row[i].clear();
+            a.row[i].shrink_to_fit();
+            a.val[i].clear();
+            a.val[i].shrink_to_fit();
+
+            continue;
+        }
+
+        Tval csum = 0;
+        for (int ii = 0; ii < len; ii++) {
+            csum += val[ii];
+            // flop count: 1 add
+            cumspace[ii] = csum;
+        }
+        Tval wdeg = csum;
+
+        Tval colScale = 1;
+
+        /*int newlen = ceil(double(len-1)/4)*4;
+        Tind js[newlen];
+        Tind ks[newlen];
+        Tval randnums[newlen];*/
+        
+        Tind *js, *ks;
+        Tval *randnums;
+        int newlen = ceil(double(len-1)/4)*4;
+        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        randnums = static_cast<Tval *>(aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
+        
+        for (int joffset = 0; joffset <= len-2; joffset++)
+        {
+            randnums[joffset] = u(engine);
+        }
+
+        __m256d csum_4 = _mm256_set1_pd(csum);
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m256d r_4 = _mm256_load_pd(randnums+joffset);
+            __m256d cum_4 = _mm256_loadu_pd(&cumspace[joffset]);
+
+            __m256d res1_4 = _mm256_sub_pd(csum_4, cum_4);
+            __m256d res2_4 = _mm256_fmadd_pd(r_4, res1_4, cum_4);
+
+            _mm256_store_pd(randnums+joffset, res2_4);
+        }
+
+        auto cumspace_last = cumspace.begin();
+        std::advance(cumspace_last, len);
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            Tval r = randnums[joffset];
+            //r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+
+            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+
+            ks[joffset] = a.row[i][koff];
+        }
+
+        Tval newEdgeVals[len-1];
+        Tind ptrs[len-1];
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // LLcol llcol = colspace[joffset];
+            Tval w = val[joffset] * colScale;
+            js[joffset] = row[joffset];
+            // ptrs[joffset] = llcol.ptr;
+
+            Tval f = w/wdeg;
+            // flop count: 1 mul
+
+            newEdgeVals[joffset] = w*(1-f);
+
+            colScale *= 1 - f;
+            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
+            // flop count: 3 mul 3 add
+
+            ldli.rowval.push_back(js[joffset]);
+            ldli.fval.push_back(f);
+            ldli_row_ptr += 1;
+        }
+
+        __m128i allone = _mm_set1_epi32(0xffffffff);
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m128i j_4 = _mm_load_si128((__m128i *)(js+joffset));
+            __m128i k_4 = _mm_load_si128((__m128i *)(ks+joffset));
+
+            __m128i mask1 = _mm_cmplt_epi32(k_4, j_4);
+            __m128i res1 = _mm_blendv_epi8(j_4, k_4, mask1);
+
+            //__m128i mask2 = _mm_cmplt_epi32(j_4, k_4);
+            __m128i mask2 = _mm_xor_si128(mask1, allone);
+            __m128i res2 = _mm_blendv_epi8(j_4, k_4, mask2);
+
+            //__m128i res1 = _mm_min_epi32(j_4, k_4);
+            //__m128i res2 = _mm_max_epi32(j_4, k_4);
+
+            _mm_store_si128((__m128i *)(js+joffset), res1);
+            _mm_store_si128((__m128i *)(ks+joffset), res2);
+        }
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // create edge (j,k) with newEdgeVal
+            // do it by reassigning ll
+            Tind j = js[joffset];
+            Tind k = ks[joffset];
+            Tval newEdgeVal = newEdgeVals[joffset];
+            Tind ptr = ptrs[joffset];
+            a.row[j].push_back(k);
+            a.val[j].push_back(newEdgeVal);
+        }
+
+        free(js);
+        free(ks);
+        free(randnums);
+
+        // LLcol llcol = colspace[len-1];
+        Tval w = val[len - 1] * colScale;
+        // flop count: 1 mul
+        Tind j = row[len - 1];
+
+        ldli.rowval.push_back(j);
+        ldli.fval.push_back(1);
+        ldli_row_ptr += 1;
+
+        d[i] = w;
+
+        //free column
+        a.row[i].clear();
+        a.row[i].shrink_to_fit();
+        a.val[i].clear();
+        a.val[i].shrink_to_fit();
+    }
+
+    ldli.colptr[n-1] = ldli_row_ptr;
+    ldli.d = d;
+
+    return ldli;
+}
+
+// aligned simd + precompute csum
+LDLinv approxChol_vector2_opt4(LLMatOrd_vector2 &a) {
+    auto n = a.n;
+
+    // need to make custom one without col info later
+    LDLinv ldli(a);
+    Tind ldli_row_ptr = 0;
+
+    std::vector<Tval> d(n, 0);
+
+    // std::vector<LLcol> colspace(n);
+    std::vector<Tind> row(n);
+    std::vector<Tval> val(n);
+
+
+    std::vector<Tval> cumspace(n);
+
+    // random engine and distribution
+    std::default_random_engine engine;
+    std::uniform_real_distribution<Tval> u(0.0, 1.0);
+
+
+    for (long i = 0; i <= n-2; i++) {
+
+        ldli.col[i] = i;
+        ldli.colptr[i] = ldli_row_ptr;
+
+        int len = a.row[i].size();
+        // TODO: is sort by val necessary
+        Tval csum = 0;
+        if (len > 0)
+        {
+            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
+            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
+            row.clear();
+            val.clear();
+
+            int idx = 1;
+            Tval last_val = a.val[i][0];
+            Tind last_row = a.row[i][0];
+            // std::cout << "merge" << std::endl;
+            while (idx < len)
+            {
+                while (idx < len && a.row[i][idx] == last_row)
+                    last_val += a.val[i][idx++];
+                row.push_back(last_row);
+                val.push_back(last_val);
+                csum += last_val;
+                if (idx < len)
+                {
+                    last_val = a.val[i][idx];
+                    last_row = a.row[i][idx];
+                }
+            }
+            // std::cout << "merge done" << std::endl;
+            len = row.size();
+            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
+            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
+        }
+        // flop count: sort LLcol len*log(len)?
+
+        if (len <= 1)
+        {
+            Tval w = val[len - 1];
+            // flop count: 1 mul
+            Tind j = row[len - 1];
+
+            ldli.rowval.push_back(j);
+            ldli.fval.push_back(1);
+            ldli_row_ptr += 1;
+
+            d[i] = w;
+
+            //free column
+            a.row[i].clear();
+            a.row[i].shrink_to_fit();
+            a.val[i].clear();
+            a.val[i].shrink_to_fit();
+
+            continue;
+        }
+
+        /*int newlen = ceil(double(len-1)/4)*4;
+        Tind js[newlen];
+        Tind ks[newlen];
+        Tval randnums[newlen];*/
+        
+        Tind *js, *ks;
+        Tval *randnums;
+        int newlen = ceil(double(len-1)/4)*4;
+        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        randnums = static_cast<Tval *>(aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
+
+
+        Tval wdeg = csum;
+        cumspace[len-1] = csum;
+
+        Tval cusum = 0;
+        Tval newEdgeVals[len-1];
+        Tval colScale = 1;
+        for (int ii = 0; ii < len-1; ii++) {
+            cusum += val[ii];
+            cumspace[ii] = cusum;
+
+
+            Tval w = val[ii] * colScale;
+            js[ii] = row[ii];
+
+            Tval f = w/wdeg;
+
+            newEdgeVals[ii] = w*(1-f);
+
+            colScale *= 1 - f;
+            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
+
+            ldli.rowval.push_back(js[ii]);
+            ldli.fval.push_back(f);
+            ldli_row_ptr += 1;
+        }
+
+        
+        for (int joffset = 0; joffset <= len-2; joffset++)
+        {
+            randnums[joffset] = u(engine);
+        }
+
+        __m256d csum_4 = _mm256_set1_pd(csum);
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m256d r_4 = _mm256_load_pd(randnums+joffset);
+            __m256d cum_4 = _mm256_loadu_pd(&cumspace[joffset]);
+
+            __m256d res1_4 = _mm256_sub_pd(csum_4, cum_4);
+            __m256d res2_4 = _mm256_fmadd_pd(r_4, res1_4, cum_4);
+
+            _mm256_store_pd(randnums+joffset, res2_4);
+        }
+
+        auto cumspace_last = cumspace.begin();
+        std::advance(cumspace_last, len);
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            Tval r = randnums[joffset];
+            //r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+
+            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+
+            ks[joffset] = a.row[i][koff];
+        }
+
+        __m128i allone = _mm_set1_epi32(0xffffffff);
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m128i j_4 = _mm_load_si128((__m128i *)(js+joffset));
+            __m128i k_4 = _mm_load_si128((__m128i *)(ks+joffset));
+
+            __m128i mask1 = _mm_cmplt_epi32(k_4, j_4);
+            __m128i res1 = _mm_blendv_epi8(j_4, k_4, mask1);
+
+            //__m128i mask2 = _mm_cmplt_epi32(j_4, k_4);
+            __m128i mask2 = _mm_xor_si128(mask1, allone);
+            __m128i res2 = _mm_blendv_epi8(j_4, k_4, mask2);
+
+            //__m128i res1 = _mm_min_epi32(j_4, k_4);
+            //__m128i res2 = _mm_max_epi32(j_4, k_4);
+
+            _mm_store_si128((__m128i *)(js+joffset), res1);
+            _mm_store_si128((__m128i *)(ks+joffset), res2);
+        }
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // create edge (j,k) with newEdgeVal
+            // do it by reassigning ll
+            Tind j = js[joffset];
+            Tind k = ks[joffset];
+            Tval newEdgeVal = newEdgeVals[joffset];
+            a.row[j].push_back(k);
+            a.val[j].push_back(newEdgeVal);
+        }
+
+        free(js);
+        free(ks);
+        free(randnums);
+        
+
+        // LLcol llcol = colspace[len-1];
+        Tval w = val[len - 1] * colScale;
+        // flop count: 1 mul
+        Tind j = row[len - 1];
+
+        ldli.rowval.push_back(j);
+        ldli.fval.push_back(1);
+        ldli_row_ptr += 1;
+
+        d[i] = w;
+
+        //free column
+        a.row[i].clear();
+        a.row[i].shrink_to_fit();
+        a.val[i].clear();
+        a.val[i].shrink_to_fit();
+    }
+
+    ldli.colptr[n-1] = ldli_row_ptr;
+    ldli.d = d;
+
+    return ldli;
+}
+
+LDLinv approxChol_vector2_opt5(LLMatOrd_vector2 &a) {
+    auto n = a.n;
+
+    // need to make custom one without col info later
+    LDLinv ldli(a);
+    Tind ldli_row_ptr = 0;
+
+    std::vector<Tval> d(n, 0);
+
+    // std::vector<LLcol> colspace(n);
+    std::vector<Tind> row(n);
+    std::vector<Tval> val(n);
+
+
+    std::vector<Tval> cumspace(n);
+
+    // random engine and distribution
+    std::default_random_engine engine;
+    std::uniform_real_distribution<Tval> u(0.0, 1.0);
+
+
+    for (long i = 0; i <= n-2; i++) {
+
+        ldli.col[i] = i;
+        ldli.colptr[i] = ldli_row_ptr;
+
+        int len = a.row[i].size();
+        // TODO: is sort by val necessary
+        Tval csum = 0;
+        if (len > 0)
+        {
+            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
+            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
+            row.clear();
+            val.clear();
+
+            int idx = 1;
+            Tval last_val = a.val[i][0];
+            Tind last_row = a.row[i][0];
+            // std::cout << "merge" << std::endl;
+            while (idx < len)
+            {
+                while (idx < len && a.row[i][idx] == last_row)
+                    last_val += a.val[i][idx++];
+                row.push_back(last_row);
+                val.push_back(last_val);
+                csum += last_val;
+                if (idx < len)
+                {
+                    last_val = a.val[i][idx];
+                    last_row = a.row[i][idx];
+                }
+            }
+            // std::cout << "merge done" << std::endl;
+            len = row.size();
+            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
+            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
+        }
+        // flop count: sort LLcol len*log(len)?
+
+        if (len <= 1)
+        {
+            Tval w = val[len - 1];
+            // flop count: 1 mul
+            Tind j = row[len - 1];
+
+            ldli.rowval.push_back(j);
+            ldli.fval.push_back(1);
+            ldli_row_ptr += 1;
+
+            d[i] = w;
+
+            //free column
+            a.row[i].clear();
+            a.row[i].shrink_to_fit();
+            a.val[i].clear();
+            a.val[i].shrink_to_fit();
+
+            continue;
+        }
+
+        /*int newlen = ceil(double(len-1)/4)*4;
+        Tind js[newlen];
+        Tind ks[newlen];
+        Tval randnums[newlen];*/
+        
+        Tind *js, *ks;
+        Tval *randnums;
+        int newlen = ceil(double(len-1)/4)*4;
+        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        randnums = static_cast<Tval *>(aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
+
+
+        Tval wdeg = csum;
+        cumspace[len-1] = csum;
+
+        Tval cusum = 0;
+        Tval newEdgeVals[len-1];
+        Tval colScale = 1;
+        for (int ii = 0; ii < len-1; ii++) {
+            cusum += val[ii];
+            cumspace[ii] = cusum;
+
+
+            Tval w = val[ii] * colScale;
+            js[ii] = row[ii];
+
+            Tval f = w/wdeg;
+
+            newEdgeVals[ii] = w*(1-f);
+
+            colScale *= 1 - f;
+            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
+
+            ldli.rowval.push_back(js[ii]);
+            ldli.fval.push_back(f);
+            ldli_row_ptr += 1;
+        }
+
+        
+        for (int joffset = 0; joffset <= len-2; joffset++)
+        {
+            randnums[joffset] = u(engine);
+        }
+
+        __m256d csum_4 = _mm256_set1_pd(csum);
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m256d r_4 = _mm256_load_pd(randnums+joffset);
+            __m256d cum_4 = _mm256_loadu_pd(&cumspace[joffset]);
+
+            __m256d res1_4 = _mm256_sub_pd(csum_4, cum_4);
+            __m256d res2_4 = _mm256_fmadd_pd(r_4, res1_4, cum_4);
+
+            _mm256_store_pd(randnums+joffset, res2_4);
+        }
+
+        auto cumspace_last = cumspace.begin();
+        std::advance(cumspace_last, len);
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            Tval r = randnums[joffset];
+            //r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+
+            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+
+            ks[joffset] = a.row[i][koff];
+        }
+
+        __m128i allone = _mm_set1_epi32(0xffffffff);
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m128i j_4 = _mm_load_si128((__m128i *)(js+joffset));
+            __m128i k_4 = _mm_load_si128((__m128i *)(ks+joffset));
+
+            __m128i mask1 = _mm_cmplt_epi32(k_4, j_4);
+            __m128i res1 = _mm_blendv_epi8(j_4, k_4, mask1);
+
+            //__m128i mask2 = _mm_cmplt_epi32(j_4, k_4);
+            __m128i mask2 = _mm_xor_si128(mask1, allone);
+            __m128i res2 = _mm_blendv_epi8(j_4, k_4, mask2);
+
+            //__m128i res1 = _mm_min_epi32(j_4, k_4);
+            //__m128i res2 = _mm_max_epi32(j_4, k_4);
+
+            _mm_store_si128((__m128i *)(js+joffset), res1);
+            _mm_store_si128((__m128i *)(ks+joffset), res2);
+        }
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // create edge (j,k) with newEdgeVal
+            // do it by reassigning ll
+            Tind j = js[joffset];
+            Tind k = ks[joffset];
+            Tval newEdgeVal = newEdgeVals[joffset];
+            a.row[j].push_back(k);
+            a.val[j].push_back(newEdgeVal);
+        }
+
+        free(js);
+        free(ks);
+        free(randnums);
 
         // LLcol llcol = colspace[len-1];
         Tval w = val[len - 1] * colScale;
@@ -644,519 +1942,8 @@ LDLinv approxChol_vector2_struct_merge(LLMatOrd_vector2_struct a) {
     return ldli;
 }
 
-LDLinv approxChol_vector2_mergerand(LLMatOrd_vector2 a) {
-    auto n = a.n;
-
-    // need to make custom one without col info later
-    LDLinv ldli(a);
-    Tind ldli_row_ptr = 0;
-
-    std::vector<Tval> d(n, 0);
-
-    // std::vector<LLcol> colspace(n);
-    std::vector<Tind> row(n);
-    std::vector<Tval> val(n);
-
-
-    std::vector<Tval> cumspace(n);
-
-    // random engine and distribution
-    pcg_extras::seed_seq_from<std::random_device> seed_source;
-    pcg32_fast engine(seed_source);
-    std::uniform_real_distribution<Tval> u(0.0, 1.0);
-    std::uniform_real_distribution<Tval> uidx(0, n);
-    Tval randnums[n];
-    Tind randidx[n];
-    for (int joffset = 0; joffset < n; joffset++)
-    {
-        randnums[joffset] = u(engine);
-        randidx[joffset] = u(engine);
-    }
-    for (long i = 0; i <= n-2; i++) {
-
-        ldli.col[i] = i;
-        ldli.colptr[i] = ldli_row_ptr;
-
-        int len = a.row[i].size();
-        // TODO: is sort by val necessary
-        if (len > 0)
-        {
-            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
-            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
-            row.clear();
-            val.clear();
-
-            int idx = 1;
-            Tval last_val = a.val[i][0];
-            Tind last_row = a.row[i][0];
-            // std::cout << "merge" << std::endl;
-            while (idx < len)
-            {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                if (idx < len)
-                {
-                    last_val = a.val[i][idx];
-                    last_row = a.row[i][idx];
-                }
-            }
-            // std::cout << "merge done" << std::endl;
-            len = row.size();
-            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
-            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
-        }
-        // flop count: sort LLcol len*log(len)?
-
-        Tval csum = 0;
-        for (int ii = 0; ii < len; ii++) {
-            csum += val[ii];
-            // flop count: 1 add
-            cumspace[ii] = csum;
-        }
-        Tval wdeg = csum;
-
-        Tval colScale = 1;
-
-        Tind ks[len-1];
-
-        for (int joffset = 0; joffset <= len-2; joffset++) {
-            Tval r = randnums[randidx[(i+joffset)%n]];
-            r = r * (csum - cumspace[joffset]) + cumspace[joffset];
-
-            auto cumspace_last = cumspace.begin();
-            std::advance(cumspace_last, len);
-            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
-
-            ks[joffset] = row[koff];
-        }
-
-        Tval newEdgeVals[len-1];
-        Tind js[len-1];
-        Tind ptrs[len-1];
-        for (int joffset = 0; joffset <= len-2; joffset++) {
-            // LLcol llcol = colspace[joffset];
-            Tval w = val[joffset] * colScale;
-            js[joffset] = row[joffset];
-            // ptrs[joffset] = llcol.ptr;
-
-            Tval f = w/wdeg;
-            // flop count: 1 mul
-
-            newEdgeVals[joffset] = w*(1-f);
-
-            colScale *= 1 - f;
-            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
-            // flop count: 3 mul 3 add
-
-            ldli.rowval.push_back(js[joffset]);
-            ldli.fval.push_back(f);
-            ldli_row_ptr += 1;
-        }
-
-        for (int joffset = 0; joffset <= len-2; joffset++) {
-            // create edge (j,k) with newEdgeVal
-            // do it by reassigning ll
-            Tind j = js[joffset];
-            Tind k = ks[joffset];
-            Tval newEdgeVal = newEdgeVals[joffset];
-            Tind ptr = ptrs[joffset];
-            if (j < k) {    // put it in col j
-                a.row[j].push_back(k);
-                a.val[j].push_back(newEdgeVal);
-            } else {        // put it in col k
-                a.row[k].push_back(j);
-                a.val[k].push_back(newEdgeVal);
-            }
-        }
-
-        // LLcol llcol = colspace[len-1];
-        Tval w = val[len - 1] * colScale;
-        // flop count: 1 mul
-        Tind j = row[len - 1];
-
-        ldli.rowval.push_back(j);
-        ldli.fval.push_back(1);
-        ldli_row_ptr += 1;
-
-        d[i] = w;
-
-        //free column
-        a.row[i].clear();
-        a.row[i].shrink_to_fit();
-        a.val[i].clear();
-        a.val[i].shrink_to_fit();
-    }
-
-    ldli.colptr[n-1] = ldli_row_ptr;
-    ldli.d = d;
-
-    return ldli;
-}
-
-
-
-LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a) {
-    auto n = a.n;
-
-    LDLinv ldli(a);
-    Tind ldli_row_ptr = 0;
-
-    std::vector<Tval> d(n, 0);
-
-    std::vector<Tind> row(n);
-    std::vector<Tval> val(n);
-
-    std::vector<Tval> cumspace(n);
-
-    std::default_random_engine engine;
-    std::uniform_real_distribution<Tval> u(0.0, 1.0);
-
-
-    for (long i = 0; i <= n-2; i++) {
-
-        ldli.col[i] = i;
-        ldli.colptr[i] = ldli_row_ptr;
-
-        int len = a.row[i].size();
-        
-        if (len > 0)
-        {
-            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
-            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
-            row.clear();
-            val.clear();
-
-            int idx = 1;
-            Tval last_val = a.val[i][0];
-            Tind last_row = a.row[i][0];
-            // std::cout << "merge" << std::endl;
-            while (idx < len)
-            {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                if (idx < len)
-                {
-                    last_val = a.val[i][idx];
-                    last_row = a.row[i][idx];
-                }
-            }
-            // std::cout << "merge done" << std::endl;
-            len = row.size();
-            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
-            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
-        }
-        // flop count: sort LLcol len*log(len)?
-
-        Tval csum = 0;
-        for (int ii = 0; ii < len; ii++) {
-            csum += a.val[i][ii];
-            // flop count: 1 add
-            cumspace[ii] = csum;
-        }
-        Tval wdeg = csum;
-
-        Tval colScale = 1;
-
-        int newlen = ceil(double(len-1)/4)*4;
-        Tind js[newlen];
-        Tind ks[newlen];
-        
-        /*Tind *js, *ks;
-        int newlen = ceil(double(len-1)/4)*4;
-        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));*/
-        
-        Tval randnums[newlen];
-        for (int joffset = 0; joffset <= len-2; joffset++)
-        {
-            randnums[joffset] = u(engine);
-        }
-
-        auto cumspace_last = cumspace.begin();
-        std::advance(cumspace_last, len);
-
-        for (int joffset = 0; joffset <= len-2; joffset++) {
-            Tval r = randnums[joffset];
-            r = r * (csum - cumspace[joffset]) + cumspace[joffset];
-
-            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
-
-            ks[joffset] = a.row[i][koff];
-        }
-
-        Tval newEdgeVals[len-1];
-        Tind ptrs[len-1];
-        for (int joffset = 0; joffset <= len-2; joffset++) {
-            // LLcol llcol = colspace[joffset];
-            Tval w = a.val[i][joffset] * colScale;
-            js[joffset] = a.row[i][joffset];
-            // ptrs[joffset] = llcol.ptr;
-
-            Tval f = w/wdeg;
-            // flop count: 1 mul
-
-            newEdgeVals[joffset] = w*(1-f);
-
-            colScale *= 1 - f;
-            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
-            // flop count: 3 mul 3 add
-
-            ldli.rowval.push_back(js[joffset]);
-            ldli.fval.push_back(f);
-            ldli_row_ptr += 1;
-        }
-        
-        __m128i allone = _mm_set1_epi32(0xffffffff);
-        for (int joffset = 0; joffset < newlen; joffset+=4) {
-            __m128i j_4 = _mm_loadu_si128((__m128i *)(js+joffset));
-            __m128i k_4 = _mm_loadu_si128((__m128i *)(ks+joffset));
-
-            __m128i mask1 = _mm_cmplt_epi32(k_4, j_4);
-            __m128i res1 = _mm_blendv_epi8(j_4, k_4, mask1);
-
-            //__m128i mask2 = _mm_cmplt_epi32(j_4, k_4);
-            __m128i mask2 = _mm_xor_si128(mask1, allone);
-            __m128i res2 = _mm_blendv_epi8(j_4, k_4, mask2);
-
-            //__m128i res1 = _mm_min_epi32(j_4, k_4);
-            //__m128i res2 = _mm_max_epi32(j_4, k_4);
-
-            _mm_storeu_si128((__m128i *)(js+joffset), res1);
-            _mm_storeu_si128((__m128i *)(ks+joffset), res2);
-        }
-        
-        for (int joffset = 0; joffset <= len-2; joffset++) {
-            // create edge (j,k) with newEdgeVal
-            // do it by reassigning ll
-            Tind j = js[joffset];
-            Tind k = ks[joffset];
-            Tval newEdgeVal = newEdgeVals[joffset];
-            Tind ptr = ptrs[joffset];
-
-            auto iter = std::lower_bound(a.row[j].begin(), a.row[j].end(), k);
-            int idx = iter - a.row[j].begin();
-            if (iter != a.row[j].end() && *iter == k)
-            {
-                a.val[j][idx] += newEdgeVal;
-            }
-            else
-            {
-                a.row[j].insert(iter, k);
-                a.val[j].insert(a.val[j].begin() + idx, newEdgeVal);
-            }
-        }
-        
-        //free(js);
-        //free(ks);
-        // LLcol llcol = colspace[len-1];
-        Tval w = a.val[i][len - 1] * colScale;
-        // flop count: 1 mul
-        Tind j = a.row[i][len - 1];
-
-        ldli.rowval.push_back(j);
-        ldli.fval.push_back(1);
-        ldli_row_ptr += 1;
-
-        d[i] = w;
-
-        //free column
-        a.row[i].clear();
-        a.row[i].shrink_to_fit();
-        a.val[i].clear();
-        a.val[i].shrink_to_fit();
-    }
-
-    ldli.colptr[n-1] = ldli_row_ptr;
-    ldli.d = d;
-
-    return ldli;
-}
-
-// with jkswap and sampling simd
-LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 a) {
-    auto n = a.n;
-
-    LDLinv ldli(a);
-    Tind ldli_row_ptr = 0;
-
-    std::vector<Tval> d(n, 0);
-
-    std::vector<Tind> row(n);
-    std::vector<Tval> val(n);
-
-    std::vector<Tval> cumspace(n);
-
-    std::default_random_engine engine;
-    std::uniform_real_distribution<Tval> u(0.0, 1.0);
-
-
-    for (long i = 0; i <= n-2; i++) {
-
-        ldli.col[i] = i;
-        ldli.colptr[i] = ldli_row_ptr;
-
-        int len = a.row[i].size();
-        if (len > 0)
-        {
-            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
-            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
-            row.clear();
-            val.clear();
-
-            int idx = 1;
-            Tval last_val = a.val[i][0];
-            Tind last_row = a.row[i][0];
-            // std::cout << "merge" << std::endl;
-            while (idx < len)
-            {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                if (idx < len)
-                {
-                    last_val = a.val[i][idx];
-                    last_row = a.row[i][idx];
-                }
-            }
-            // std::cout << "merge done" << std::endl;
-            len = row.size();
-            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
-            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
-        }
-        // flop count: sort LLcol len*log(len)?
-
-        Tval csum = 0;
-        for (int ii = 0; ii < len; ii++) {
-            csum += a.val[i][ii];
-            // flop count: 1 add
-            cumspace[ii] = csum;
-        }
-        Tval wdeg = csum;
-
-        Tval colScale = 1;
-
-        int newlen = ceil(double(len-1)/4)*4;
-        Tind js[newlen];
-        Tind ks[newlen];
-        
-        Tval randnums[newlen];
-        for (int joffset = 0; joffset <= len-2; joffset++)
-        {
-            randnums[joffset] = u(engine);
-        }
-
-        __m256d csum_4 = _mm256_set1_pd(csum);
-        for (int joffset = 0; joffset < newlen; joffset+=4) {
-            __m256d r_4 = _mm256_loadu_pd(randnums+joffset);
-            __m256d cum_4 = _mm256_loadu_pd(&cumspace[joffset]);
-
-            __m256d res1_4 = _mm256_sub_pd(csum_4, cum_4);
-            __m256d res2_4 = _mm256_fmadd_pd(r_4, res1_4, cum_4);
-
-            _mm256_storeu_pd(randnums+joffset, res2_4);
-        }
-
-        auto cumspace_last = cumspace.begin();
-        std::advance(cumspace_last, len);
-
-        for (int joffset = 0; joffset <= len-2; joffset++) {
-            Tval r = randnums[joffset];
-            //r = r * (csum - cumspace[joffset]) + cumspace[joffset];
-
-            int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
-
-            ks[joffset] = a.row[i][koff];
-        }
-
-        Tval newEdgeVals[len-1];
-        Tind ptrs[len-1];
-        for (int joffset = 0; joffset <= len-2; joffset++) {
-            // LLcol llcol = colspace[joffset];
-            Tval w = a.val[i][joffset] * colScale;
-            js[joffset] = a.row[i][joffset];
-            // ptrs[joffset] = llcol.ptr;
-
-            Tval f = w/wdeg;
-            // flop count: 1 mul
-
-            newEdgeVals[joffset] = w*(1-f);
-
-            colScale *= 1 - f;
-            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
-            // flop count: 3 mul 3 add
-
-            ldli.rowval.push_back(js[joffset]);
-            ldli.fval.push_back(f);
-            ldli_row_ptr += 1;
-        }
-        
-        __m128i allone = _mm_set1_epi32(0xffffffff);
-        for (int joffset = 0; joffset < newlen; joffset+=4) {
-            __m128i j_4 = _mm_loadu_si128((__m128i *)(js+joffset));
-            __m128i k_4 = _mm_loadu_si128((__m128i *)(ks+joffset));
-
-            __m128i mask1 = _mm_cmplt_epi32(k_4, j_4);
-            __m128i res1 = _mm_blendv_epi8(j_4, k_4, mask1);
-
-            __m128i mask2 = _mm_xor_si128(mask1, allone);
-            __m128i res2 = _mm_blendv_epi8(j_4, k_4, mask2);
-
-            _mm_storeu_si128((__m128i *)(js+joffset), res1);
-            _mm_storeu_si128((__m128i *)(ks+joffset), res2);
-        }
-        
-        for (int joffset = 0; joffset <= len-2; joffset++) {
-            // create edge (j,k) with newEdgeVal
-            // do it by reassigning ll
-            Tind j = js[joffset];
-            Tind k = ks[joffset];
-            Tval newEdgeVal = newEdgeVals[joffset];
-            Tind ptr = ptrs[joffset];
-
-            auto iter = std::lower_bound(a.row[j].begin(), a.row[j].end(), k);
-            int idx = iter - a.row[j].begin();
-            if (iter != a.row[j].end() && *iter == k)
-            {
-                a.val[j][idx] += newEdgeVal;
-            }
-            else
-            {
-                a.row[j].insert(iter, k);
-                a.val[j].insert(a.val[j].begin() + idx, newEdgeVal);
-            }
-        }
-        // LLcol llcol = colspace[len-1];
-        Tval w = a.val[i][len - 1] * colScale;
-        // flop count: 1 mul
-        Tind j = a.row[i][len - 1];
-
-        ldli.rowval.push_back(j);
-        ldli.fval.push_back(1);
-        ldli_row_ptr += 1;
-
-        d[i] = w;
-
-        //free column
-        a.row[i].clear();
-        a.row[i].shrink_to_fit();
-        a.val[i].clear();
-        a.val[i].shrink_to_fit();
-    }
-
-    ldli.colptr[n-1] = ldli_row_ptr;
-    ldli.d = d;
-
-    return ldli;
-}
-
-
 // inline
-LDLinv approxChol_opt(LLMatOrd a) {
+LDLinv approxChol_opt(LLMatOrd &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -1328,7 +2115,7 @@ LDLinv approxChol_opt(LLMatOrd a) {
 }
 
 // inline + simd
-LDLinv approxChol_opt2(LLMatOrd a) {
+LDLinv approxChol_opt2(LLMatOrd &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -1406,6 +2193,21 @@ LDLinv approxChol_opt2(LLMatOrd a) {
         len = ptr+1;
 
 
+        if (len <= 1)
+        {
+            LLcol llcol = colspace[len-1];
+            Tval w = llcol.cval;
+            // flop count: 1 mul
+            Tind j = llcol.row;
+
+            ldli.rowval.push_back(j);
+            ldli.fval.push_back(1);
+            ldli_row_ptr += len;
+
+            d[i] = w;
+
+            continue;
+        }
 
         Tval csum = 0;
         for (int ii = 0; ii < len; ii++) {
@@ -1417,11 +2219,14 @@ LDLinv approxChol_opt2(LLMatOrd a) {
 
         Tval colScale = 1;
 
+        Tind *js, *ks;
+        Tval *randnums;
         int newlen = ceil(double(len-1)/4)*4;
-        Tind js[newlen];
-        Tind ks[newlen];
+        js = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        ks = static_cast<Tind *>(aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+        randnums = static_cast<Tval *>(aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
+
         
-        Tval randnums[newlen];
         for (int joffset = 0; joffset <= len-2; joffset++)
         {
             randnums[joffset] = u(engine);
@@ -1501,6 +2306,10 @@ LDLinv approxChol_opt2(LLMatOrd a) {
             a.lles[ptr].val = newEdgeVal;
             a.cols[j] = ptr;
         }
+
+        free(js);
+        free(ks);
+        free(randnums);
 
         LLcol llcol = colspace[len-1];
         Tval w = llcol.cval * colScale;
