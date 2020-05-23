@@ -5,6 +5,10 @@
 #include <iostream>
 #include <immintrin.h>
 #include <emmintrin.h>
+#include <boost/align/aligned_allocator.hpp>
+
+template <typename T>
+using aligned_vector = std::vector<T, boost::alignment::aligned_allocator<T, 32>>;
 
 template<typename T>
 class levelorder_vector
@@ -103,7 +107,7 @@ inline int bitset_search(std::vector<double>& x, const int n, double z)
   return i;
 }
 
-inline __m256i bitset_search_simd(std::vector<double>& x, const int n, __m256d z)
+inline __m256i bitset_search_simd(aligned_vector<double>& x, const int n, __m256d z)
 {
   __m256i i = _mm256_set1_epi64x(0);
   int k = (n >> 1) + 1;
@@ -118,9 +122,9 @@ inline __m256i bitset_search_simd(std::vector<double>& x, const int n, __m256d z
     // double xr2 = x[r[2]];
     // double xr3 = x[r[3]];
     // __m256d xr = _mm256_set_pd(xr3, xr2, xr1, xr0);
-    __m256d xr = _mm256_i64gather_pd(x, r, 8);
-    __m256d mask = _mm256_cmp_pd(z, xr, _CMP_GE_OQ)
-    i = _mm256_blendv_epi8(i, r, mask);
+    __m256d xr = _mm256_i64gather_pd(&x[0], r, 8);
+    __m256d mask = _mm256_cmp_pd(z, xr, _CMP_GE_OQ);
+    i = _mm256_blendv_epi8(i, r, _mm256_castpd_si256(mask));
     // i = z >= x[r] ? r : i;
   }
   return i;
