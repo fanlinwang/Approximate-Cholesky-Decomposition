@@ -19,7 +19,7 @@
 using namespace std;
 
 #define CYCLES_REQUIRED 1e8
-#define REP 5
+#define REP 2
 #define MAX_FUNCS 32
 
 // #define FLOPS (4.*n)
@@ -27,8 +27,9 @@ using namespace std;
 int VERTICE;
 int EDGE;
 
-typedef LDLinv(*comp_func)(LLMatOrd a);
-typedef LDLinv(*comp_func2)(LLMatOrd_vector2 a);
+typedef LDLinv(*comp_func)(LLMatOrd &a);
+typedef LDLinv(*comp_func2)(LLMatOrd_vector2 &a);
+
 // typedef void(*comp_func)(SparseMatrix& A, SparseMatrix& lap_A,
 //                          const std::vector<Tval>& b,          
 //                          std::vector<Tval>& sol, SolverParameter paras);
@@ -129,10 +130,10 @@ double perf_test(comp_func f, string desc, int flops)
     list<double> cyclesList;
 
     for (size_t j = 0; j < REP; j++) {
-
+        vector<LLMatOrd> llmats(num_runs, llmat);
         start = start_tsc();
         for (size_t i = 0; i < num_runs; ++i) {
-            f(llmat); 
+            f(llmats[i]); 
         }
         end = stop_tsc(start);
 
@@ -158,10 +159,10 @@ double perf_test(comp_func2 f, string desc, int flops)
     LLMatOrd_vector2 llmat2(A);
 
     for (size_t j = 0; j < REP; j++) {
-
+        vector<LLMatOrd_vector2> llmats(num_runs, llmat2);
         start = start_tsc();
         for (size_t i = 0; i < num_runs; ++i) {
-            f(llmat2);
+            f(llmats[i]);
         }
         end = stop_tsc(start);
 
