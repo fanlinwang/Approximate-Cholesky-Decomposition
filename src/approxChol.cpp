@@ -96,7 +96,7 @@ Tind compressCol(std::vector<LLcol> &colspace, int len) {
     return ptr+1; // if the returned value is used for vector length, then it should return ptr+1
 }
 
-LDLinv approxChol(LLMatOrd a) {
+LDLinv approxChol(LLMatOrd &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -213,7 +213,7 @@ LDLinv approxChol(LLMatOrd a) {
     return ldli;
 }
 
-LDLinv approxChol_vector2(LLMatOrd_vector2 a) {
+LDLinv approxChol_vector2(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -347,7 +347,7 @@ LDLinv approxChol_vector2(LLMatOrd_vector2 a) {
     return ldli;
 }
 
-LDLinv approxChol_vector2_merge(LLMatOrd_vector2 a) {
+LDLinv approxChol_vector2_merge(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -497,7 +497,7 @@ LDLinv approxChol_vector2_merge(LLMatOrd_vector2 a) {
 }
 
 
-LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a) {
+LDLinv approxChol_vector2_opt(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -669,7 +669,7 @@ LDLinv approxChol_vector2_opt(LLMatOrd_vector2 a) {
 }
 
 
-LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 a) {
+LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -853,7 +853,7 @@ LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 a) {
 
 
 
-LDLinv approxChol_vector2_mergerand(LLMatOrd_vector2 a) {
+LDLinv approxChol_vector2_mergerand(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -1006,7 +1006,7 @@ LDLinv approxChol_vector2_mergerand(LLMatOrd_vector2 a) {
 }
 
 
-LDLinv approxChol_vector2_mergerand_simd(LLMatOrd_vector2 a) {
+LDLinv approxChol_vector2_mergerand_simd(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -1179,7 +1179,7 @@ LDLinv approxChol_vector2_mergerand_simd(LLMatOrd_vector2 a) {
 
 
 // aligned simds
-LDLinv approxChol_vector2_opt3(LLMatOrd_vector2 a) {
+LDLinv approxChol_vector2_opt3(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -1389,7 +1389,7 @@ LDLinv approxChol_vector2_opt3(LLMatOrd_vector2 a) {
 }
 
 // aligned simd + precompute csum
-LDLinv approxChol_vector2_opt4(LLMatOrd_vector2 a) {
+LDLinv approxChol_vector2_opt4(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -1596,7 +1596,7 @@ LDLinv approxChol_vector2_opt4(LLMatOrd_vector2 a) {
     return ldli;
 }
 
-LDLinv approxChol_vector2_opt5(LLMatOrd_vector2 a) {
+LDLinv approxChol_vector2_opt5(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -1803,7 +1803,7 @@ LDLinv approxChol_vector2_opt5(LLMatOrd_vector2 a) {
 }
 
 // inline
-LDLinv approxChol_opt(LLMatOrd a) {
+LDLinv approxChol_opt(LLMatOrd &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -1975,7 +1975,7 @@ LDLinv approxChol_opt(LLMatOrd a) {
 }
 
 // inline + simd
-LDLinv approxChol_opt2(LLMatOrd a) {
+LDLinv approxChol_opt2(LLMatOrd &a) {
     auto n = a.n;
 
     // need to make custom one without col info later

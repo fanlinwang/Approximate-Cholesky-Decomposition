@@ -23,8 +23,8 @@ inline void test(const bool pred, const std::string& error_message = "")
         throw std::runtime_error(msg);
 }
 
-typedef LDLinv(*func1)(LLMatOrd a);
-typedef LDLinv(*func2)(LLMatOrd_vector2 a);
+typedef LDLinv(*func1)(LLMatOrd &a);
+typedef LDLinv(*func2)(LLMatOrd_vector2 &a);
 
 void elapsed_time(func1 f1, LLMatOrd llmat, std::string func_name) {
     auto start = std::chrono::steady_clock::now();
