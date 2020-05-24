@@ -18,8 +18,8 @@ std::ostream& operator << (std::ostream &out, __m256i d)
 
 int main()
 {
-    vector<double> x{0.1, 0.3, 0.6, 1.0};
-    vector<double> r{.01, .1,.2,.3,.4,.5,.6,.7,.8,.9,1.0,1.1};
+    aligned_vector<double> x{0.1, 0.3, 0.6, 1.0};
+    aligned_vector<double> r{.01, .1,.2,.3,.4,.5,.6,.7,.8,.9,1.0,1.1};
     // levelorder_vector<double> x_level(x.begin(), x.end());
     // for (int i = 0; i < x_level.impl.size(); i++)
     //     cout << x_level.impl[i] << " " << x_level.idx[i] << endl;
@@ -35,7 +35,7 @@ int main()
         x[i] = x[n - 1];
     for (int i = 0; i < r.size(); i+=4)
     {
-        __m256d rv = _mm256_load_pd(&x[i]);
+        __m256d rv = _mm256_load_pd(&r[i]);
         cout << rv << " " << bitset_search_simd(x, n_new, rv) << endl;
     }
 
