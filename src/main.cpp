@@ -53,14 +53,12 @@ void register_functions()
     add_function(&approxChol_opt2, "Inline+simd", 1);
     add_function(&approxChol_vector2, "Vec", 1);
     add_function(&approxChol_vector2_merge, "VecMg", 1);
-    add_function(&approxChol_vector2_opt, "VecMgSIMD1", 1);
-    add_function(&approxChol_vector2_opt2, "VecMgSIMD2", 1);
+    // add_function(&approxChol_vector2_opt, "VecMgSIMD1", 1);
+    // add_function(&approxChol_vector2_opt2, "VecMgSIMD2", 1);
     add_function(&approxChol_vector2_opt3, "VecMgSIMD3", 1);
     add_function(&approxChol_vector2_opt4, "VecMgSIMD3csum", 1);
     add_function(&approxChol_vector2_mergerand, "VecMgRand", 1);
     add_function(&approxChol_vector2_mergerand_simd, "VecMgRandSIMD", 1);
-    add_function(&approxChol_vector2_struct_merge, "VecStructMg", 1);
-    add_function(&approxChol_vector2_struct_merge_simd, "VecStructMgSIMD", 1);
     add_function(&approxChol_vector2_merge_search, "VecMgSearch", 1);
     add_function(&approxChol_vector2_merge_search_opt, "VecMgSearchSIMD1", 1);
     add_function(&approxChol_vector2_merge_search_opt2, "VecMgSearchSIMD2", 1);
