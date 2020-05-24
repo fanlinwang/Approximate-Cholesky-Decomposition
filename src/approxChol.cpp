@@ -915,7 +915,7 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
     while (n >> nbits)
         ++nbits;
     int n_new = (1 << nbits) - 1;
-    aligned_vector<Tval> cumspace(n_new+1);
+    aligned_vector<Tval> cumspace(n_new+4);
     // std::vector<Tval> cumspace(n_new+1);
     //for padding
 
@@ -998,7 +998,7 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
         int newlen = ceil(double(len-1)/4)*4;
         js = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
         ks = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
-        randnums = static_cast<Tval *>(boost::alignment::aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
+        // randnums = static_cast<Tval *>(boost::alignment::aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
 
 
         Tval wdeg = csum;
@@ -1027,25 +1027,35 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
             ldli_row_ptr += 1;
         }
 
+        
+        // for (int joffset = 0; joffset <= len-2; joffset++)
+        // {
+        //     randnums[joffset] = u(engine);
+        // }
+
+        __m256d csum_4 = _mm256_set1_pd(csum);
+        __m128i allone = _mm_set1_epi32(0xffffffff);
+
         //padding
         unsigned nbits = 0;
         while (len >> nbits)
             ++nbits;
         int n_new = (1 << nbits) - 1;
         for (int tmp = len; tmp < n_new; tmp++)
-            cumspace[tmp] = cumspace[len - 1];
+            cumspace[tmp] = csum;
+        // for (int tmp = len; tmp < n_new; tmp+=4)
+        //     _mm256_storeu_pd(&cumspace[tmp], csum_4);
         //padding
 
-        
-        for (int joffset = 0; joffset <= len-2; joffset++)
-        {
-            randnums[joffset] = u(engine);
-        }
-
-        __m256d csum_4 = _mm256_set1_pd(csum);
-        __m128i allone = _mm_set1_epi32(0xffffffff);
         for (int joffset = 0; joffset < newlen; joffset+=4) {
-            __m256d r_4 = _mm256_load_pd(randnums+joffset);
+            double r1 = u(engine);
+            double r2 = u(engine);
+            double r3 = u(engine);
+            double r4 = u(engine);
+
+            __m256d r_4 = _mm256_set_pd(r1, r2, r3, r4);
+
+            // __m256d r_4 = _mm256_load_pd(randnums+joffset);
             __m256d cum_4 = _mm256_load_pd(&cumspace[joffset]);
 
             __m256d res_4 = _mm256_sub_pd(csum_4, cum_4);
@@ -1084,7 +1094,7 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
 
         free(js);
         free(ks);
-        free(randnums);
+        // free(randnums);
         
 
         // LLcol llcol = colspace[len-1];
