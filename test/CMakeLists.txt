@@ -1,3 +1,8 @@
+find_package(Boost)
+IF (Boost_FOUND)
+    message(STATUS "${Boost_INCLUDE_DIRS}")
+    INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+ENDIF()
 
 add_executable(test_LDLsolver test_LDLsolver.cpp)
 target_link_libraries(test_LDLsolver PRIVATE approxChol)
