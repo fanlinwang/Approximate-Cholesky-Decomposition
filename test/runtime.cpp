@@ -15,10 +15,10 @@ int main(int argc, char **argv){
     LLMatOrd llmat = LLMatOrd(A);
     std::cout << v << " " << e << " ";
 
-    std::vector<LLMatOrd> llmats(4, llmat);
-    elapsed_time(&approxChol, llmats[0], "Baseline", r);
-    elapsed_time(&approxChol_opt, llmats[1], "Inline", r);
-    elapsed_time(&approxChol_opt2, llmats[2], "Inline+simd", r);
+    // std::vector<LLMatOrd> llmats(4, llmat);
+    // elapsed_time(&approxChol, llmats[0], "Baseline", r);
+    // elapsed_time(&approxChol_opt, llmats[1], "Inline", r);
+    // elapsed_time(&approxChol_opt2, llmats[2], "Inline+simd", r);
 
     LLMatOrd_vector2 llmat2 = LLMatOrd_vector2(A);
     std::vector<LLMatOrd_vector2> llmats2(9, llmat2);
@@ -32,6 +32,7 @@ int main(int argc, char **argv){
     elapsed_time(&approxChol_vector2_mergerand_simd, llmats2[7], "VecMgRandSIMD", r);
     elapsed_time(&approxChol_vector2_merge_search,llmats2[7], "VecMgSearch", r);
     elapsed_time(&approxChol_vector2_merge_search_opt, llmats2[7], "VecMgSearchSIMD", r);
+    elapsed_time(&approxChol_vector2_merge_search_opt2, llmats2[7], "VecMgSearchSIMD2", r);
     
     LLMatOrd_vector2_struct llmat3 = LLMatOrd_vector2_struct(A);
     std::vector<LLMatOrd_vector2_struct> llmats3(2, llmat3);
