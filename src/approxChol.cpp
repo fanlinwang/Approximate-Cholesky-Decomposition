@@ -909,7 +909,8 @@ LDLinv approxChol_vector2_merge_search_opt1(LLMatOrd_vector2 &a) {
     std::vector<Tval> d(n, 0);
 
     // std::vector<LLcol> colspace(n);
-    std::vector<Tind> row(n);
+    // std::vector<Tind> row(n);
+    aligned_vector<Tind> row(n);
     std::vector<Tval> val(n);
 
 
@@ -926,7 +927,7 @@ LDLinv approxChol_vector2_merge_search_opt1(LLMatOrd_vector2 &a) {
     std::default_random_engine engine;
     std::uniform_real_distribution<Tval> u(0.0, 1.0);
 
-
+    long count1 = 0, count2 = 0;
     for (long i = 0; i <= n-2; i++) {
 
         ldli.col[i] = i;
@@ -1072,32 +1073,30 @@ LDLinv approxChol_vector2_merge_search_opt1(LLMatOrd_vector2 &a) {
             ks[joffset+3] = row[koff_4[3]];
         }
 
-        // auto start = std::chrono::steady_clock::now();
-        // for (int joffset = 0; joffset < newlen; joffset+=4) {
-        //     __m256d r_4 = _mm256_load_pd(randnums+joffset);
-        //     // r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+        auto start = std::chrono::steady_clock::now();
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m256d r_4 = _mm256_load_pd(randnums+joffset);
+            // r = r * (csum - cumspace[joffset]) + cumspace[joffset];
 
-        //     __m256i koff_4 = bitset_search_simd(cumspace, n_new, r_4);
+            __m256i koff_4 = bitset_search_simd(cumspace, n_new, r_4);
 
-        //     // ks[joffset] = a.row[i][koff];
-        //     // ks[joffset] = row[koff];
-        // }
-        // auto end = std::chrono::steady_clock::now();
-        // long count1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+            __m128i k_4 = _mm256_i64gather_epi32(&row[0], koff_4, 4);
+            _mm_store_si128((__m128i *)(ks+joffset), k_4);
+        }
+        auto end = std::chrono::steady_clock::now();
+        count1 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
-        // start = std::chrono::steady_clock::now();
-        // for (int joffset = 0; joffset <= len-2; joffset++) {
-        //     Tval r = randnums[joffset];
-        //     // r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+        start = std::chrono::steady_clock::now();
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            Tval r = randnums[joffset];
+            // r = r * (csum - cumspace[joffset]) + cumspace[joffset];
 
-        //     int koff = bitset_search(cumspace, n_new, r);
+            int koff = bitset_search(cumspace, n_new, r);
 
-        //     // ks[joffset] = row[koff];
-        // }
-        // end = std::chrono::steady_clock::now();
-        // long count2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-
-        // std::cout << count1 << " " << count2 << std::endl;
+            ks[joffset] = row[koff];
+        }
+        end = std::chrono::steady_clock::now();
+        count2 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
         __m128i allone = _mm_set1_epi32(0xffffffff);
         for (int joffset = 0; joffset < newlen; joffset+=4) {
@@ -1153,6 +1152,8 @@ LDLinv approxChol_vector2_merge_search_opt1(LLMatOrd_vector2 &a) {
 
     ldli.colptr[n-1] = ldli_row_ptr;
     ldli.d = d;
+
+    std::cout << count1 << " " << count2 << std::endl;
 
     return ldli;
 }
