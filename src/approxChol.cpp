@@ -11,6 +11,7 @@
 #include <cmath>
 #include <ctime>
 #include <limits>
+#include <chrono>
 
 bool cmp_row_elem(const Elem &a, const Elem &b) {
     return a.row < b.row;
@@ -898,7 +899,7 @@ LDLinv approxChol_vector2_merge_search_opt(LLMatOrd_vector2 &a) {
 }
 
 
-LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
+LDLinv approxChol_vector2_merge_search_opt1(LLMatOrd_vector2 &a) {
     auto n = a.n;
 
     // need to make custom one without col info later
@@ -908,6 +909,8 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
     std::vector<Tval> d(n, 0);
 
     // std::vector<LLcol> colspace(n);
+    std::vector<Tind> row(n);
+    std::vector<Tval> val(n);
 
 
     //for padding
@@ -915,13 +918,9 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
     while (n >> nbits)
         ++nbits;
     int n_new = (1 << nbits) - 1;
-    aligned_vector<Tval> cumspace(n_new+1);
-    // std::vector<Tval> cumspace(n_new+1);
+    // aligned_vector<Tval> cumspace(n_new+1);
+    aligned_vector<Tval> cumspace(n_new+4);
     //for padding
-
-    // std::vector<Tind> row(n);
-    aligned_vector<Tind> row(n);
-    std::vector<Tval> val(n);
 
     // random engine and distribution
     std::default_random_engine engine;
@@ -1043,20 +1042,67 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
         }
 
         __m256d csum_4 = _mm256_set1_pd(csum);
-        __m128i allone = _mm_set1_epi32(0xffffffff);
         for (int joffset = 0; joffset < newlen; joffset+=4) {
             __m256d r_4 = _mm256_load_pd(randnums+joffset);
-            __m256d cum_4 = _mm256_load_pd(&cumspace[joffset]);
+            __m256d cum_4 = _mm256_loadu_pd(&cumspace[joffset]);
 
             __m256d res_4 = _mm256_sub_pd(csum_4, cum_4);
             __m256d newr_4 = _mm256_fmadd_pd(r_4, res_4, cum_4);
 
-            // _mm256_store_pd(randnums+joffset, newr_4);
-            __m256i koff_4 = bitset_search_simd(cumspace, n_new, newr_4);
+            _mm256_store_pd(randnums+joffset, newr_4);
+            // __m256i koff_4 = bitset_search_simd(cumspace, n_new, newr_4);
             
-            __m128i k_4 = _mm256_i64gather_epi32(&row[0], koff_4, 4);
-        
+            // ks[joffset] = row[koff_4[0]];
+            // ks[joffset+1] = row[koff_4[1]];
+            // ks[joffset+2] = row[koff_4[2]];
+            // ks[joffset+3] = row[koff_4[3]];
+        }
+
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            __m256d r_4 = _mm256_load_pd(randnums+joffset);
+            // r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+
+            __m256i koff_4 = bitset_search_simd(cumspace, n_new, r_4);
+
+            // ks[joffset] = a.row[i][koff];
+            // ks[joffset] = row[koff];
+            ks[joffset] = row[koff_4[0]];
+            ks[joffset+1] = row[koff_4[1]];
+            ks[joffset+2] = row[koff_4[2]];
+            ks[joffset+3] = row[koff_4[3]];
+        }
+
+        // auto start = std::chrono::steady_clock::now();
+        // for (int joffset = 0; joffset < newlen; joffset+=4) {
+        //     __m256d r_4 = _mm256_load_pd(randnums+joffset);
+        //     // r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+
+        //     __m256i koff_4 = bitset_search_simd(cumspace, n_new, r_4);
+
+        //     // ks[joffset] = a.row[i][koff];
+        //     // ks[joffset] = row[koff];
+        // }
+        // auto end = std::chrono::steady_clock::now();
+        // long count1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+
+        // start = std::chrono::steady_clock::now();
+        // for (int joffset = 0; joffset <= len-2; joffset++) {
+        //     Tval r = randnums[joffset];
+        //     // r = r * (csum - cumspace[joffset]) + cumspace[joffset];
+
+        //     int koff = bitset_search(cumspace, n_new, r);
+
+        //     // ks[joffset] = row[koff];
+        // }
+        // end = std::chrono::steady_clock::now();
+        // long count2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+
+        // std::cout << count1 << " " << count2 << std::endl;
+
+        __m128i allone = _mm_set1_epi32(0xffffffff);
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
             __m128i j_4 = _mm_load_si128((__m128i *)(js+joffset));
+            __m128i k_4 = _mm_load_si128((__m128i *)(ks+joffset));
 
             __m128i mask1 = _mm_cmplt_epi32(k_4, j_4);
             __m128i res1 = _mm_blendv_epi8(j_4, k_4, mask1);
@@ -1104,6 +1150,230 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
         a.val[i].clear();
         a.val[i].shrink_to_fit();
     }
+
+    ldli.colptr[n-1] = ldli_row_ptr;
+    ldli.d = d;
+
+    return ldli;
+}
+
+
+LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
+    auto n = a.n;
+
+    // need to make custom one without col info later
+    LDLinv ldli(a);
+    Tind ldli_row_ptr = 0;
+
+    std::vector<Tval> d(n, 0);
+
+    // std::vector<LLcol> colspace(n);
+
+
+    //for padding
+    unsigned nbits = 0;
+    while (n >> nbits)
+        ++nbits;
+    int n_new = (1 << nbits) - 1;
+    aligned_vector<Tval> cumspace(n_new+4);
+    // std::vector<Tval> cumspace(n_new+1);
+    //for padding
+
+    // std::vector<Tind> row(n);
+    aligned_vector<Tind> row(n);
+    std::vector<Tval> val(n);
+
+    Tind *js, *ks;
+    int newlen = ceil(double(n-1)/4)*4;
+    js = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+    ks = static_cast<Tind *>(boost::alignment::aligned_alloc(4*sizeof(Tind), newlen * sizeof(Tind)));
+
+    // random engine and distribution
+    std::default_random_engine engine;
+    std::uniform_real_distribution<Tval> u(0.0, 1.0);
+
+
+    for (long i = 0; i <= n-2; i++) {
+
+        ldli.col[i] = i;
+        ldli.colptr[i] = ldli_row_ptr;
+
+        int len = a.row[i].size();
+        // TODO: is sort by val necessary
+        Tval csum = 0;
+        if (len > 0)
+        {
+            typedef std::sort_helper::value_iterator_t<Tval,Tind> IndexByRow;
+            std::sort(IndexByRow(&a.val[i][0], &a.row[i][0]), IndexByRow(&a.val[i][0] + len, &a.row[i][0] + len) );
+            row.clear();
+            val.clear();
+
+            int idx = 1;
+            Tval last_val = a.val[i][0];
+            Tind last_row = a.row[i][0];
+            // std::cout << "merge" << std::endl;
+            while (idx < len)
+            {
+                while (idx < len && a.row[i][idx] == last_row)
+                    last_val += a.val[i][idx++];
+                row.push_back(last_row);
+                val.push_back(last_val);
+                csum += last_val;
+                if (idx < len)
+                {
+                    last_val = a.val[i][idx];
+                    last_row = a.row[i][idx];
+                }
+            }
+            // std::cout << "merge done" << std::endl;
+            len = row.size();
+            typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
+            std::sort(IndexByVal(&row[0], &val[0]), IndexByVal(&row[0] + len, &val[0] + len) );
+        }
+        // flop count: sort LLcol len*log(len)?
+
+        if (len <= 1)
+        {
+            Tval w = val[len - 1];
+            // flop count: 1 mul
+            Tind j = row[len - 1];
+
+            ldli.rowval.push_back(j);
+            ldli.fval.push_back(1);
+            ldli_row_ptr += 1;
+
+            d[i] = w;
+
+            //free column
+            a.row[i].clear();
+            a.row[i].shrink_to_fit();
+            a.val[i].clear();
+            a.val[i].shrink_to_fit();
+
+            continue;
+        }
+
+        // int newlen = ceil(double(len-1)/4)*4;
+        // Tind js[newlen];
+        // Tind ks[newlen];
+        // Tval randnums[newlen];
+        newlen = ceil(double(len-1)/4)*4;
+        // randnums = static_cast<Tval *>(boost::alignment::aligned_alloc(4*sizeof(Tval), newlen * sizeof(Tval)));
+
+
+        Tval wdeg = csum;
+        cumspace[len-1] = csum;
+
+        Tval cusum = 0;
+        Tval newEdgeVals[len-1];
+        Tval colScale = 1;
+        for (int ii = 0; ii < len-1; ii++) {
+            cusum += val[ii];
+            cumspace[ii] = cusum;
+
+
+            Tval w = val[ii] * colScale;
+            js[ii] = row[ii];
+
+            Tval f = w/wdeg;
+
+            newEdgeVals[ii] = w*(1-f);
+
+            colScale *= 1 - f;
+            wdeg = wdeg - 2*w + w*f; // wdeg *= (1-f)^2
+
+            ldli.rowval.push_back(js[ii]);
+            ldli.fval.push_back(f);
+            ldli_row_ptr += 1;
+        }
+
+        
+        // for (int joffset = 0; joffset <= len-2; joffset++)
+        // {
+        //     randnums[joffset] = u(engine);
+        // }
+
+        __m256d csum_4 = _mm256_set1_pd(csum);
+        __m128i allone = _mm_set1_epi32(0xffffffff);
+
+        //padding
+        unsigned nbits = 0;
+        while (len >> nbits)
+            ++nbits;
+        int n_new = (1 << nbits) - 1;
+        for (int tmp = len; tmp < n_new; tmp++)
+            cumspace[tmp] = csum;
+        // for (int tmp = len; tmp < n_new; tmp+=4)
+        //     _mm256_storeu_pd(&cumspace[tmp], csum_4);
+        //padding
+
+        for (int joffset = 0; joffset < newlen; joffset+=4) {
+            double r1 = u(engine);
+            double r2 = u(engine);
+            double r3 = u(engine);
+            double r4 = u(engine);
+
+            __m256d r_4 = _mm256_set_pd(r1, r2, r3, r4);
+
+            // __m256d r_4 = _mm256_load_pd(randnums+joffset);
+            __m256d cum_4 = _mm256_load_pd(&cumspace[joffset]);
+
+            __m256d res_4 = _mm256_sub_pd(csum_4, cum_4);
+            __m256d newr_4 = _mm256_fmadd_pd(r_4, res_4, cum_4);
+
+            // _mm256_store_pd(randnums+joffset, newr_4);
+            __m256i koff_4 = bitset_search_simd(cumspace, n_new, newr_4);
+            
+            __m128i k_4 = _mm256_i64gather_epi32(&row[0], koff_4, 4);
+        
+            __m128i j_4 = _mm_load_si128((__m128i *)(js+joffset));
+
+            __m128i mask1 = _mm_cmplt_epi32(k_4, j_4);
+            __m128i res1 = _mm_blendv_epi8(j_4, k_4, mask1);
+
+            //__m128i mask2 = _mm_cmplt_epi32(j_4, k_4);
+            __m128i mask2 = _mm_xor_si128(mask1, allone);
+            __m128i res2 = _mm_blendv_epi8(j_4, k_4, mask2);
+
+            //__m128i res1 = _mm_min_epi32(j_4, k_4);
+            //__m128i res2 = _mm_max_epi32(j_4, k_4);
+
+            _mm_store_si128((__m128i *)(js+joffset), res1);
+            _mm_store_si128((__m128i *)(ks+joffset), res2);
+        }
+
+        for (int joffset = 0; joffset <= len-2; joffset++) {
+            // create edge (j,k) with newEdgeVal
+            // do it by reassigning ll
+            Tind j = js[joffset];
+            Tind k = ks[joffset];
+            Tval newEdgeVal = newEdgeVals[joffset];
+            a.row[j].push_back(k);
+            a.val[j].push_back(newEdgeVal);
+        }
+        // free(randnums);
+        
+
+        // LLcol llcol = colspace[len-1];
+        Tval w = val[len - 1] * colScale;
+        // flop count: 1 mul
+        Tind j = row[len - 1];
+
+        ldli.rowval.push_back(j);
+        ldli.fval.push_back(1);
+        ldli_row_ptr += 1;
+
+        d[i] = w;
+
+        //free column
+        a.row[i].clear();
+        a.row[i].shrink_to_fit();
+        a.val[i].clear();
+        a.val[i].shrink_to_fit();
+    }
+
+    free(js);
+    free(ks);
 
     ldli.colptr[n-1] = ldli_row_ptr;
     ldli.d = d;

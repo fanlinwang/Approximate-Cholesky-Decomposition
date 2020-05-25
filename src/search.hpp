@@ -107,6 +107,19 @@ inline int bitset_search(std::vector<double>& x, const int n, double z)
   return i;
 }
 
+inline int bitset_search(aligned_vector<double>& x, const int n, double z)
+{
+  int i = 0;
+  int k = (n >> 1) + 1;
+  int r;
+  while(k >>= 1)
+  {
+    r = i | k;
+    i = z >= x[r] ? r : i;
+  }
+  return i;
+}
+
 inline __m256i bitset_search_simd(aligned_vector<double>& x, const int n, __m256d z)
 {
   __m256i i = _mm256_set1_epi64x(0);
