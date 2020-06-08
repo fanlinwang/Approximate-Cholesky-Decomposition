@@ -94,6 +94,9 @@ public:
   std::vector<int> idx;
 };
 
+
+// implementation of bitset/leadbit binary search 
+extern "C" __attribute__((optimize("no-tree-vectorize")))
 inline int bitset_search(std::vector<double>& x, const int n, double z)
 {
   int i = 0;

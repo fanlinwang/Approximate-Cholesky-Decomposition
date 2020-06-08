@@ -17,6 +17,7 @@ bool cmp_row(const LLcol &a, const LLcol &b);
 bool cmp_val(const LLcol &a, const LLcol &b);
 Tind compressCol(std::vector<LLcol> &colspace, int len);
 LDLinv approxChol_vector2_struct_merge(LLMatOrd_vector2_struct& a);
+LDLinv approxChol_vector2_struct_merge_search(LLMatOrd_vector2_struct& a);
 LDLinv approxChol_vector2_struct_merge_simd(LLMatOrd_vector2_struct& a);
 LDLinv approxChol(LLMatOrd &a);
 LDLinv approxChol_vector2(LLMatOrd_vector2 &a);
