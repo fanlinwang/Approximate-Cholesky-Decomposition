@@ -36,7 +36,7 @@ void elapsed_time(func1 f1, LLMatOrd llmat, std::string func_name, int rep) {
         auto end = std::chrono::steady_clock::now();   
         count += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     }
-    std::cout << " " <<  count/(float)(rep)/1e9 << " ";
+    std::cout << func_name << ": " <<  count/(float)(rep)/1e9 << std::endl;
 }
 
 void elapsed_time(func2 f2, LLMatOrd_vector2 llmat, std::string func_name, int rep) {
@@ -48,7 +48,7 @@ void elapsed_time(func2 f2, LLMatOrd_vector2 llmat, std::string func_name, int r
         auto end = std::chrono::steady_clock::now();   
         count += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     }
-    std::cout << " " <<  count/(float)(rep)/1e9 << " ";
+    std::cout << func_name << ": " <<  count/(float)(rep)/1e9 << std::endl;
 }
 
 void elapsed_time(func3 f3, LLMatOrd_vector2_struct llmat, std::string func_name, int rep) {
@@ -60,6 +60,6 @@ void elapsed_time(func3 f3, LLMatOrd_vector2_struct llmat, std::string func_name
         auto end = std::chrono::steady_clock::now();   
         count += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     }
-    std::cout << " " <<  count/(float)(rep)/1e9 << " ";
+    std::cout << func_name << ": " <<  count/(float)(rep)/1e9 << std::endl;
 }
 
