@@ -35,10 +35,11 @@ int main(int argc, char **argv){
     elapsed_time(&approxChol_vector2_merge_search_opt2, llmats2[7], "VecMgSearchSIMD2", r);
     
     LLMatOrd_vector2_struct llmat3 = LLMatOrd_vector2_struct(A);
-    std::vector<LLMatOrd_vector2_struct> llmats3(3, llmat3);
+    std::vector<LLMatOrd_vector2_struct> llmats3(4, llmat3);
     elapsed_time(&approxChol_vector2_struct_merge, llmats3[0], "VecStructMg", r);
     elapsed_time(&approxChol_vector2_struct_merge_simd, llmats3[1], "VecStructMgSIMD", r);
     elapsed_time(&approxChol_vector2_struct_merge_search, llmats3[2], "VecStructMgSearch", r);
+    elapsed_time(&approxChol_vector2_struct_merge_search_simd, llmats3[3], "VecStructMgSearchSIMD", r);
 
     std::cout << "\n";
 
