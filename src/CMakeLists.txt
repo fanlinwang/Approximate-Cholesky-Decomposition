@@ -1,4 +1,4 @@
-add_library(approxChol STATIC approxChol.cpp approxCholTypes.cpp conditionNumber.cpp)
+add_library(approxChol STATIC approxChol.cpp approxCholTypes.cpp conditionNumber.cpp search.hpp)
 target_include_directories(approxChol PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 # ${Boost_INCLUDE_DIRS}
 

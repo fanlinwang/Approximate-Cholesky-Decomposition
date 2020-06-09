@@ -3,6 +3,7 @@
 
 #include "approxCholTypes.h"
 #include "common.h"
+#include "search.hpp"
 #include <limits>
 #define EPS std::numeric_limits<Tval>::epsilon()
 #define INF std::numeric_limits<Tval>::max()
