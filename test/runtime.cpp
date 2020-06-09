@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include "search.hpp"
 
 int main(int argc, char **argv){
 

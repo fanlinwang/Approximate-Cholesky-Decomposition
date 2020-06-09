@@ -116,14 +116,14 @@ int main()
 
     // not counting initializing vectors
     auto start = std::chrono::steady_clock::now();
-    for (int k = 0; k < 100; k++)
-    {
-        for (int i = 0; i < r1.size(); i+=4)
-        {
-            __m256d rv = _mm256_load_pd(&r1[i]);
-            __m256i res = bitset_search_simd(x1, n_new, rv);
-        }
-    }
+    // for (int k = 0; k < 100; k++)
+    // {
+    //     for (int i = 0; i < r1.size(); i+=4)
+    //     {
+    //         __m256d rv = _mm256_load_pd(&r1[i]);
+    //         __m256i res = bitset_search_simd(x1, n_new, rv);
+    //     }
+    // }
     auto end = std::chrono::steady_clock::now();
     auto count1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
@@ -140,7 +140,7 @@ int main()
     auto count2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
     cout << "not counting initializing vectors" << endl;
-    cout << "    simd: " << count1 << " ns" << endl;
+    // cout << "    simd: " << count1 << " ns" << endl;
     cout << "not simd: " << count2 << " ns" << endl;
 
     return 0;
