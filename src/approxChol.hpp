@@ -83,6 +83,8 @@ void approxchol_lapGiven(SparseMatrix& A, SparseMatrix& lap_A,
                          const std::vector<Tval>& b,          
                          std::vector<Tval>& sol, SolverParameter paras);
 
+// pair sort 
+//modification of https://stackoverflow.com/a/46370189
 namespace std {
 
 namespace sort_helper {
@@ -140,6 +142,10 @@ bool operator < (const value_t<_Data,_Order>& lhs, const value_reference_t<_Data
 template <typename _Data, typename _Order>
 bool operator < (const value_reference_t<_Data,_Order>& lhs, const value_t<_Data,_Order>& rhs) {
     return *lhs.pval < rhs.val; }
+
+template <typename _Data, typename _Order>
+bool operator < (const value_reference_t<_Data,_Order>& lhs, const value_reference_t<_Data,_Order>& rhs) {
+    return *lhs.pval < *rhs.pval; }
 
 template <typename _Data, typename _Order>
 void swap(value_reference_t<_Data,_Order> lhs, value_reference_t<_Data,_Order> rhs) {
