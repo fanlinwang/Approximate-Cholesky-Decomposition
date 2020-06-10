@@ -60,9 +60,14 @@ void register_functions()
     add_function(&approxChol_vector2_mergerand, "VecMgRand", 1);
     add_function(&approxChol_vector2_mergerand_simd, "VecMgRandSIMD", 1);
     add_function(&approxChol_vector2_merge_search, "VecMgSearch", 1);
-    add_function(&approxChol_vector2_merge_search_opt1, "VecMgSearchSIMD1", 1);
-    add_function(&approxChol_vector2_merge_search_opt2, "VecMgSearchSIMD2", 1);
+    add_function(&approxChol_vector2_merge_search_opt2, "VecMgSearchSIMD", 1);
    // add_function(&approxChol_vector3, "approxChol 3", 1);
+   add_function(&approxChol_vector2_struct_merge, "VecStructMg", 1);
+   add_function(&approxChol_vector2_struct_merge_simd, "VecStructMgSIMD", 1);
+   add_function(&approxChol_vector2_struct_merge_search, "VecStructMgSearch", 1);
+   add_function(&approxChol_vector2_struct_merge_search_simd, "VecStructMgSearchSIMD", 1);
+   add_function(&approxChol_vector2_struct_merge_search_nofree, "VecStructMgSearch_nofree", 1);
+
 }
 
 /* Global vars, used to keep track of student functions */
