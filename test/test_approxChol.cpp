@@ -25,8 +25,11 @@ int main(){
     lles[5].row = 4; lles[5].next = 4; lles[5].val = 1.0;
     llmat.lles = lles;
 
+    LLMatOrd llmat2 = llmat;
     LDLinv ldli = approxChol(llmat);
+    LDLinv ldli2 = approxChol_opt2(llmat2);
     std::cout << ldli << std::endl;
+    std::cout << ldli2 << std::endl;
     std::cout << "ApproxChol tested!" << std::endl;
     return 0;
 }

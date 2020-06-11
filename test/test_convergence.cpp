@@ -52,10 +52,10 @@ int main(int argc, char **argv){
     sol[0] = LDLsolver(ldli0, b);
     sol[0] = pcg(lap_A, b, LDLsolver, sol[0], ldli0, para);
 
-    // std::cout << "Inline: ";
-    // LDLinv ldli6 = approxChol_opt2(llmats[1]);
-    // sol[6] = LDLsolver(ldli6, b);
-    // sol[6] = pcg(lap_A, b, LDLsolver, sol[6], ldli6, para);
+    std::cout << "Inline: ";
+    LDLinv ldli6 = approxChol_opt2(llmats[1]);
+    sol[6] = LDLsolver(ldli6, b);
+    sol[6] = pcg(lap_A, b, LDLsolver, sol[6], ldli6, para);
     
     LLMatOrd_vector2 llmat2 = LLMatOrd_vector2(A);
     std::vector<LLMatOrd_vector2> llmats2(4, llmat2);
@@ -70,16 +70,16 @@ int main(int argc, char **argv){
     sol[2] = LDLsolver(ldli2, b);
     sol[2] = pcg(lap_A, b, LDLsolver, sol[2], ldli2, para);
 
-    std::cout << "VecMgSearch:"; 
-    LDLinv ldli3 = approxChol_vector2_merge_search(llmats2[2]);
-    sol[3] = LDLsolver(ldli3, b);
-    sol[3] = pcg(lap_A, b, LDLsolver, sol[3], ldli3, para);
+    // std::cout << "VecMgSearch:"; 
+    // LDLinv ldli3 = approxChol_vector2_merge_search(llmats2[2]);
+    // sol[3] = LDLsolver(ldli3, b);
+    // sol[3] = pcg(lap_A, b, LDLsolver, sol[3], ldli3, para);
 
     LLMatOrd_vector2_struct llmat3 = LLMatOrd_vector2_struct(A);
     std::vector<LLMatOrd_vector2_struct> llmats3(2, llmat3);
 
     std::cout << "VecStructMg:"; 
-    LDLinv ldli4 = approxChol_vector2_struct_merge(llmats3[0]);
+    LDLinv ldli4 = approxChol_vector2_struct_merge_simd(llmats3[0]);
     sol[4] = LDLsolver(ldli4, b);
     sol[4] = pcg(lap_A, b, LDLsolver, sol[4], ldli4, para);
 
