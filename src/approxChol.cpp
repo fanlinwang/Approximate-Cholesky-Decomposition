@@ -121,16 +121,20 @@ LDLinv approxChol(LLMatOrd &a) {
 
     // random engine and distribution
     std::default_random_engine engine;
+    engine.seed(752606159);
     std::uniform_real_distribution<Tval> u(0.0, 1.0);
 
 
     for (long i = 0; i <= n-2; i++) {
+        // std::cout << "column:" << i << std::endl;
 
         ldli.col[i] = i;
         ldli.colptr[i] = ldli_row_ptr;
 
         int len = get_ll_col(a, i, colspace);
         len = compressCol(colspace, len);
+        // for (int ii = 0; ii < len; ii++)
+        //     std::cout << colspace[ii].cval << ' ' << colspace[ii].row << std::endl;
         // flop count: sort LLcol len*log(len)?
 
         Tval csum = 0;
@@ -197,12 +201,14 @@ LDLinv approxChol(LLMatOrd &a) {
                 a.lles[ptr].next = jhead;
                 a.lles[ptr].val = newEdgeVal;
                 a.cols[j] = ptr;
+                // std::cout << j << ' ' <<  k << ' ' << newEdgeVal << std::endl;
             } else {        // put it in col k
                 Tind khead = a.cols[k];
                 a.lles[ptr].row = j;
                 a.lles[ptr].next = khead;
                 a.lles[ptr].val = newEdgeVal;
                 a.cols[k] = ptr;
+                // std::cout << k << ' ' <<  j << ' ' << newEdgeVal << std::endl;
             }
         }
 
@@ -397,18 +403,22 @@ LDLinv approxChol_vector2_merge(LLMatOrd_vector2 &a) {
             Tval last_val = a.val[i][0];
             Tind last_row = a.row[i][0];
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+            for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                if (idx < len)
+                if (a.row[i][idx] != last_row)
                 {
+                    val.push_back(last_val);
+                    row.push_back(last_row);
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
+                else
+                {
+                    last_val += a.val[i][idx];
+                }
             }
+            val.push_back(last_val);
+            row.push_back(last_row);
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -551,18 +561,22 @@ LDLinv approxChol_vector2_merge_search(LLMatOrd_vector2 &a) {
             Tval last_val = a.val[i][0];
             Tind last_row = a.row[i][0];
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+           for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                if (idx < len)
+                if (a.row[i][idx] != last_row)
                 {
+                    val.push_back(last_val);
+                    row.push_back(last_row);
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
+                else
+                {
+                    last_val += a.val[i][idx];
+                }
             }
+            val.push_back(last_val);
+            row.push_back(last_row);
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -718,19 +732,22 @@ LDLinv approxChol_vector2_merge_search_opt(LLMatOrd_vector2 &a) {
             Tval last_val = a.val[i][0];
             Tind last_row = a.row[i][0];
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+           for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                csum += last_val;
-                if (idx < len)
+                if (a.row[i][idx] != last_row)
                 {
+                    val.push_back(last_val);
+                    row.push_back(last_row);
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
+                else
+                {
+                    last_val += a.val[i][idx];
+                }
             }
+            val.push_back(last_val);
+            row.push_back(last_row);
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -947,19 +964,22 @@ LDLinv approxChol_vector2_merge_search_opt1(LLMatOrd_vector2 &a) {
             Tval last_val = a.val[i][0];
             Tind last_row = a.row[i][0];
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+            for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                csum += last_val;
-                if (idx < len)
+                if (a.row[i][idx] != last_row)
                 {
+                    val.push_back(last_val);
+                    row.push_back(last_row);
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
+                else
+                {
+                    last_val += a.val[i][idx];
+                }
             }
+            val.push_back(last_val);
+            row.push_back(last_row);
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -1213,19 +1233,22 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
             Tval last_val = a.val[i][0];
             Tind last_row = a.row[i][0];
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+            for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                csum += last_val;
-                if (idx < len)
+                if (a.row[i][idx] != last_row)
                 {
+                    val.push_back(last_val);
+                    row.push_back(last_row);
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
+                else
+                {
+                    last_val += a.val[i][idx];
+                }
             }
+            val.push_back(last_val);
+            row.push_back(last_row);
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -1422,18 +1445,22 @@ LDLinv approxChol_vector2_opt(LLMatOrd_vector2 &a) {
             Tval last_val = a.val[i][0];
             Tind last_row = a.row[i][0];
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+            for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                if (idx < len)
+                if (a.row[i][idx] != last_row)
                 {
+                    val.push_back(last_val);
+                    row.push_back(last_row);
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
+                else
+                {
+                    last_val += a.val[i][idx];
+                }
             }
+            val.push_back(last_val);
+            row.push_back(last_row);
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -1594,18 +1621,22 @@ LDLinv approxChol_vector2_opt2(LLMatOrd_vector2 &a) {
             Tval last_val = a.val[i][0];
             Tind last_row = a.row[i][0];
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+           for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                if (idx < len)
+                if (a.row[i][idx] != last_row)
                 {
+                    val.push_back(last_val);
+                    row.push_back(last_row);
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
+                else
+                {
+                    last_val += a.val[i][idx];
+                }
             }
+            val.push_back(last_val);
+            row.push_back(last_row);
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -1785,18 +1816,22 @@ LDLinv approxChol_vector2_mergerand(LLMatOrd_vector2 &a) {
             Tval last_val = a.val[i][0];
             Tind last_row = a.row[i][0];
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+            for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                if (idx < len)
+                if (a.row[i][idx] != last_row)
                 {
+                    val.push_back(last_val);
+                    row.push_back(last_row);
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
+                else
+                {
+                    last_val += a.val[i][idx];
+                }
             }
+            val.push_back(last_val);
+            row.push_back(last_row);
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -1938,18 +1973,22 @@ LDLinv approxChol_vector2_mergerand_simd(LLMatOrd_vector2 &a) {
             Tval last_val = a.val[i][0];
             Tind last_row = a.row[i][0];
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+            for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                if (idx < len)
+                if (a.row[i][idx] != last_row)
                 {
+                    val.push_back(last_val);
+                    row.push_back(last_row);
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
+                else
+                {
+                    last_val += a.val[i][idx];
+                }
             }
+            val.push_back(last_val);
+            row.push_back(last_row);
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -2104,18 +2143,22 @@ LDLinv approxChol_vector2_opt3(LLMatOrd_vector2 &a) {
             Tval last_val = a.val[i][0];
             Tind last_row = a.row[i][0];
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+            for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                if (idx < len)
+                if (a.row[i][idx] != last_row)
                 {
+                    val.push_back(last_val);
+                    row.push_back(last_row);
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
+                else
+                {
+                    last_val += a.val[i][idx];
+                }
             }
+            val.push_back(last_val);
+            row.push_back(last_row);
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -2316,19 +2359,22 @@ LDLinv approxChol_vector2_opt4(LLMatOrd_vector2 &a) {
             Tval last_val = a.val[i][0];
             Tind last_row = a.row[i][0];
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+            for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.row[i][idx] == last_row)
-                    last_val += a.val[i][idx++];
-                row.push_back(last_row);
-                val.push_back(last_val);
-                csum += last_val;
-                if (idx < len)
+                if (a.row[i][idx] != last_row)
                 {
+                    val.push_back(last_val);
+                    row.push_back(last_row);
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
+                else
+                {
+                    last_val += a.val[i][idx];
+                }
             }
+            val.push_back(last_val);
+            row.push_back(last_row);
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -2520,17 +2566,20 @@ LDLinv approxChol_vector2_struct_merge_simd(LLMatOrd_vector2_struct& a) {
             Tval last_val = a.elems[i][0].val;
             Tind last_row = a.elems[i][0].row;
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+            for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.elems[i][idx].row == last_row)
-                    last_val += a.elems[i][idx++].val;
-                elems.push_back(Elem(last_row, last_val));
-                if (idx < len)
+                if (a.elems[i][idx].row != last_row)
                 {
+                    elems.push_back(Elem(last_row, last_val));
                     last_val = a.elems[i][idx].val;
                     last_row = a.elems[i][idx].row;
                 }
+                else
+                {
+                    last_val += a.elems[i][idx].val;
+                }
             }
+            elems.push_back(Elem(last_row, last_val));
             // std::cout << "merge done" << std::endl;
             len = elems.size();
             std::sort(elems.begin(), elems.end(), cmp_val_elem);
@@ -2694,10 +2743,12 @@ LDLinv approxChol_vector2_struct_merge(LLMatOrd_vector2_struct& a) {
 
     // random engine and distribution
     std::default_random_engine engine;
+    engine.seed(752606159);
     std::uniform_real_distribution<Tval> u(0.0, 1.0);
 
 
     for (long i = 0; i <= n-2; i++) {
+        // std::cout << "column:" << i << std::endl;
 
         ldli.col[i] = i;
         ldli.colptr[i] = ldli_row_ptr;
@@ -2712,24 +2763,29 @@ LDLinv approxChol_vector2_struct_merge(LLMatOrd_vector2_struct& a) {
             int idx = 1;
             Tval last_val = a.elems[i][0].val;
             Tind last_row = a.elems[i][0].row;
-            // std::cout << "merge" << std::endl;
-            while (idx < len)
+            // std::cout << "start merge" << std::endl;
+            for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.elems[i][idx].row == last_row)
-                    last_val += a.elems[i][idx++].val;
-                elems.push_back(Elem(last_row, last_val));
-                if (idx < len)
+                if (a.elems[i][idx].row != last_row)
                 {
+                    elems.push_back(Elem(last_row, last_val));
                     last_val = a.elems[i][idx].val;
                     last_row = a.elems[i][idx].row;
                 }
+                else
+                {
+                    last_val += a.elems[i][idx].val;
+                }
             }
+            elems.push_back(Elem(last_row, last_val));
             // std::cout << "merge done" << std::endl;
             len = elems.size();
             std::sort(elems.begin(), elems.end(), cmp_val_elem);
         }
         // flop count: sort LLcol len*log(len)?
 
+        // for (int ii = 0; ii < len; ii++)
+        //     std::cout << elems[ii].val << ' ' << elems[ii].row << std::endl;
         Tval csum = 0;
         for (int ii = 0; ii < len; ii++) {
             csum += elems[ii].val;
@@ -2790,8 +2846,10 @@ LDLinv approxChol_vector2_struct_merge(LLMatOrd_vector2_struct& a) {
             Tind ptr = ptrs[joffset];
             if (j < k) {    // put it in col j
                 a.elems[j].push_back(Elem(k, newEdgeVal));
+                // std::cout << j << ' ' <<  k << ' ' << newEdgeVal << std::endl;
             } else {        // put it in col k
                 a.elems[k].push_back(Elem(j, newEdgeVal));
+                // std::cout << k << ' ' <<  j << ' ' << newEdgeVal << std::endl;
             }
         }
 
@@ -2859,17 +2917,20 @@ LDLinv approxChol_vector2_struct_merge_search(LLMatOrd_vector2_struct& a) {
             Tval last_val = a.elems[i][0].val;
             Tind last_row = a.elems[i][0].row;
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+            for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.elems[i][idx].row == last_row)
-                    last_val += a.elems[i][idx++].val;
-                elems.push_back(Elem(last_row, last_val));
-                if (idx < len)
+                if (a.elems[i][idx].row != last_row)
                 {
+                    elems.push_back(Elem(last_row, last_val));
                     last_val = a.elems[i][idx].val;
                     last_row = a.elems[i][idx].row;
                 }
+                else
+                {
+                    last_val += a.elems[i][idx].val;
+                }
             }
+            elems.push_back(Elem(last_row, last_val));
             // std::cout << "merge done" << std::endl;
             len = elems.size();
             std::sort(elems.begin(), elems.end(), cmp_val_elem);
@@ -3014,17 +3075,20 @@ LDLinv approxChol_vector2_struct_merge_search_nofree(LLMatOrd_vector2_struct& a)
             Tval last_val = a.elems[i][0].val;
             Tind last_row = a.elems[i][0].row;
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+           for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.elems[i][idx].row == last_row)
-                    last_val += a.elems[i][idx++].val;
-                elems.push_back(Elem(last_row, last_val));
-                if (idx < len)
+                if (a.elems[i][idx].row != last_row)
                 {
+                    elems.push_back(Elem(last_row, last_val));
                     last_val = a.elems[i][idx].val;
                     last_row = a.elems[i][idx].row;
                 }
+                else
+                {
+                    last_val += a.elems[i][idx].val;
+                }
             }
+            elems.push_back(Elem(last_row, last_val));
             // std::cout << "merge done" << std::endl;
             len = elems.size();
             std::sort(elems.begin(), elems.end(), cmp_val_elem);
@@ -3177,18 +3241,20 @@ LDLinv approxChol_vector2_struct_merge_search_simd(LLMatOrd_vector2_struct& a) {
             Tval last_val = a.elems[i][0].val;
             Tind last_row = a.elems[i][0].row;
             // std::cout << "merge" << std::endl;
-            while (idx < len)
+           for (int idx = 1; idx < len; idx++)
             {
-                while (idx < len && a.elems[i][idx].row == last_row)
-                    last_val += a.elems[i][idx++].val;
-                elems.push_back(Elem(last_row, last_val));
-                csum += last_val;
-                if (idx < len)
+                if (a.elems[i][idx].row != last_row)
                 {
+                    elems.push_back(Elem(last_row, last_val));
                     last_val = a.elems[i][idx].val;
                     last_row = a.elems[i][idx].row;
                 }
+                else
+                {
+                    last_val += a.elems[i][idx].val;
+                }
             }
+            elems.push_back(Elem(last_row, last_val));
             // std::cout << "merge done" << std::endl;
             len = elems.size();
             std::sort(elems.begin(), elems.end(), cmp_val_elem);
