@@ -23,6 +23,7 @@ LDLinv approxChol_vector2_struct_merge_search_nofree(LLMatOrd_vector2_struct& a)
 LDLinv approxChol_vector2_struct_merge_search_simd(LLMatOrd_vector2_struct& a);
 LDLinv approxChol_vector2_struct_merge_simd(LLMatOrd_vector2_struct& a);
 LDLinv approxChol(LLMatOrd &a);
+LDLinv approxChol_nosort(LLMatOrd_vector2 &a);
 LDLinv approxChol_vector2(LLMatOrd_vector2 &a);
 LDLinv approxChol_vector2_merge(LLMatOrd_vector2 &a);
 LDLinv approxChol_vector2_merge_search(LLMatOrd_vector2 &a);

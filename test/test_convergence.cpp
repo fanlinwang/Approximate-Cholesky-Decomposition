@@ -16,6 +16,7 @@ int main(int argc, char **argv){
 
     int v = atoi(argv[1]);
     int e = atoi(argv[2]);
+    int r = atoi(argv[3]);
 
     SparseMatrix A(v, e);
     // int v = 4;
@@ -28,7 +29,7 @@ int main(int argc, char **argv){
     // SparseMatrix A(matrix);
     SparseMatrix lap_A;
     laplacian(A, lap_A);
-    std::vector<std::vector<Tval>> sol(10, std::vector<Tval>(v, 0.0));
+    std::vector<std::vector<Tval>> sol(5, std::vector<Tval>(v, 0.0));
 
     SolverParameter para;
     para.maxits = 1000;
@@ -41,55 +42,60 @@ int main(int argc, char **argv){
     for (auto& el: b)
         el = get_random();
     Tval m = mean(b);
-    std::cout << "random b:\n";
     for (auto& el : b)
         el -= m;
 
-    LLMatOrd llmat = LLMatOrd(A);
-    std::vector<LLMatOrd> llmats(3, llmat);
-    std::cout << "Baseline: ";
-    LDLinv ldli0 = approxChol(llmats[0]);
-    sol[0] = LDLsolver(ldli0, b);
-    sol[0] = pcg(lap_A, b, LDLsolver, sol[0], ldli0, para);
-
-    std::cout << "Inline: ";
-    LDLinv ldli6 = approxChol_opt2(llmats[1]);
-    sol[6] = LDLsolver(ldli6, b);
-    sol[6] = pcg(lap_A, b, LDLsolver, sol[6], ldli6, para);
-    
     LLMatOrd_vector2 llmat2 = LLMatOrd_vector2(A);
-    std::vector<LLMatOrd_vector2> llmats2(4, llmat2);
+    std::vector<LLMatOrd_vector2> llmats2(5, llmat2);
 
-    std::cout << "VecMg: ";
-    LDLinv ldli1 = approxChol_vector2_merge(llmats2[0]);
+    std::cout << "\nVec: ";
+    elapsed_time(&approxChol_vector2, llmats2[0], "Vec", r);
+    LDLinv ldli1 = approxChol_vector2(llmats2[1]);
+
+    auto start = std::chrono::steady_clock::now();
     sol[1] = LDLsolver(ldli1, b);
     sol[1] = pcg(lap_A, b, LDLsolver, sol[1], ldli1, para);
+    auto end = std::chrono::steady_clock::now();
+    std::cout <<  "pcg time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()/(float)(r)/1e9 << " ";
 
-    std::cout << "VecMgRand: ";
-    LDLinv ldli2 = approxChol_vector2_mergerand(llmats2[1]);
+    
+
+
+    std::cout << "\nVec_nosort: ";
+    elapsed_time(&approxChol_nosort, llmats2[2], "Vec", r);
+    LDLinv ldli2 = approxChol_nosort(llmats2[2]);
+
+    start = std::chrono::steady_clock::now();
     sol[2] = LDLsolver(ldli2, b);
     sol[2] = pcg(lap_A, b, LDLsolver, sol[2], ldli2, para);
+    end = std::chrono::steady_clock::now();
+    std::cout << "pcg time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()/(float)(r)/1e9 << " ";
 
-    std::cout << "VecMgSearch:"; 
-    LDLinv ldli3 = approxChol_vector2_merge_search(llmats2[2]);
+    LDLinv ldli3 = approxChol_vector2_opt3(llmats2[3]);
     sol[3] = LDLsolver(ldli3, b);
     sol[3] = pcg(lap_A, b, LDLsolver, sol[3], ldli3, para);
 
-    LLMatOrd_vector2_struct llmat3 = LLMatOrd_vector2_struct(A);
-    std::vector<LLMatOrd_vector2_struct> llmats3(2, llmat3);
+    // TODO: not correct
+    // LDLinv ldli4 = approxChol_vector2_opt4(llmats2[4]);
+    // sol[4] = LDLsolver(ldli4, b);
+    // sol[4] = pcg(lap_A, b, LDLsolver, sol[4], ldli4, para);
 
-    std::cout << "VecStructMg:"; 
-    LDLinv ldli4 = approxChol_vector2_struct_merge_simd(llmats3[0]);
-    sol[4] = LDLsolver(ldli4, b);
-    sol[4] = pcg(lap_A, b, LDLsolver, sol[4], ldli4, para);
 
-    std::cout << "VecStructMgSearch:"; 
-    LDLinv ldli5 = approxChol_vector2_struct_merge_search(llmats3[1]);
-    sol[5] = LDLsolver(ldli5, b);
-    sol[5] = pcg(lap_A, b, LDLsolver, sol[5], ldli5, para);
+    // LLMatOrd_vector2_struct llmat3 = LLMatOrd_vector2_struct(A);
+    // std::vector<LLMatOrd_vector2_struct> llmats3(2, llmat3);
 
-    std::cout << "\n";
+    // std::cout << "\nVecStructMgSearchSIMD: ";
+    // elapsed_time(&approxChol_vector2_struct_merge_search_simd, llmats3[0], "Vec", r);
+    // LDLinv ldli3 = approxChol_vector2_struct_merge_search_simd(llmats3[0]);
 
+    // std::cout << " pcg: \n";
+    // start = std::chrono::steady_clock::now();
+    // sol[3] = LDLsolver(ldli3, b);
+    // sol[3] = pcg(lap_A, b, LDLsolver, sol[3], ldli3, para);
+    // end = std::chrono::steady_clock::now();
+    // std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()/(float)(r)/1e9 << " ";
+
+    std::cout << std::endl;
     return 0;
 
 }
