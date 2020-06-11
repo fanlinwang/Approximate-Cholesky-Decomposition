@@ -21,6 +21,13 @@ std::ostream& operator << (std::ostream &out, __m256i d)
 
 int main()
 {
+    std::vector<double> x = {0.1, 0.3, 0.5, 0.8, 1.0, 1.0, 1.0, 1.0};
+    std::vector<double> r = {-0.1, 0.2, 0.3, 0.75, 1.1};
+    // std::vector<double> x = {1, 2};
+    // std::vector<double> r = {1.4};
+    for (int i = 0; i < r.size(); i++)
+        std::cout << r[i] << ' ' << bitset_search(x, 8, r[i]) << std::endl;
+
     std::default_random_engine engine;
     std::uniform_real_distribution<double> u(0.0, 1.0);
 

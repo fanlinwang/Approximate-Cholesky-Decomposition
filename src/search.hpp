@@ -99,39 +99,39 @@ public:
 extern "C" __attribute__((optimize("no-tree-vectorize")))
 inline int bitset_search(std::vector<double>& x, const int n, double z)
 {
-  int i = 0;
-  int k = (n >> 1) + 1;
+  int i = n - 1;
+  int k = n;
   int r;
   while(k >>= 1)
   {
-    r = i | k;
-    i = z >= x[r] ? r : i;
+    r = i ^ k;
+    i = z <= x[r] ? r : i;
   }
   return i;
 }
 
 inline int bitset_search(aligned_vector<double>& x, const int n, double z)
 {
-  int i = 0;
-  int k = (n >> 1) + 1;
+  int i = n - 1;
+  int k = n;
   int r;
   while(k >>= 1)
   {
-    r = i | k;
-    i = z >= x[r] ? r : i;
+    r = i ^ k;
+    i = z <= x[r] ? r : i;
   }
   return i;
 }
 
 inline __m256i bitset_search_simd(aligned_vector<double>& x, const int n, __m256d z)
 {
-  __m256i i = _mm256_set1_epi64x(0);
-  int k = (n >> 1) + 1;
+  __m256i i = _mm256_set1_epi64x(n - 1);
+  int k = n;
   __m256i r;
   while(k >>= 1)
   {
     // r = i | k;
-    r = _mm256_or_si256(i, _mm256_set1_epi64x(k));
+    r = _mm256_xor_si256(i, _mm256_set1_epi64x(k));
     //load from 4 different places
     // double xr0 = x[r[0]];
     // double xr1 = x[r[1]];
@@ -139,7 +139,7 @@ inline __m256i bitset_search_simd(aligned_vector<double>& x, const int n, __m256
     // double xr3 = x[r[3]];
     // __m256d xr = _mm256_set_pd(xr3, xr2, xr1, xr0);
     __m256d xr = _mm256_i64gather_pd(&x[0], r, 8);
-    __m256d mask = _mm256_cmp_pd(z, xr, _CMP_GE_OQ);
+    __m256d mask = _mm256_cmp_pd(z, xr, _CMP_LE_OQ);
     i = _mm256_blendv_epi8(i, r, _mm256_castpd_si256(mask));
     // i = z >= x[r] ? r : i;
   }

@@ -532,9 +532,9 @@ LDLinv approxChol_vector2_merge_search(LLMatOrd_vector2 &a) {
 
     //for padding
     unsigned nbits = 0;
-    while (n >> nbits)
+    while ((n - 1) >> nbits)
         ++nbits;
-    int n_new = (1 << nbits) - 1;
+    int n_new = (1 << nbits);
     std::vector<Tval> cumspace(n_new + 1);
     //for padding
 
@@ -592,9 +592,9 @@ LDLinv approxChol_vector2_merge_search(LLMatOrd_vector2 &a) {
         }
         //padding
         unsigned nbits = 0;
-        while (len >> nbits)
+        while ((len - 1) >> nbits)
             ++nbits;
-        int n_new = (1 << nbits) - 1;
+        int n_new = (1 << nbits);
         for (int tmp = len; tmp < n_new; tmp++)
             cumspace[tmp] = cumspace[len - 1];
         //padding
@@ -701,9 +701,9 @@ LDLinv approxChol_vector2_merge_search_opt(LLMatOrd_vector2 &a) {
 
     //for padding
     unsigned nbits = 0;
-    while (n >> nbits)
+    while ((n - 1) >> nbits)
         ++nbits;
-    int n_new = (1 << nbits) - 1;
+    int n_new = (1 << nbits);
     // aligned_vector<Tval> cumspace(n_new+1);
     std::vector<Tval> cumspace(n_new+1);
     //for padding
@@ -817,9 +817,9 @@ LDLinv approxChol_vector2_merge_search_opt(LLMatOrd_vector2 &a) {
 
         //padding
         unsigned nbits = 0;
-        while (len >> nbits)
+        while ((len - 1) >> nbits)
             ++nbits;
-        int n_new = (1 << nbits) - 1;
+        int n_new = (1 << nbits);
         for (int tmp = len; tmp < n_new; tmp++)
             cumspace[tmp] = cumspace[len - 1];
         //padding
@@ -933,9 +933,9 @@ LDLinv approxChol_vector2_merge_search_opt1(LLMatOrd_vector2 &a) {
 
     //for padding
     unsigned nbits = 0;
-    while (n >> nbits)
+    while ((n - 1) >> nbits)
         ++nbits;
-    int n_new = (1 << nbits) - 1;
+    int n_new = (1 << nbits);
     // aligned_vector<Tval> cumspace(n_new+1);
     aligned_vector<Tval> cumspace(n_new+4);
     //for padding
@@ -1049,9 +1049,9 @@ LDLinv approxChol_vector2_merge_search_opt1(LLMatOrd_vector2 &a) {
 
         //padding
         unsigned nbits = 0;
-        while (len >> nbits)
+        while ((len - 1) >> nbits)
             ++nbits;
-        int n_new = (1 << nbits) - 1;
+        int n_new = (1 << nbits);
         for (int tmp = len; tmp < n_new; tmp++)
             cumspace[tmp] = cumspace[len - 1];
         //padding
@@ -1193,9 +1193,9 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
 
     //for padding
     unsigned nbits = 0;
-    while (n >> nbits)
+    while ((n - 1) >> nbits)
         ++nbits;
-    int n_new = (1 << nbits) - 1;
+    int n_new = (1 << nbits);
     aligned_vector<Tval> cumspace(n_new+4);
     // std::vector<Tval> cumspace(n_new+1);
     //for padding
@@ -1322,9 +1322,9 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
 
         //padding
         unsigned nbits = 0;
-        while (len >> nbits)
+        while ((len - 1) >> nbits)
             ++nbits;
-        int n_new = (1 << nbits) - 1;
+        int n_new = (1 << nbits);
         for (int tmp = len; tmp < n_new; tmp++)
             cumspace[tmp] = csum;
         // for (int tmp = len; tmp < n_new; tmp+=4)
@@ -2792,6 +2792,10 @@ LDLinv approxChol_vector2_struct_merge(LLMatOrd_vector2_struct& a) {
             // flop count: 1 add
             cumspace[ii] = csum;
         }
+        
+        // for (int idx = 0; idx < len; idx++)
+        //     std::cout << cumspace[idx] << ' ' << std::endl;
+
         Tval wdeg = csum;
 
         Tval colScale = 1;
@@ -2810,6 +2814,7 @@ LDLinv approxChol_vector2_struct_merge(LLMatOrd_vector2_struct& a) {
             auto cumspace_last = cumspace.begin();
             std::advance(cumspace_last, len);
             int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
+            // std::cout << r << ' ' << koff << std::endl;
 
             ks[joffset] = elems[koff].row;
         }
@@ -2890,18 +2895,20 @@ LDLinv approxChol_vector2_struct_merge_search(LLMatOrd_vector2_struct& a) {
 
      //for padding
     unsigned nbits = 0;
-    while (n >> nbits)
+    while ((n- 1) >> nbits)
         ++nbits;
-    int n_new = (1 << nbits) - 1;
-    std::vector<Tval> cumspace(n_new + 1);
+    int n_new = (1 << nbits);
+    std::vector<Tval> cumspace(n_new);
     //for padding
 
     // random engine and distribution
     std::default_random_engine engine;
+    engine.seed(752606159);
     std::uniform_real_distribution<Tval> u(0.0, 1.0);
 
 
     for (long i = 0; i <= n-2; i++) {
+        // std::cout << "column:" << i << std::endl;
 
         ldli.col[i] = i;
         ldli.colptr[i] = ldli_row_ptr;
@@ -2943,16 +2950,19 @@ LDLinv approxChol_vector2_struct_merge_search(LLMatOrd_vector2_struct& a) {
             // flop count: 1 add
             cumspace[ii] = csum;
         }
+        // for (int idx = 0; idx < len; idx++)
+        //     std::cout << cumspace[idx] << ' ' << std::endl;
         Tval wdeg = csum;
 
         Tval colScale = 1;
         //padding
         unsigned nbits = 0;
-        while (len >> nbits)
+        while ((len - 1) >> nbits)
             ++nbits;
-        int n_new = (1 << nbits) - 1;
+        int n_new = (1 << nbits);
         for (int tmp = len; tmp < n_new; tmp++)
             cumspace[tmp] = cumspace[len - 1];
+
         //padding
         Tind ks[len-1];
         Tval randnums[len-1];
@@ -2969,6 +2979,7 @@ LDLinv approxChol_vector2_struct_merge_search(LLMatOrd_vector2_struct& a) {
             // std::advance(cumspace_last, len);
             // int koff = std::distance(cumspace.begin(), std::lower_bound(cumspace.begin(), cumspace_last, r));
             int koff = bitset_search(cumspace, n_new, r);
+            // std::cout << r << ' ' << koff << std::endl;
 
             ks[joffset] = elems[koff].row;
         }
@@ -3046,12 +3057,12 @@ LDLinv approxChol_vector2_struct_merge_search_nofree(LLMatOrd_vector2_struct& a)
     std::vector<Elem> elems(n);
 
 
-     //for padding
+      //for padding
     unsigned nbits = 0;
-    while (n >> nbits)
+    while ((n- 1) >> nbits)
         ++nbits;
-    int n_new = (1 << nbits) - 1;
-    std::vector<Tval> cumspace(n_new + 1);
+    int n_new = (1 << nbits);
+    std::vector<Tval> cumspace(n_new);
     //for padding
 
     // random engine and distribution
@@ -3106,9 +3117,9 @@ LDLinv approxChol_vector2_struct_merge_search_nofree(LLMatOrd_vector2_struct& a)
         Tval colScale = 1;
         //padding
         unsigned nbits = 0;
-        while (len >> nbits)
+        while ((len - 1) >> nbits)
             ++nbits;
-        int n_new = (1 << nbits) - 1;
+        int n_new = (1 << nbits);
         for (int tmp = len; tmp < n_new; tmp++)
             cumspace[tmp] = cumspace[len - 1];
         //padding
@@ -3205,9 +3216,9 @@ LDLinv approxChol_vector2_struct_merge_search_simd(LLMatOrd_vector2_struct& a) {
 
      //for padding
     unsigned nbits = 0;
-    while (n >> nbits)
+    while ((n - 1) >> nbits)
         ++nbits;
-    int n_new = (1 << nbits) - 1;
+    int n_new = (1 << nbits);
     //std::vector<Tval> cumspace(n_new + 1);
     aligned_vector<Tval> cumspace(n_new+4);
     //for padding
@@ -3312,9 +3323,9 @@ LDLinv approxChol_vector2_struct_merge_search_simd(LLMatOrd_vector2_struct& a) {
 
         //padding
         unsigned nbits = 0;
-        while (len >> nbits)
+        while ((len - 1) >> nbits)
             ++nbits;
-        int n_new = (1 << nbits) - 1;
+        int n_new = (1 << nbits);
         for (int tmp = len; tmp < n_new; tmp++)
             cumspace[tmp] = cumspace[len - 1];
         //padding
