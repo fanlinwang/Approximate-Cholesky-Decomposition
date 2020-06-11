@@ -738,6 +738,7 @@ LDLinv approxChol_vector2_merge_search_opt(LLMatOrd_vector2 &a) {
                 {
                     val.push_back(last_val);
                     row.push_back(last_row);
+                    csum += last_val;
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
@@ -748,6 +749,7 @@ LDLinv approxChol_vector2_merge_search_opt(LLMatOrd_vector2 &a) {
             }
             val.push_back(last_val);
             row.push_back(last_row);
+            csum += last_val;
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -1239,6 +1241,7 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
                 {
                     val.push_back(last_val);
                     row.push_back(last_row);
+                    csum += last_val;
                     last_val = a.val[i][idx];
                     last_row = a.row[i][idx];
                 }
@@ -1249,6 +1252,7 @@ LDLinv approxChol_vector2_merge_search_opt2(LLMatOrd_vector2 &a) {
             }
             val.push_back(last_val);
             row.push_back(last_row);
+            csum += last_val;
             // std::cout << "merge done" << std::endl;
             len = row.size();
             typedef std::sort_helper::value_iterator_t<Tind,Tval> IndexByVal;
@@ -3257,6 +3261,7 @@ LDLinv approxChol_vector2_struct_merge_search_simd(LLMatOrd_vector2_struct& a) {
                 if (a.elems[i][idx].row != last_row)
                 {
                     elems.push_back(Elem(last_row, last_val));
+                    csum += last_val;
                     last_val = a.elems[i][idx].val;
                     last_row = a.elems[i][idx].row;
                 }
@@ -3266,6 +3271,7 @@ LDLinv approxChol_vector2_struct_merge_search_simd(LLMatOrd_vector2_struct& a) {
                 }
             }
             elems.push_back(Elem(last_row, last_val));
+            csum += last_val;
             // std::cout << "merge done" << std::endl;
             len = elems.size();
             std::sort(elems.begin(), elems.end(), cmp_val_elem);
@@ -3352,6 +3358,12 @@ LDLinv approxChol_vector2_struct_merge_search_simd(LLMatOrd_vector2_struct& a) {
             ks[joffset+1] = elems[koff_4[1]].row;
             ks[joffset+2] = elems[koff_4[2]].row;
             ks[joffset+3] = elems[koff_4[3]].row;
+            // std::cout << "joffset: " << joffset << std::endl;
+            // std::cout << "r: " << r_4[0] << " " << r_4[1] << " " << r_4[2] << " " << r_4[3] << std::endl;
+            // std::cout << "cum: " << cum_4[0] << " " << cum_4[1] << " " << cum_4[2] << " " << cum_4[3] << std::endl;
+            // std::cout << "csum: " << csum << " newr: " << newr_4[0] << " " << newr_4[1] << " " << newr_4[2] << " " << newr_4[3] << std::endl;
+            // std::cout << "size: " << elems.size() << " koff: " << koff_4[0] << " " << koff_4[1] << " " << koff_4[2] << " " << koff_4[3] << std::endl;
+            // std::cout << "k: " << ks[joffset] << " " << ks[joffset+1] << " " << ks[joffset+2] << " " << ks[joffset+3] << std::endl;
         }
 
         /*for (int joffset = 0; joffset < newlen; joffset+=4) {
@@ -3389,7 +3401,7 @@ LDLinv approxChol_vector2_struct_merge_search_simd(LLMatOrd_vector2_struct& a) {
             Tind j = js[joffset];
             Tind k = ks[joffset];
             Tval newEdgeVal = newEdgeVals[joffset];
-
+            // std::cout << "2: " << j << std::endl;
             a.elems[j].push_back(Elem(k, newEdgeVal));
         }
 
