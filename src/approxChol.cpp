@@ -3568,7 +3568,7 @@ LDLinv approxChol_opt(LLMatOrd &a) {
 
         ldli.rowval.push_back(j);
         ldli.fval.push_back(1);
-        ldli_row_ptr += len;
+        ldli_row_ptr += 1;
 
         d[i] = w;
     }
@@ -3599,7 +3599,6 @@ LDLinv approxChol_opt2(LLMatOrd &a) {
     // random engine and distribution
     std::default_random_engine engine;
     std::uniform_real_distribution<Tval> u(0.0, 1.0);
-
 
     for (long i = 0; i <= n-2; i++) {
 
@@ -3660,7 +3659,6 @@ LDLinv approxChol_opt2(LLMatOrd &a) {
         
         colspace = c;
         len = ptr+1;
-
 
         if (len <= 1)
         {
@@ -3787,7 +3785,7 @@ LDLinv approxChol_opt2(LLMatOrd &a) {
 
         ldli.rowval.push_back(j);
         ldli.fval.push_back(1);
-        ldli_row_ptr += len;
+        ldli_row_ptr += 1;
 
         d[i] = w;
     }
