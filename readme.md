@@ -65,3 +65,7 @@ make
 ./src/main [vertice] [edges]
 ./test/test_LDLsolver
 ```
+- Run `runtime.sh` to test the runtime:
+``` bash
+bash runtime.sh
+```
