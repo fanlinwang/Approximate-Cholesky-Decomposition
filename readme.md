@@ -65,10 +65,3 @@ make
 ./src/main [vertice] [edges]
 ./test/test_LDLsolver
 ```
-- Use `run.sh` to generate log files for performance test
-``` bash
-bash run.sh [agfcp] 
-# a: all log files, g: general metrics, f: flops counts
-# c: on cache usage, p: generate perf.data
-# check log/README.md for details
-```
