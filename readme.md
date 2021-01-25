@@ -1,5 +1,13 @@
 # Approximate Cholesky Decomposition
 
+Project repository for [Advanced Systems Lab, ETH Zurich, Spring 2020](https://acl.inf.ethz.ch/teaching/fastcode/2020/)
+
+In this project, we optimized the implementation of the [Approximate Cholesky Decomposition algorithm](https://arxiv.org/abs/1605.02353) from an engineering perspective. [The original implementation](https://danspielman.github.io/Laplacians.jl/latest/usingSolvers/) is in Julia.
+
+The final report can be found [here](https://github.com/fanlinwang/Approximate-Cholesky-Decomposition/blob/master/report.pdf).
+
+Team member: Daoye Wang, Fanlin Wang, Dexin Yang, Kaifeng Zhao.
+
 ## Julia Code
 
 - [x] approxCholTypes/LLord: a node in the linked list (i.e. a column of the sparse matrix)
@@ -17,55 +25,15 @@
 - [x] approxChol/backward!: backward substitution, which is a step in LDLsolver
 - [x] approxChol/approxchol_lapGiven: an API over 
 
-## Project Structure
-``` text
-.
-├── CMakeLists.txt
-├── src
-│   ├── main.cpp
-│   ├── approxChol.hpp
-│   ├── approxChol.cpp
-│   ├── approxCholTypes.h
-│   ├── approxCholTypes.cpp
-│   ├── conditionNumber.hpp
-│   ├── conditionNumber.cpp
-│   ├── common.h
-│   ├── tsc_x86.h
-│   └── CMakeLists.txt
-└── test
-    ├── test_approxChol.cpp
-    ├── test_flops.cpp
-    ├── test_LDLsolver.cpp
-    ├── test_LLMatOrd.cpp
-    ├── test_pcg.cpp
-    ├── test_solver.cpp
-    ├── test_validation.cpp
-    ├── matrix.hpp
-    ├── test.h
-    └── CMakeLists.txt
-```
-- To add a new test file `test_xxx.cpp` under the `test/`, append the following two lines to `test/CMakeLists.txt`: 
-``` cmake
-add_executable(test_xxx test_xxx.cpp)   # Name of executable.
-target_link_libraries(test_xxx PRIVATE approxChol)  # Link the executable to the library built from src/*.cpp
-```
-
 ## Build and Test
 - Generate build files for all:
 ``` bash
-cd team008 && mkdir build && cd build
+mkdir build && cd build
 cmake ..
-```
-- Compile:
-``` bash
 make
 ```
 - Run:
 ``` bash
 ./src/main [vertice] [edges]
 ./test/test_LDLsolver
-```
-- Run `runtime.sh` to test the runtime:
-``` bash
-bash runtime.sh
 ```

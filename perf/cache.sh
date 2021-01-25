@@ -15,6 +15,3 @@ do
          fi
     done
 done
-
-# cg_annotate --auto=yes --include=/home/fanlin/team008 cachegrind.out.xxx ./src/approxChol.cpp
-# valgrind --tool=cachegrind --cache-sim=yes --branch-sim=yes ./build/test/runtime 50000 500000 1
